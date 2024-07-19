@@ -26,3 +26,7 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks.bootBuildImage {
+    createdDate = "now"
+}
