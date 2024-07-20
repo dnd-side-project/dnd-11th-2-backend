@@ -61,3 +61,18 @@ spotless {
         trimTrailingWhitespace()
     }
 }
+
+tasks.register<Copy>("updateGitHooks") {
+    from("scripts/pre-commit.sh")
+    into(".git/hooks")
+    rename("pre-commit.sh", "pre-commit")
+}
+
+tasks.register<Exec>("makeGitHooksExecutable") {
+    commandLine("chmod", "+x", ".git/hooks/pre-commit")
+    dependsOn("updateGitHooks")
+}
+
+tasks.compileJava {
+    dependsOn("makeGitHooksExecutable")
+}
