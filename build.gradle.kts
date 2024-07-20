@@ -76,3 +76,9 @@ tasks.register<Exec>("makeGitHooksExecutable") {
 tasks.compileJava {
     dependsOn("makeGitHooksExecutable")
 }
+
+tasks.register("projectTest") {
+    dependsOn("spotlessJavaCheck")
+    dependsOn("compileJava")
+    dependsOn("test")
+}
