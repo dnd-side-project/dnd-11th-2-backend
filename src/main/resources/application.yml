@@ -1,4 +1,5 @@
 spring.application.name: run-us
+spring.profiles.active: local
 
 spring:
   jpa:
