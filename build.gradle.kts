@@ -20,13 +20,19 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.postgresql:postgresql:42.7.3")
     implementation("me.paulschwarz:spring-dotenv:4.0.0")
 
+    // Web
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0")
+
+    // Database
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.postgresql:postgresql:42.7.3")
+
     // Lombok
+    implementation("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
     testCompileOnly("org.projectlombok:lombok:1.18.34")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
@@ -47,6 +53,14 @@ tasks.withType<Test> {
 
 tasks.bootBuildImage {
     createdDate = "now"
+}
+
+springBoot {
+    buildInfo {
+        properties {
+            setVersion(System.getProperty("WAS_TAG") ?: "Unknown")
+        }
+    }
 }
 
 spotless {
