@@ -43,3 +43,4 @@ out/
 
 **/resources/.env
 **/resources/.env.*
+!**/resources/.env.example
