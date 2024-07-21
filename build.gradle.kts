@@ -31,6 +31,12 @@ dependencies {
     testCompileOnly("org.projectlombok:lombok:1.18.34")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
 
+    // testcontainers
+    testImplementation("org.testcontainers:testcontainers:1.20.0")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.0")
+    testImplementation("org.testcontainers:jdbc:1.20.0")
+    testImplementation("org.testcontainers:postgresql:1.20.0")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
