@@ -6,7 +6,6 @@ plugins {
 }
 
 group = "com.dnd"
-version = "0.0.1-SNAPSHOT"
 
 java {
     toolchain {
@@ -53,15 +52,13 @@ tasks.withType<Test> {
 
 tasks.bootBuildImage {
     createdDate = "now"
-}
-
-springBoot {
-    buildInfo {
-        properties {
-            setVersion(System.getProperty("WAS_TAG") ?: "Unknown")
-        }
+    doFirst {
+        version = imageName.get().substringAfterLast(":", "Unknown")
+        println("Setting version to: $version")
     }
 }
+
+springBoot.buildInfo { properties {} }
 
 spotless {
     encoding = Charsets.UTF_8
