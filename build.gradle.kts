@@ -79,7 +79,6 @@ spotless {
         trimTrailingWhitespace()
         importOrder("", "java|javax", "\\#").wildcardsLast()
         removeUnusedImports()
-        formatAnnotations()
     }
 
     format("misc") {
