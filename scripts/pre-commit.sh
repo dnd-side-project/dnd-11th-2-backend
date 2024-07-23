@@ -7,7 +7,12 @@ stagedFiles=$(git diff --staged --name-only)
 
 # Part 2
 echo "Running spotlessApply. Formatting code..."
-cd "$PROJECT_ROOT" && ./gradlew spotlessApply
+
+if [ "$OS" = "Windows_NT" ]; then
+    cd "$PROJECT_ROOT" && ./gradlew.bat spotlessApply
+else
+    cd "$PROJECT_ROOT" && ./gradlew spotlessApply
+fi
 
 # Checking the exit status
 if [ $? -ne 0 ]; then

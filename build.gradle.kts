@@ -93,15 +93,14 @@ tasks.register<Copy>("updateGitHooks") {
     from("scripts/pre-commit.sh")
     into(".git/hooks")
     rename("pre-commit.sh", "pre-commit")
-}
-
-tasks.register<Exec>("makeGitHooksExecutable") {
-    commandLine("chmod", "+x", ".git/hooks/pre-commit")
-    dependsOn("updateGitHooks")
+    doLast {
+        val preCommitHook = file(".git/hooks/pre-commit")
+        preCommitHook.setExecutable(true, false)
+    }
 }
 
 tasks.compileJava {
-    dependsOn("makeGitHooksExecutable")
+    dependsOn("updateGitHooks")
 }
 
 tasks.register("projectTest") {
