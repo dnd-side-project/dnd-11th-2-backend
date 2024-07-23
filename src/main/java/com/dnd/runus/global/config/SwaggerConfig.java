@@ -1,9 +1,11 @@
 package com.dnd.runus.global.config;
 
+import com.dnd.runus.global.constant.AuthConstant;
 import com.dnd.runus.global.exception.type.ApiErrorType;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.info.Info;
@@ -15,6 +17,7 @@ import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.QueryParameter;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springdoc.core.customizers.OpenApiCustomizer;
@@ -34,6 +37,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.security.config.Elements.JWT;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @RequiredArgsConstructor
@@ -44,7 +49,19 @@ public class SwaggerConfig {
 
     @Bean
     OpenAPI openAPI() {
-        return new OpenAPI().info(info()).addSecurityItem(new SecurityRequirement().addList("JWT"));
+        SecurityScheme securityScheme = new SecurityScheme()
+                .name(JWT)
+                .type(SecurityScheme.Type.HTTP)
+                .in(SecurityScheme.In.HEADER)
+                .scheme(AuthConstant.TOKEN_TYPE.trim())
+                .bearerFormat(JWT)
+                .name(AUTHORIZATION)
+                .description("JWT 토큰을 입력해주세요 (" + AuthConstant.TOKEN_TYPE + "제외)");
+
+        return new OpenAPI()
+                .info(info())
+                .addSecurityItem(new SecurityRequirement().addList(JWT))
+                .components(new Components().addSecuritySchemes(JWT, securityScheme));
     }
 
     @Bean
@@ -87,9 +104,11 @@ public class SwaggerConfig {
             Schema<?> errorSchema = new Schema<>();
             errorSchema.properties(Map.of(
                     "statusCode",
-                            new Schema<>().type("int").example(type.httpStatus().value()),
-                    "code", new Schema<>().type("string").example(type.code()),
-                    "message", new Schema<>().type("string").example(type.message())));
+                    new Schema<>().type("int").example(type.httpStatus().value()),
+                    "code",
+                    new Schema<>().type("string").example(type.code()),
+                    "message",
+                    new Schema<>().type("string").example(type.message())));
             return errorSchema;
         };
 
