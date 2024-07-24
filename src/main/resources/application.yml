@@ -14,6 +14,10 @@ spring:
     username: ${DATABASE_USER}
     password: ${DATABASE_PASSWORD}
 
+app:
+  api:
+    allow-origins: ${ALLOW_ORIGINS}
+
 ---
 spring.config.activate.on-profile: local
 
