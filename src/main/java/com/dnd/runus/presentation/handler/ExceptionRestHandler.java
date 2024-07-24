@@ -21,19 +21,19 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 public class ExceptionRestHandler {
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiErrorDto> handleBaseException(BaseException e) {
-        log.warn(e.getMessage(), e);
+        log.warn(e.getMessage());
         return toResponseEntity(e.getType(), e.getMessage());
     }
 
     @ExceptionHandler(AuthException.class)
     public ResponseEntity<ApiErrorDto> handleAuthException(AuthException e) {
-        log.warn(e.getMessage(), e);
+        log.warn(e.getMessage());
         return toResponseEntity(e.getType(), e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorDto> handleException(Exception e) {
-        log.error(e.getMessage(), e);
+        log.error("Unhandled exception: ", e);
         return toResponseEntity(ErrorType.UNHANDLED_EXCEPTION, e.getMessage());
     }
 
