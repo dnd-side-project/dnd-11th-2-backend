@@ -44,6 +44,10 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // PostGIS
+    runtimeOnly ("org.postgresql:postgresql")
+    implementation ("org.hibernate:hibernate-spatial:6.4.0.Final")
 }
 
 tasks.withType<Test> {
