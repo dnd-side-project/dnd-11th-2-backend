@@ -17,6 +17,11 @@ spring:
 app:
   api:
     allow-origins: ${ALLOW_ORIGINS}
+  auth:
+    token:
+      access:
+        expiration: ${ACCESS_TOKEN_EXPIRATION}
+        secret-key: ${ACCESS_TOKEN_SECRET_KEY}
 
 ---
 spring.config.activate.on-profile: local
