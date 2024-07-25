@@ -13,3 +13,8 @@ spring:
 app:
   api:
     allow-origins: "*"
+  auth:
+    token:
+      access:
+        expiration: PT1H
+        secret-key: test-long-long-long-secret-key
