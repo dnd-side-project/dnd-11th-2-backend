@@ -30,6 +30,9 @@ public class Member extends BaseTimeEntity {
 
     private Long badgeId;
 
+    @NotNull
+    private Integer exp;
+
     @Embedded
     @Accessors(fluent = true)
     private SocialProfile social;
