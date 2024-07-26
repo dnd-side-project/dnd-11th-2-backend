@@ -29,6 +29,9 @@ dependencies {
     // Database
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql:42.7.3")
+    runtimeOnly ("org.postgresql:postgresql")
+    implementation ("org.hibernate:hibernate-spatial:6.4.0.Final")
+
 
     // Lombok
     implementation("org.projectlombok:lombok:1.18.34")
@@ -44,10 +47,6 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    // PostGIS
-    runtimeOnly ("org.postgresql:postgresql")
-    implementation ("org.hibernate:hibernate-spatial:6.4.0.Final")
 }
 
 tasks.withType<Test> {
