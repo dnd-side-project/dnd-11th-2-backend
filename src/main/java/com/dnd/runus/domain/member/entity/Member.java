@@ -28,7 +28,7 @@ public class Member extends BaseTimeEntity {
     @Size(max = 20)
     private String nickname;
 
-    private Long badgeId;
+    private Long mainBadgeId;
 
     @NotNull
     private Integer exp;
@@ -47,6 +47,7 @@ public class Member extends BaseTimeEntity {
         member.nickname = nickname;
         member.social = social;
         member.personal = personal;
+        member.exp = 0;
         return member;
     }
 }
