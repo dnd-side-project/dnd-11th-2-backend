@@ -22,5 +22,8 @@ public class Level {
     private String name;
 
     @NotNull
-    private Integer requiredMinExp;
+    private Integer expRangeStart;
+
+    @NotNull
+    private Integer expRangeEnd;
 }
