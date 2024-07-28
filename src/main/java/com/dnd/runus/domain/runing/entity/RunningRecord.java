@@ -37,7 +37,7 @@ public class RunningRecord extends BaseTimeEntity {
     private Double distance;
 
     @NotNull
-    private Integer runningTime;
+    private Integer durationSeconds;
 
     @NotNull
     private Double calorie;
@@ -68,7 +68,7 @@ public class RunningRecord extends BaseTimeEntity {
     private RunningRecord(
             Member member,
             Double distance,
-            Integer runningTime,
+            Integer durationSeconds,
             Double calorie,
             Double averagePace,
             Instant startAt,
@@ -79,7 +79,7 @@ public class RunningRecord extends BaseTimeEntity {
             String goalDescription) {
         this.member = member;
         this.distance = distance;
-        this.runningTime = runningTime;
+        this.durationSeconds = durationSeconds;
         this.calorie = calorie;
         this.averagePace = averagePace;
         this.startAt = startAt;
