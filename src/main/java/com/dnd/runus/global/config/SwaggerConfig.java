@@ -144,6 +144,10 @@ public class SwaggerConfig {
                 .version(buildProperties.getVersion());
     }
 
+    private String formatTime(Instant instant) {
+        return instant.atZone(SERVER_TIMEZONE_ID).format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
+    }
+
     private MediaType errorMediaType(ErrorType type) {
         Schema<?> errorSchema = new Schema<>();
         errorSchema.properties(Map.of(
@@ -154,10 +158,6 @@ public class SwaggerConfig {
                 "message",
                 new Schema<>().type("string").example(type.message())));
         return new MediaType().schema(errorSchema);
-    }
-
-    private String formatTime(Instant instant) {
-        return instant.atZone(SERVER_TIMEZONE_ID).format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
     }
 
     private void updatePropertySchema(Map<String, Schema<?>> properties, String propertyName, String example) {
