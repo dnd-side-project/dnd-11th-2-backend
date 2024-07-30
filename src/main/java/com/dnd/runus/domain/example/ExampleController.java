@@ -5,30 +5,17 @@ import com.dnd.runus.global.exception.type.ApiErrorType;
 import com.dnd.runus.global.exception.type.ErrorType;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.Getter;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.time.LocalTime;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/examples")
 public class ExampleController { // FIXME: 추후 삭제
-    @Operation(summary = "페이징 테스트, 복잡한 페이징(pageable) 결과는 나중에 정해서 간략화해도 좋을 것 같아요")
-    @GetMapping("/pagination")
-    public Page<?> a(Pageable pageable) {
-        List<String> list = List.of("a", "b", "c", "d", "e", "f", "g", "h", "i", "j");
-        List<String> sublist = list.subList(
-                (int) pageable.getOffset(), Math.min((int) pageable.getOffset() + pageable.getPageSize(), list.size()));
-        return new PageImpl<>(sublist, pageable, list.size());
-    }
-
     @Operation(summary = "input 테스트, input을 반환합니다.")
     @GetMapping("/input")
     public String name(@RequestParam String input) {
@@ -41,7 +28,7 @@ public class ExampleController { // FIXME: 추후 삭제
         return headers;
     }
 
-    @Operation(summary = "데이터 테스트, 시간 관련 형식도 정하면 좋을 것 같아요")
+    @Operation(summary = "시간, 날짜 데이터 테스트")
     @GetMapping("/data")
     public MyData data() {
         return new MyData();
@@ -49,10 +36,10 @@ public class ExampleController { // FIXME: 추후 삭제
 
     @Getter
     public static class MyData {
-        int a;
-        String b = "b";
-        Instant c = Instant.now();
-        String d = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
+        int number = 0;
+        LocalTime time = LocalTime.now();
+        LocalDate date = LocalDate.now();
+        LocalDateTime dateTime = LocalDateTime.now();
     }
 
     @GetMapping("/empty")
