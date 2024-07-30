@@ -1,5 +1,6 @@
 package com.dnd.runus.domain.member.entity;
 
+import com.dnd.runus.domain.common.BaseTimeEntity;
 import com.dnd.runus.global.constant.SocialType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +13,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @Entity
 @NoArgsConstructor(access = PROTECTED)
-public class SocialProfile {
+public class SocialProfile extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

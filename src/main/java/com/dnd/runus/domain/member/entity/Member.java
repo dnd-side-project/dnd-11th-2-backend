@@ -30,9 +30,6 @@ public class Member extends BaseTimeEntity {
 
     private Long mainBadgeId;
 
-    @NotNull
-    private Integer exp;
-
     @Embedded
     @Accessors(fluent = true)
     private PersonalProfile personal;
@@ -42,7 +39,6 @@ public class Member extends BaseTimeEntity {
         member.role = role;
         member.nickname = nickname;
         member.personal = personal;
-        member.exp = 0;
         return member;
     }
 }
