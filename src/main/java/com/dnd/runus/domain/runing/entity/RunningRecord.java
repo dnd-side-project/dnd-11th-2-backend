@@ -2,7 +2,6 @@ package com.dnd.runus.domain.runing.entity;
 
 import com.dnd.runus.domain.common.BaseTimeEntity;
 import com.dnd.runus.domain.member.entity.Member;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -51,7 +50,6 @@ public class RunningRecord extends BaseTimeEntity {
     @NotNull
     private Instant endAt;
 
-    @Nullable
     @Column(columnDefinition = "geometry(LineString, 4326)")
     private LineString route;
 
@@ -60,9 +58,6 @@ public class RunningRecord extends BaseTimeEntity {
 
     @NotNull
     private Long emojiId;
-
-    @Column(length = 500)
-    private String goalDescription;
 
     @Builder
     private RunningRecord(
@@ -75,8 +70,7 @@ public class RunningRecord extends BaseTimeEntity {
             Instant endAt,
             LineString route,
             String location,
-            Long emojiId,
-            String goalDescription) {
+            Long emojiId) {
         this.member = member;
         this.distance = distance;
         this.durationSeconds = durationSeconds;
@@ -87,6 +81,5 @@ public class RunningRecord extends BaseTimeEntity {
         this.route = route;
         this.location = location;
         this.emojiId = emojiId;
-        this.goalDescription = goalDescription;
     }
 }

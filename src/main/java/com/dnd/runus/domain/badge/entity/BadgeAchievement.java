@@ -18,8 +18,7 @@ public class BadgeAchievement {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = LAZY)
-    private Badge badge;
+    private Long badgeId;
 
     @NotNull
     @ManyToOne(fetch = LAZY)
@@ -27,7 +26,7 @@ public class BadgeAchievement {
 
     public static BadgeAchievement of(Badge badge, Member member) {
         BadgeAchievement badgeAchievement = new BadgeAchievement();
-        badgeAchievement.badge = badge;
+        badgeAchievement.badgeId = badge.getId();
         badgeAchievement.member = member;
         return badgeAchievement;
     }

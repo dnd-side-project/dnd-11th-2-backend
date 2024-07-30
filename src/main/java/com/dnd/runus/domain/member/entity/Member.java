@@ -35,17 +35,12 @@ public class Member extends BaseTimeEntity {
 
     @Embedded
     @Accessors(fluent = true)
-    private SocialProfile social;
-
-    @Embedded
-    @Accessors(fluent = true)
     private PersonalProfile personal;
 
-    public static Member of(MemberRole role, String nickname, SocialProfile social, PersonalProfile personal) {
+    public static Member of(MemberRole role, String nickname, PersonalProfile personal) {
         Member member = new Member();
         member.role = role;
         member.nickname = nickname;
-        member.social = social;
         member.personal = personal;
         member.exp = 0;
         return member;

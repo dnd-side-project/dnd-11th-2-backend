@@ -1,24 +1,22 @@
 package com.dnd.runus.domain.member.entity;
 
 import com.dnd.runus.global.constant.SocialType;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.EnumType.STRING;
-import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@Builder
+@Entity
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor(access = PRIVATE)
-@Embeddable
 public class SocialProfile {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NotNull
     @Enumerated(STRING)
     private SocialType socialType;
@@ -28,4 +26,16 @@ public class SocialProfile {
 
     @NotNull
     private String oauthEmail;
+
+    @NotNull
+    private Long memberId;
+
+    public static SocialProfile of(SocialType socialType, String oauthId, String oauthEmail, Long memberId) {
+        SocialProfile socialProfile = new SocialProfile();
+        socialProfile.socialType = socialType;
+        socialProfile.oauthId = oauthId;
+        socialProfile.oauthEmail = oauthEmail;
+        socialProfile.memberId = memberId;
+        return socialProfile;
+    }
 }
