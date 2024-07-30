@@ -7,14 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
-import io.swagger.v3.oas.models.parameters.Parameter;
-import io.swagger.v3.oas.models.parameters.QueryParameter;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -28,15 +25,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.dnd.runus.global.constant.TimeConstant.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.security.config.Elements.JWT;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
@@ -70,11 +66,25 @@ public class SwaggerConfig {
     }
 
     @Bean
-    OpenApiCustomizer projectPageableCustomizer() {
-        return openApi -> customizeOperations(openApi, "pageable", (operation, parameter) -> {
-            operation.getParameters().remove(parameter);
-            pageableParameter().forEach(operation::addParametersItem);
-        });
+    OpenApiCustomizer timeFormatCustomizer() {
+        return openApi -> Optional.ofNullable(openApi.getComponents())
+                .map(Components::getSchemas)
+                .ifPresent(schemas -> schemas.forEach((name, schema) -> {
+                    @SuppressWarnings("unchecked") // schema.getProperties() returns Map<String, Schema>
+                    Map<String, Schema<?>> properties = Optional.ofNullable(schema.getProperties())
+                            .map(props -> (Map<String, Schema<?>>) props)
+                            .orElse(Collections.emptyMap());
+                    properties.forEach((propertyName, propertySchema) -> {
+                        System.out.println("propertyName = " + propertyName + ", propertySchema = " + propertySchema);
+                        if ("date-time".equals(propertySchema.getFormat())) {
+                            updatePropertySchema(properties, propertyName, DATE_TIME_FORMAT_EXAMPLE);
+                        } else if ("date".equals(propertySchema.getFormat())) {
+                            updatePropertySchema(properties, propertyName, DATE_FORMAT_EXAMPLE);
+                        } else if ("#/components/schemas/LocalTime".equals(propertySchema.get$ref())) {
+                            updatePropertySchema(properties, propertyName, TIME_FORMAT_EXAMPLE);
+                        }
+                    });
+                }));
     }
 
     @Bean
@@ -100,18 +110,6 @@ public class SwaggerConfig {
 
     @Bean
     OperationCustomizer apiErrorTypeCustomizer() {
-        Function<ErrorType, Schema<?>> getErrorSchema = type -> {
-            Schema<?> errorSchema = new Schema<>();
-            errorSchema.properties(Map.of(
-                    "statusCode",
-                    new Schema<>().type("int").example(type.httpStatus().value()),
-                    "code",
-                    new Schema<>().type("string").example(type.code()),
-                    "message",
-                    new Schema<>().type("string").example(type.message())));
-            return errorSchema;
-        };
-
         return (operation, handlerMethod) -> {
             ApiErrorType apiErrorType = handlerMethod.getMethodAnnotation(ApiErrorType.class);
             if (apiErrorType == null) {
@@ -121,9 +119,7 @@ public class SwaggerConfig {
             Stream.of(apiErrorType.value())
                     .sorted(Comparator.comparingInt(t -> t.httpStatus().value()))
                     .forEach(type -> {
-                        Content content = new Content()
-                                .addMediaType(
-                                        APPLICATION_JSON_VALUE, new MediaType().schema(getErrorSchema.apply(type)));
+                        Content content = new Content().addMediaType(APPLICATION_JSON_VALUE, errorMediaType(type));
                         operation
                                 .getResponses()
                                 .put(
@@ -148,28 +144,30 @@ public class SwaggerConfig {
                 .version(buildProperties.getVersion());
     }
 
-    private void customizeOperations(OpenAPI openApi, String paramName, BiConsumer<Operation, Parameter> customizer) {
-        openApi.getPaths().values().stream()
-                .flatMap(pathItem -> pathItem.readOperations().stream())
-                .filter(operation -> !ObjectUtils.isEmpty(operation.getParameters()))
-                .forEach(operation -> operation.getParameters().stream()
-                        .filter(parameter -> paramName.equals(parameter.getName()))
-                        .findFirst()
-                        .ifPresent(parameter -> customizer.accept(operation, parameter)));
-    }
-
-    private List<Parameter> pageableParameter() {
-        Schema<?> pageSchema = new StringSchema().example("0").description("페이지 번호 (0부터 시작)");
-        Schema<?> sizeSchema = new StringSchema().example("20").description("한 페이지에 보여줄 항목 수");
-        Schema<?> sortSchema = new StringSchema().example("id,asc").description("정렬 조건 (ex. id,asc or id,desc)");
-
-        return List.of(
-                new QueryParameter().name("page").schema(pageSchema),
-                new QueryParameter().name("size").schema(sizeSchema),
-                new QueryParameter().name("sort").schema(sortSchema));
+    private MediaType errorMediaType(ErrorType type) {
+        Schema<?> errorSchema = new Schema<>();
+        errorSchema.properties(Map.of(
+                "statusCode",
+                new Schema<>().type("int").example(type.httpStatus().value()),
+                "code",
+                new Schema<>().type("string").example(type.code()),
+                "message",
+                new Schema<>().type("string").example(type.message())));
+        return new MediaType().schema(errorSchema);
     }
 
     private String formatTime(Instant instant) {
-        return instant.atZone(ZoneId.of("Asia/Seoul")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return instant.atZone(SERVER_TIMEZONE_ID).format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
+    }
+
+    private void updatePropertySchema(Map<String, Schema<?>> properties, String propertyName, String example) {
+        Schema<?> propertySchema = properties.get(propertyName);
+        properties.replace(
+                propertyName,
+                new StringSchema()
+                        .type(propertySchema.getType())
+                        .format(propertySchema.getFormat())
+                        .example(example)
+                        .description(propertySchema.getDescription()));
     }
 }
