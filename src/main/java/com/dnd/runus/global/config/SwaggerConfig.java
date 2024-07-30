@@ -75,7 +75,6 @@ public class SwaggerConfig {
                             .map(props -> (Map<String, Schema<?>>) props)
                             .orElse(Collections.emptyMap());
                     properties.forEach((propertyName, propertySchema) -> {
-                        System.out.println("propertyName = " + propertyName + ", propertySchema = " + propertySchema);
                         if ("date-time".equals(propertySchema.getFormat())) {
                             updatePropertySchema(properties, propertyName, DATE_TIME_FORMAT_EXAMPLE);
                         } else if ("date".equals(propertySchema.getFormat())) {
