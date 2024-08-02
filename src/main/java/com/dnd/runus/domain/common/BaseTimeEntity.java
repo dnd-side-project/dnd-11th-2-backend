@@ -1,21 +1,25 @@
 package com.dnd.runus.domain.common;
 
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.Instant;
+import java.time.OffsetDateTime;
 
 @Getter
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseTimeEntity {
-    @CreatedDate
-    private Instant createdAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
 
-    @LastModifiedDate
-    private Instant updatedAt;
+    @PrePersist
+    public void prePersist() {
+        createdAt = updatedAt = OffsetDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = OffsetDateTime.now();
+    }
 }

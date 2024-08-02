@@ -1,0 +1,65 @@
+package com.dnd.runus.infrastructure.persistence.jpa.member.entity;
+
+import com.dnd.runus.domain.badge.Badge;
+import com.dnd.runus.domain.common.BaseTimeEntity;
+import com.dnd.runus.domain.level.Level;
+import com.dnd.runus.domain.member.Member;
+import com.dnd.runus.global.constant.MemberRole;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import static jakarta.persistence.EnumType.STRING;
+import static lombok.AccessLevel.PROTECTED;
+
+@Getter
+@Entity(name = "member")
+@NoArgsConstructor(access = PROTECTED)
+public class MemberEntity extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull
+    @Enumerated(STRING)
+    private MemberRole role;
+
+    @NotNull
+    @Size(max = 20)
+    private String nickname;
+
+    private Integer weightKg;
+
+    private Long mainBadgeId;
+
+    public static MemberEntity from(Member member) {
+        MemberEntity memberEntity = new MemberEntity();
+        memberEntity.id = member.memberId();
+        memberEntity.role = member.role();
+        memberEntity.nickname = member.nickname();
+        memberEntity.weightKg = member.weightKg();
+        memberEntity.mainBadgeId =
+                member.mainBadge() == null ? null : member.mainBadge().badgeId();
+        return memberEntity;
+    }
+
+    public Member toDomain() {
+        return toDomain(null, null, -1);
+    }
+
+    public Member toDomain(Badge mainBadge, Level level, int currentExp) {
+        return Member.builder()
+                .memberId(id)
+                .createdAt(getCreatedAt())
+                .updatedAt(getUpdatedAt())
+                .role(role)
+                .nickname(nickname)
+                .weightKg(weightKg)
+                .mainBadge(mainBadge)
+                .level(level)
+                .currentExp(currentExp)
+                .build();
+    }
+}

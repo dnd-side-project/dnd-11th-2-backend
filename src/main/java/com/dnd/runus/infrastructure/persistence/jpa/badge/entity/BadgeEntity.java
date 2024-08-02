@@ -1,5 +1,6 @@
-package com.dnd.runus.domain.badge.entity;
+package com.dnd.runus.infrastructure.persistence.jpa.badge.entity;
 
+import com.dnd.runus.domain.badge.Badge;
 import com.dnd.runus.global.constant.BadgeType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -11,9 +12,9 @@ import static jakarta.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@Entity
+@Entity(name = "badge")
 @NoArgsConstructor(access = PROTECTED)
-public class Badge {
+public class BadgeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,13 +37,14 @@ public class Badge {
     @NotNull
     private Integer requiredValue;
 
-    public static Badge of(String name, String description, String imagePath, BadgeType type, Integer requiredValue) {
-        Badge badge = new Badge();
-        badge.name = name;
-        badge.description = description;
-        badge.imagePath = imagePath;
-        badge.type = type;
-        badge.requiredValue = requiredValue;
-        return badge;
+    public static BadgeEntity from(Badge badge) {
+        BadgeEntity badgeEntity = new BadgeEntity();
+        badgeEntity.id = badge.badgeId();
+        badgeEntity.name = badge.name();
+        badgeEntity.description = badge.description();
+        badgeEntity.imagePath = badge.imageUrl();
+        badgeEntity.type = badge.type();
+        badgeEntity.requiredValue = badge.requiredValue();
+        return badgeEntity;
     }
 }

@@ -1,4 +1,4 @@
-package com.dnd.runus.domain.level.entity;
+package com.dnd.runus.infrastructure.persistence.jpa.scale.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,16 +11,16 @@ import lombok.NoArgsConstructor;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@Entity
+@Entity(name = "scale")
 @NoArgsConstructor(access = PROTECTED)
-public class Level {
+public class ScaleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    private Integer expRangeStart;
+    private String name;
 
     @NotNull
-    private Integer expRangeEnd;
+    private Integer sizeMeter;
 }

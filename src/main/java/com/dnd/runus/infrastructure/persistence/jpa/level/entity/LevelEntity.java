@@ -1,6 +1,5 @@
-package com.dnd.runus.domain.runing.entity;
+package com.dnd.runus.infrastructure.persistence.jpa.level.entity;
 
-import com.dnd.runus.domain.common.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,14 +11,16 @@ import lombok.NoArgsConstructor;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@Entity
+@Entity(name = "level")
 @NoArgsConstructor(access = PROTECTED)
-public class RunningEmoji extends BaseTimeEntity {
-
+public class LevelEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    private String imagePath;
+    private Integer expRangeStart;
+
+    @NotNull
+    private Integer expRangeEnd;
 }
