@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,10 +39,9 @@ public class ObjectMapperConfig {
                                 InstantSerializer.INSTANCE,
                                 false,
                                 false,
-                                dateTimeFormatter.withZone(SERVER_TIMEZONE_ID)) {});
-
+                                dateTimeFormatter.withZone(SERVER_TIMEZONE_ID)) {})
+                .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter));
         objectMapper.registerModule(dateTimeModule);
-
         return objectMapper;
     }
 }
