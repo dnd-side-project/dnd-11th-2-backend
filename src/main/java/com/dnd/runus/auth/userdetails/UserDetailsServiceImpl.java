@@ -1,8 +1,8 @@
 package com.dnd.runus.auth.userdetails;
 
 import com.dnd.runus.auth.exception.AuthException;
-import com.dnd.runus.domain.member.entity.Member;
-import com.dnd.runus.domain.member.repository.MemberRepository;
+import com.dnd.runus.domain.member.Member;
+import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.global.exception.type.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     .findById(memberId)
                     .orElseThrow(
                             () -> new AuthException(ErrorType.FAILED_AUTHENTICATION, "Member not found: " + memberId));
-            return AuthUserDetails.of(memberId, member.getRole());
+            return AuthUserDetails.of(memberId, member.role());
         } catch (NumberFormatException exception) {
             throw new UsernameNotFoundException(identity);
         }
