@@ -25,6 +25,10 @@ app:
         expiration: ${ACCESS_TOKEN_EXPIRATION}
         secret-key: ${ACCESS_TOKEN_SECRET_KEY}
 
+oauth:
+  apple:
+    public-key-url: ${APPLE_AUTH_URL}
+
 ---
 spring.config.activate.on-profile: local
 
