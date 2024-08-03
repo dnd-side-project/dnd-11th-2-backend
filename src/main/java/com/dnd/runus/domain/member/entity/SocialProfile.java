@@ -39,4 +39,9 @@ public class SocialProfile extends BaseTimeEntity {
         socialProfile.memberId = memberId;
         return socialProfile;
     }
+
+    public void updateEmail(String email) {
+        System.out.println("이메일");
+        this.oauthEmail = email;
+    }
 }
