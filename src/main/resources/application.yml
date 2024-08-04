@@ -3,8 +3,6 @@ spring.profiles.active: local
 
 spring:
   jpa:
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: none
     show-sql: true
