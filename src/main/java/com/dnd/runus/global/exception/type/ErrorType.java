@@ -26,6 +26,7 @@ public enum ErrorType {
     MALFORMED_ACCESS_TOKEN(UNAUTHORIZED, "AUTH_004", "잘못된 형식의 토큰입니다"),
     TAMPERED_ACCESS_TOKEN(UNAUTHORIZED, "AUTH_005", "변조된 토큰입니다"),
     UNSUPPORTED_JWT_TOKEN(UNAUTHORIZED, "AUTH_006", "지원하지 않는 JWT 토큰입니다"),
+    UNSUPPORTED_SOCIAL_TYPE(UNAUTHORIZED, "AUTH_007", "지원하지 않는 소셜 타입입니다."),
 
     // DatabaseErrorType
     ENTITY_NOT_FOUND(NOT_FOUND, "DB_001", "해당 엔티티를 찾을 수 없습니다"),

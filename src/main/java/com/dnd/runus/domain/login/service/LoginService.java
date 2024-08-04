@@ -1,6 +1,6 @@
 package com.dnd.runus.domain.login.service;
 
-import com.dnd.runus.auth.apple.AppleAuthProvider;
+import com.dnd.runus.auth.oidc.provider.OidcProviderFactory;
 import com.dnd.runus.auth.token.TokenProviderModule;
 import com.dnd.runus.auth.token.dto.AuthTokenDto;
 import com.dnd.runus.domain.login.dto.request.LoginRequest;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class LoginService {
 
-    private final AppleAuthProvider provider;
+    private final OidcProviderFactory oidcProviderFactory;
     private final TokenProviderModule tokenProviderModule;
 
     private final MemberRepository memberRepository;
@@ -38,7 +38,7 @@ public class LoginService {
     @Transactional
     public TokenResponse login(LoginRequest request) {
 
-        Claims claim = provider.getClaimsBy(request.idToken());
+        Claims claim = oidcProviderFactory.getClaims(request.socialType(), request.idToken());
         String oAuthId = claim.getSubject();
         String email = String.valueOf(claim.get("email"));
 
@@ -70,7 +70,7 @@ public class LoginService {
             throw new BusinessException(ErrorType.VIOLATION_OCCURRED, "이미 존재하는 이메일");
         }
 
-        // todo 체중 디폴트는 클라이언트에서 설정해서 값만 넘겨 줄지, 백단에서 저장할지 상의 후 결정 예정
+        // todo 체중 디폴트는 온보딩으로
         // 현재는 들어갈 때 임시로 70이 들어가도록 하드 코딩해둠
         Long memberId = memberRepository
                 .save(Member.of(
