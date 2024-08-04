@@ -1,4 +1,4 @@
-package com.dnd.runus.domain.login.dto.response;
+package com.dnd.runus.domain.sign.dto.response;
 
 
 import com.dnd.runus.auth.token.dto.AuthTokenDto;

@@ -1,15 +1,15 @@
-package com.dnd.runus.domain.login.service;
+package com.dnd.runus.domain.sign.service;
 
 import com.dnd.runus.auth.oidc.provider.OidcProviderFactory;
 import com.dnd.runus.auth.token.TokenProviderModule;
 import com.dnd.runus.auth.token.dto.AuthTokenDto;
-import com.dnd.runus.domain.login.dto.request.LoginRequest;
-import com.dnd.runus.domain.login.dto.response.TokenResponse;
 import com.dnd.runus.domain.member.entity.Member;
 import com.dnd.runus.domain.member.entity.PersonalProfile;
 import com.dnd.runus.domain.member.entity.SocialProfile;
 import com.dnd.runus.domain.member.repository.MemberRepository;
 import com.dnd.runus.domain.member.repository.SocialProfileRepository;
+import com.dnd.runus.domain.sign.dto.request.LoginRequest;
+import com.dnd.runus.domain.sign.dto.response.TokenResponse;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.SocialType;
 import com.dnd.runus.global.exception.BusinessException;

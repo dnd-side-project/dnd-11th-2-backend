@@ -1,4 +1,4 @@
-package com.dnd.runus.domain.login.dto.request;
+package com.dnd.runus.domain.sign.dto.request;
 
 import com.dnd.runus.global.constant.SocialType;
 import jakarta.validation.constraints.Email;

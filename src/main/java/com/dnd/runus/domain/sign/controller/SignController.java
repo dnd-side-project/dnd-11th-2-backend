@@ -1,8 +1,8 @@
-package com.dnd.runus.domain.login.controller;
+package com.dnd.runus.domain.sign.controller;
 
-import com.dnd.runus.domain.login.dto.request.LoginRequest;
-import com.dnd.runus.domain.login.dto.response.TokenResponse;
-import com.dnd.runus.domain.login.service.LoginService;
+import com.dnd.runus.domain.sign.dto.request.LoginRequest;
+import com.dnd.runus.domain.sign.dto.response.TokenResponse;
+import com.dnd.runus.domain.sign.service.LoginService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
