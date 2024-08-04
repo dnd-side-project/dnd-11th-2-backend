@@ -2,6 +2,7 @@ package com.dnd.runus.auth.oidc.provider;
 
 import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.type.ErrorType;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 
@@ -18,7 +19,7 @@ public interface OidcProvider {
         String header = token.split("\\.")[0];
 
         try {
-            return new ObjectMapper().readValue(decodeBase64(header), Map.class);
+            return new ObjectMapper().readValue(decodeBase64(header), new TypeReference<>() {});
         } catch (IOException e) {
             throw new BusinessException(ErrorType.FAILED_PARSING, e.getMessage());
         }
