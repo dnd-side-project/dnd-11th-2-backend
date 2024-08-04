@@ -33,7 +33,7 @@ public class SecurityWebConfig {
     private List<String> corsOrigins;
 
     private static final String[] PUBLIC_ENDPOINTS = {
-        "/api/v1/auth/**", "/api/v1/login/**",
+        "/api/v1/auth/**", "/api/v1/sign/**",
     };
 
     private static final String[] OPEN_API_ENDPOINTS = {

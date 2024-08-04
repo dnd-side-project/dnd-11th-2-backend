@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/api/v1/login")
+@RequestMapping("/api/v1/sign")
 @RestController
 @RequiredArgsConstructor
-public class LoginController {
+public class SignController {
 
     private final LoginService loginService;
 
-    @PostMapping("/")
+    @PostMapping("/in")
     public TokenResponse signUp(@Valid @RequestBody LoginRequest request) {
         return loginService.login(request);
     }
