@@ -25,7 +25,7 @@ app:
 
 oauth:
   apple:
-    public-key-url: ${APPLE_AUTH_URL}
+    public-key-url: https://appleid.apple.com/auth
 
 ---
 spring.config.activate.on-profile: local

@@ -20,4 +20,4 @@ app:
 
 oauth:
   apple:
-    public-key-url: test-apple-url
+    public-key-url: https://appleid.apple.com/auth
