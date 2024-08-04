@@ -1,6 +1,6 @@
 package com.dnd.runus.domain.oauth.controller;
 
-import com.dnd.runus.domain.oauth.dto.request.SignInRequest;
+import com.dnd.runus.domain.oauth.dto.request.OauthRequest;
 import com.dnd.runus.domain.oauth.dto.response.TokenResponse;
 import com.dnd.runus.domain.oauth.service.OauthService;
 import jakarta.validation.Valid;
@@ -18,7 +18,7 @@ public class OauthController {
     private final OauthService oauthService;
 
     @PostMapping
-    public TokenResponse SignIn(@Valid @RequestBody SignInRequest request) {
+    public TokenResponse SignIn(@Valid @RequestBody OauthRequest request) {
         return oauthService.SignIn(request);
     }
 }

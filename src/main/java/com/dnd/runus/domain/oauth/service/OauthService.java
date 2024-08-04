@@ -8,7 +8,7 @@ import com.dnd.runus.domain.member.entity.PersonalProfile;
 import com.dnd.runus.domain.member.entity.SocialProfile;
 import com.dnd.runus.domain.member.repository.MemberRepository;
 import com.dnd.runus.domain.member.repository.SocialProfileRepository;
-import com.dnd.runus.domain.oauth.dto.request.SignInRequest;
+import com.dnd.runus.domain.oauth.dto.request.OauthRequest;
 import com.dnd.runus.domain.oauth.dto.response.TokenResponse;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.SocialType;
@@ -36,7 +36,7 @@ public class OauthService {
      * @return TokenResponse
      */
     @Transactional
-    public TokenResponse SignIn(SignInRequest request) {
+    public TokenResponse SignIn(OauthRequest request) {
 
         Claims claim = oidcProviderFactory.getClaims(request.socialType(), request.idToken());
         String oAuthId = claim.getSubject();

@@ -1,4 +1,4 @@
-package com.dnd.runus.domain.sign.dto.request;
+package com.dnd.runus.domain.oauth.dto.request;
 
 import com.dnd.runus.global.constant.SocialType;
 import jakarta.validation.constraints.Email;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 
-public record LoginRequest(
+public record OauthRequest(
     @NotNull
     SocialType socialType,
     @NotBlank
