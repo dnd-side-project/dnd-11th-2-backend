@@ -18,3 +18,7 @@ app:
       access:
         expiration: PT1H
         secret-key: test-long-long-long-secret-key
+
+oauth:
+  apple:
+    public-key-url: test-apple-url
