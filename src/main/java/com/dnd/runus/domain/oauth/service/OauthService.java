@@ -1,4 +1,4 @@
-package com.dnd.runus.domain.sign.service;
+package com.dnd.runus.domain.oauth.service;
 
 import com.dnd.runus.auth.oidc.provider.OidcProviderFactory;
 import com.dnd.runus.auth.token.TokenProviderModule;
@@ -8,8 +8,8 @@ import com.dnd.runus.domain.member.entity.PersonalProfile;
 import com.dnd.runus.domain.member.entity.SocialProfile;
 import com.dnd.runus.domain.member.repository.MemberRepository;
 import com.dnd.runus.domain.member.repository.SocialProfileRepository;
-import com.dnd.runus.domain.sign.dto.request.LoginRequest;
-import com.dnd.runus.domain.sign.dto.response.TokenResponse;
+import com.dnd.runus.domain.oauth.dto.request.SignInRequest;
+import com.dnd.runus.domain.oauth.dto.response.TokenResponse;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.SocialType;
 import com.dnd.runus.global.exception.BusinessException;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class LoginService {
+public class OauthService {
 
     private final OidcProviderFactory oidcProviderFactory;
     private final TokenProviderModule tokenProviderModule;
@@ -36,20 +36,16 @@ public class LoginService {
      * @return TokenResponse
      */
     @Transactional
-    public TokenResponse login(LoginRequest request) {
+    public TokenResponse SignIn(SignInRequest request) {
 
         Claims claim = oidcProviderFactory.getClaims(request.socialType(), request.idToken());
         String oAuthId = claim.getSubject();
         String email = String.valueOf(claim.get("email"));
 
         // 회원 가입 안되있으면 회원가입 진행
-        if (!isLogin(request.socialType(), oAuthId)) {
-            crateMember(oAuthId, email, request.socialType(), request.nickName());
-        }
-
         SocialProfile socialProfile = socialProfileRepository
                 .findBySocialTypeAndOauthId(request.socialType(), oAuthId)
-                .orElseThrow(IllegalStateException::new);
+                .orElseGet(() -> crateMember(oAuthId, email, request.socialType(), request.nickName()));
 
         // 이메일 변경(사용자가 애플의 이메일을 변경한 후 로그인하면 해당 이메일 변경해줘야함. -> 리젝 사유 될 수 있음)
         if (!email.equals(socialProfile.getOauthEmail())) {
@@ -61,11 +57,7 @@ public class LoginService {
         return TokenResponse.from(tokenDto);
     }
 
-    private boolean isLogin(SocialType socialType, String authId) {
-        return socialProfileRepository.existsBySocialTypeAndOauthId(socialType, authId);
-    }
-
-    private void crateMember(String authId, String email, SocialType socialType, String nickName) {
+    private SocialProfile crateMember(String authId, String email, SocialType socialType, String nickName) {
         if (socialProfileRepository.existsByOauthEmail(email)) {
             throw new BusinessException(ErrorType.VIOLATION_OCCURRED, "이미 존재하는 이메일");
         }
@@ -79,6 +71,6 @@ public class LoginService {
                         PersonalProfile.builder().weightKg(70).build()))
                 .getId();
 
-        socialProfileRepository.save(SocialProfile.of(socialType, authId, email, memberId));
+        return socialProfileRepository.save(SocialProfile.of(socialType, authId, email, memberId));
     }
 }

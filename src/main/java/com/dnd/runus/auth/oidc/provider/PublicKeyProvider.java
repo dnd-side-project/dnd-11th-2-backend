@@ -12,9 +12,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
 import java.util.Map;
-
-import static com.dnd.runus.global.util.DecodeUtils.decodeBase64;
 
 @Component
 public class PublicKeyProvider {
@@ -29,8 +28,8 @@ public class PublicKeyProvider {
     private PublicKey getPublicKey(final OidcPublicKey key) {
 
         try {
-            final byte[] nByte = decodeBase64(key.n());
-            final byte[] eByte = decodeBase64(key.e());
+            final byte[] nByte = Base64.getUrlDecoder().decode(key.n());
+            final byte[] eByte = Base64.getUrlDecoder().decode(key.e());
 
             BigInteger n = new BigInteger(1, nByte);
             BigInteger e = new BigInteger(1, eByte);

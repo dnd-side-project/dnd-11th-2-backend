@@ -5,6 +5,7 @@ import com.dnd.runus.auth.oidc.provider.OidcProvider;
 import com.dnd.runus.auth.oidc.provider.PublicKeyProvider;
 import com.dnd.runus.client.vo.OidcPublicKeyList;
 import com.dnd.runus.client.web.AppleAuthClient;
+import com.dnd.runus.global.constant.SocialType;
 import com.dnd.runus.global.exception.type.ErrorType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -24,6 +25,11 @@ public class AppleAuthProvider implements OidcProvider {
     private final PublicKeyProvider publicKeyProvider;
 
     @Override
+    public SocialType getSocialType() {
+        return SocialType.APPLE;
+    }
+
+    @Override
     public Claims getClaimsBy(String identityToken) {
         // 퍼블릭 키 리스트
         OidcPublicKeyList publicKeys = appleAuthClient.getPublicKeys();
@@ -33,7 +39,7 @@ public class AppleAuthProvider implements OidcProvider {
         return parseClaims(identityToken, publicKey);
     }
 
-    public Claims parseClaims(String token, PublicKey publicKey) {
+    private Claims parseClaims(String token, PublicKey publicKey) {
         try {
             return Jwts.parser()
                     .verifyWith(publicKey)
@@ -44,7 +50,7 @@ public class AppleAuthProvider implements OidcProvider {
             // 토큰 서명 검증 또는 구조 문제
             throw new AuthException(ErrorType.MALFORMED_ACCESS_TOKEN, e.getMessage());
         } catch (ExpiredJwtException e) {
-            throw new AuthException(ErrorType.INVALID_ACCESS_TOKEN, e.getMessage());
+            throw new AuthException(ErrorType.EXPIRED_ACCESS_TOKEN, e.getMessage());
         }
     }
 }
