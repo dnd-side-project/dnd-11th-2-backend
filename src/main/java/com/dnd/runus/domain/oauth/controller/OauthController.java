@@ -3,6 +3,9 @@ package com.dnd.runus.domain.oauth.controller;
 import com.dnd.runus.domain.oauth.dto.request.OauthRequest;
 import com.dnd.runus.domain.oauth.dto.response.TokenResponse;
 import com.dnd.runus.domain.oauth.service.OauthService;
+import com.dnd.runus.global.exception.type.ApiErrorType;
+import com.dnd.runus.global.exception.type.ErrorType;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +20,12 @@ public class OauthController {
 
     private final OauthService oauthService;
 
+    @Operation(
+            summary = "회원가입 및 로그인",
+            description = "인증토큰(idToken)과 사용자 정보로 사용자 등록을 합니다."
+                    + " 이메일, 사용자 이름에 대해 변경사항 있는 경우 알려 주세요!(OauthRequest 스키마를 참고해 주세요.)")
+    @ApiErrorType({ErrorType.UNSUPPORTED_SOCIAL_TYPE, ErrorType.MALFORMED_ACCESS_TOKEN, ErrorType.UNSUPPORTED_JWT_TOKEN
+    })
     @PostMapping
     public TokenResponse SignIn(@Valid @RequestBody OauthRequest request) {
         return oauthService.SignIn(request);
