@@ -39,7 +39,7 @@ public class RunningRecordEntity extends BaseTimeEntity {
 
     @NotNull
     @ManyToOne(fetch = LAZY)
-    private MemberEntity memberEntity;
+    private MemberEntity member;
 
     @NotNull
     private Integer distanceMeter;
@@ -80,7 +80,7 @@ public class RunningRecordEntity extends BaseTimeEntity {
 
         return RunningRecordEntity.builder()
                 .id(runningRecord.runningId())
-                .memberEntity(MemberEntity.from(runningRecord.member()))
+                .member(MemberEntity.from(runningRecord.member()))
                 .distanceMeter(runningRecord.distanceMeter())
                 .durationSeconds(runningRecord.durationSeconds())
                 .calorie(runningRecord.calorie())
@@ -100,7 +100,7 @@ public class RunningRecordEntity extends BaseTimeEntity {
 
         return RunningRecord.builder()
                 .runningId(id)
-                .member(memberEntity.toDomain())
+                .member(member.toDomain())
                 .distanceMeter(distanceMeter)
                 .durationSeconds(durationSeconds)
                 .calorie(calorie)
