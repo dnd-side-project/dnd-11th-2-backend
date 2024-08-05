@@ -7,6 +7,7 @@ spring:
       ddl-auto: none
     show-sql: true
     open-in-view: false
+    defer-datasource-initialization: false
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -29,11 +30,6 @@ oauth:
 
 ---
 spring.config.activate.on-profile: local
-
-spring:
-  jpa:
-    hibernate:
-      ddl-auto: update
 
 ---
 spring.config.activate.on-profile: prod

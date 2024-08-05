@@ -1,7 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.jpa.member.entity;
 
 import com.dnd.runus.domain.badge.Badge;
-import com.dnd.runus.domain.level.Level;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.global.constant.BadgeType;
 import com.dnd.runus.global.constant.MemberRole;
@@ -28,8 +27,6 @@ class MemberEntityTest {
                 .mainBadge(badge)
                 .createdAt(OffsetDateTime.now())
                 .updatedAt(OffsetDateTime.now())
-                .level(new Level(1L, 100))
-                .currentExp(0)
                 .build();
     }
 

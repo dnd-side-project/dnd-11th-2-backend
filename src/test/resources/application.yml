@@ -1,13 +1,18 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
     open-in-view: false
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
 
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+  flyway:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    enabled: true
+    baseline-on-migrate: true # Baseline 생성이 필요한 상황에서 migration 작업 실행시, Baseline 생성부터 하겠다는 설정
 
 app:
   api:
