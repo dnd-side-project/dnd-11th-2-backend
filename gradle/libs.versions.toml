@@ -1,0 +1,65 @@
+[versions]
+spring-boot = "3.3.2"
+dependency-management = "1.1.5"
+spotless = "6.25.0"
+postgresql = "42.7.3"
+testcontainers = "1.20.1"
+flyway = "10.17.0"
+jjwt = "0.12.6"
+
+[libraries]
+spring-boot-starter = { group = "org.springframework.boot", name = "spring-boot-starter", version.ref = "spring-boot" }
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web", version.ref = "spring-boot" }
+spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security", version.ref = "spring-boot" }
+spring-boot-starter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation", version.ref = "spring-boot" }
+spring-boot-starter-actuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator", version.ref = "spring-boot" }
+spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa", version.ref = "spring-boot" }
+spring-boot-devtools = { group = "org.springframework.boot", name = "spring-boot-devtools", version.ref = "spring-boot" }
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "spring-boot" }
+spring-boot-testcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers", version.ref = "spring-boot" }
+
+lombok = { group = "org.projectlombok", name = "lombok", version = "1.18.34" }
+dotenv = { group = "me.paulschwarz", name = "spring-dotenv", version = "4.0.0" }
+jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version = "24.1.0" }
+jjwt-api = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { group = "io.jsonwebtoken", name = "jjwt-jackson", version.ref = "jjwt" }
+postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
+hibernate-spatial = { group = "org.hibernate", name = "hibernate-spatial", version = "6.5.1.Final" }
+flyway-core = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
+flyway-database-postgresql = { group = "org.flywaydb", name = "flyway-database-postgresql", version.ref = "flyway" }
+springdoc = { group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version = "2.4.0" }
+testcontainers = { group = "org.testcontainers", name = "testcontainers", version.ref = "testcontainers" }
+testcontainers-junit-jupiter = { group = "org.testcontainers", name = "junit-jupiter", version.ref = "testcontainers" }
+testcontainers-jdbc = { group = "org.testcontainers", name = "jdbc", version.ref = "testcontainers" }
+testcontainers-postgresql = { group = "org.testcontainers", name = "postgresql", version.ref = "testcontainers" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+
+[bundles]
+spring-boot = [
+    "spring-boot-starter",
+    "spring-boot-starter-web",
+    "spring-boot-starter-security",
+    "spring-boot-starter-validation",
+    "spring-boot-starter-actuator",
+    "spring-boot-starter-data-jpa",
+]
+
+spring-boot-test = [
+    "spring-boot-devtools",
+    "spring-boot-starter-test",
+]
+
+testcontainers = [
+    "spring-boot-testcontainers",
+    "testcontainers",
+    "testcontainers-junit-jupiter",
+    "testcontainers-postgresql",
+    "testcontainers-jdbc"
+]
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "dependency-management" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
