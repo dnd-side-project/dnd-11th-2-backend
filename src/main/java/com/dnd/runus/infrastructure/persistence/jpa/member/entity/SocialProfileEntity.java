@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
@@ -20,6 +21,10 @@ public class SocialProfileEntity extends BaseTimeEntity {
     private Long id;
 
     @NotNull
+    @ManyToOne(fetch = LAZY)
+    private MemberEntity member;
+
+    @NotNull
     @Enumerated(STRING)
     private SocialType socialType;
 
@@ -29,20 +34,18 @@ public class SocialProfileEntity extends BaseTimeEntity {
     @NotNull
     private String oauthEmail;
 
-    @NotNull
-    private Long memberId;
-
-    public static SocialProfileEntity of(SocialType socialType, String oauthId, String oauthEmail, Long memberId) {
+    public static SocialProfileEntity from(SocialProfile socialProfile) {
         SocialProfileEntity socialProfileEntity = new SocialProfileEntity();
-        socialProfileEntity.socialType = socialType;
-        socialProfileEntity.oauthId = oauthId;
-        socialProfileEntity.oauthEmail = oauthEmail;
-        socialProfileEntity.memberId = memberId;
+        socialProfileEntity.id = socialProfile.socialProfileId();
+        socialProfileEntity.member = MemberEntity.from(socialProfile.member());
+        socialProfileEntity.socialType = socialProfile.socialType();
+        socialProfileEntity.oauthId = socialProfile.oauthId();
+        socialProfileEntity.oauthEmail = socialProfile.oauthEmail();
         return socialProfileEntity;
     }
 
     public SocialProfile toDomain() {
-        return new SocialProfile(id, socialType, oauthId, oauthEmail, memberId);
+        return new SocialProfile(id, member.toDomain(), socialType, oauthId, oauthEmail);
     }
 
     public void updateOauthEmail(String oauthEmail) {

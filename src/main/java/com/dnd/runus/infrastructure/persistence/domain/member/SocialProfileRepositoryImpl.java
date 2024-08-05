@@ -30,11 +30,7 @@ public class SocialProfileRepositoryImpl implements SocialProfileRepository {
     @Override
     public SocialProfile save(SocialProfile socialProfile) {
         return jpaSocialProfileRepository
-                .save(SocialProfileEntity.of(
-                        socialProfile.socialType(),
-                        socialProfile.oauthId(),
-                        socialProfile.oauthEmail(),
-                        socialProfile.memberId()))
+                .save(SocialProfileEntity.from(socialProfile))
                 .toDomain();
     }
 

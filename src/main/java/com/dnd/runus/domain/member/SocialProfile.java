@@ -5,4 +5,4 @@ import lombok.Builder;
 
 @Builder
 public record SocialProfile(
-        long socialProfileId, SocialType socialType, String oauthId, String oauthEmail, long memberId) {}
+        long socialProfileId, Member member, SocialType socialType, String oauthId, String oauthEmail) {}

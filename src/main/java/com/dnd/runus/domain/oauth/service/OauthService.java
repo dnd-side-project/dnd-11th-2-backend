@@ -58,20 +58,20 @@ public class OauthService {
             socialProfileRepository.updateOauthEmail(socialProfile.socialProfileId(), email);
         }
 
-        AuthTokenDto tokenDto = tokenProviderModule.generate(String.valueOf(socialProfile.memberId()));
+        AuthTokenDto tokenDto = tokenProviderModule.generate(
+                String.valueOf(socialProfile.member().memberId()));
 
         return TokenResponse.from(tokenDto);
     }
 
     private SocialProfile createMember(String oauthId, String email, SocialType socialType, String nickname) {
-        long memberId =
-                memberRepository.save(new Member(MemberRole.USER, nickname)).memberId();
+        Member member = memberRepository.save(new Member(MemberRole.USER, nickname));
 
         return socialProfileRepository.save(SocialProfile.builder()
+                .member(member)
                 .socialType(socialType)
                 .oauthId(oauthId)
                 .oauthEmail(email)
-                .memberId(memberId)
                 .build());
     }
 }
