@@ -10,4 +10,6 @@ public interface SocialProfileRepository {
     Optional<SocialProfile> findBySocialTypeAndOauthId(SocialType socialType, String oauthId);
 
     SocialProfile save(SocialProfile socialProfile);
+
+    void updateOauthEmail(long socialProfileId, String oauthEmail);
 }

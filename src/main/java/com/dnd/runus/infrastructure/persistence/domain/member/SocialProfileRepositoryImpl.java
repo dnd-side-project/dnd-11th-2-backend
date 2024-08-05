@@ -36,4 +36,11 @@ public class SocialProfileRepositoryImpl implements SocialProfileRepository {
                 socialProfile.memberId()));
         return entity.toDomain();
     }
+
+    @Override
+    public void updateOauthEmail(long socialProfileId, String oauthEmail) {
+        jpaSocialProfileRepository
+                .findById(socialProfileId)
+                .ifPresent(socialProfileEntity -> socialProfileEntity.updateOauthEmail(oauthEmail));
+    }
 }

@@ -44,4 +44,8 @@ public class SocialProfileEntity extends BaseTimeEntity {
     public SocialProfile toDomain() {
         return new SocialProfile(id, socialType, oauthId, oauthEmail, memberId);
     }
+
+    public void updateOauthEmail(String oauthEmail) {
+        this.oauthEmail = oauthEmail;
+    }
 }

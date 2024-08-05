@@ -1,24 +1,26 @@
 package com.dnd.runus.domain.oauth.service;
 
+import com.dnd.runus.auth.exception.AuthException;
 import com.dnd.runus.auth.oidc.provider.OidcProviderFactory;
 import com.dnd.runus.auth.token.TokenProviderModule;
 import com.dnd.runus.auth.token.dto.AuthTokenDto;
-import com.dnd.runus.domain.member.entity.Member;
-import com.dnd.runus.domain.member.entity.PersonalProfile;
-import com.dnd.runus.domain.member.entity.SocialProfile;
-import com.dnd.runus.domain.member.repository.MemberRepository;
-import com.dnd.runus.domain.member.repository.SocialProfileRepository;
+import com.dnd.runus.domain.member.Member;
+import com.dnd.runus.domain.member.MemberRepository;
+import com.dnd.runus.domain.member.SocialProfile;
+import com.dnd.runus.domain.member.SocialProfileRepository;
 import com.dnd.runus.domain.oauth.dto.request.OauthRequest;
 import com.dnd.runus.domain.oauth.dto.response.TokenResponse;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.SocialType;
-import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.type.ErrorType;
 import io.jsonwebtoken.Claims;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OauthService {
@@ -36,41 +38,47 @@ public class OauthService {
      * @return TokenResponse
      */
     @Transactional
-    public TokenResponse SignIn(OauthRequest request) {
+    public TokenResponse signIn(OauthRequest request) {
 
         Claims claim = oidcProviderFactory.getClaims(request.socialType(), request.idToken());
-        String oAuthId = claim.getSubject();
+        String oauthId = claim.getSubject();
         String email = String.valueOf(claim.get("email"));
+        if (StringUtils.isBlank(email)) {
+            log.warn("Failed to get email from idToken! type: {}, claim: {}", request.socialType(), claim);
+            throw new AuthException(ErrorType.FAILED_AUTHENTICATION, "Failed to get email from idToken");
+        }
 
         // 회원 가입 안되있으면 회원가입 진행
         SocialProfile socialProfile = socialProfileRepository
-                .findBySocialTypeAndOauthId(request.socialType(), oAuthId)
-                .orElseGet(() -> crateMember(oAuthId, email, request.socialType(), request.nickName()));
+                .findBySocialTypeAndOauthId(request.socialType(), oauthId)
+                .orElseGet(() -> createMember(oauthId, email, request.socialType(), request.nickName()));
 
         // 이메일 변경(사용자가 애플의 이메일을 변경한 후 로그인하면 해당 이메일 변경해줘야함. -> 리젝 사유 될 수 있음)
-        if (!email.equals(socialProfile.getOauthEmail())) {
-            socialProfile.updateEmail(email);
+        if (!email.equals(socialProfile.oauthEmail())) {
+            socialProfileRepository.updateOauthEmail(socialProfile.socialProfileId(), email);
         }
 
-        AuthTokenDto tokenDto = tokenProviderModule.generate(String.valueOf(socialProfile.getMemberId()));
+        AuthTokenDto tokenDto = tokenProviderModule.generate(String.valueOf(socialProfile.memberId()));
 
         return TokenResponse.from(tokenDto);
     }
 
-    private SocialProfile crateMember(String authId, String email, SocialType socialType, String nickName) {
-        if (socialProfileRepository.existsByOauthEmail(email)) {
-            throw new BusinessException(ErrorType.VIOLATION_OCCURRED, "이미 존재하는 이메일");
-        }
-
+    private SocialProfile createMember(String oauthId, String email, SocialType socialType, String nickname) {
         // todo 체중 디폴트는 온보딩으로
         // 현재는 들어갈 때 임시로 70이 들어가도록 하드 코딩해둠
-        Long memberId = memberRepository
-                .save(Member.of(
-                        MemberRole.USER,
-                        nickName,
-                        PersonalProfile.builder().weightKg(70).build()))
-                .getId();
+        long memberId = memberRepository
+                .save(Member.builder()
+                        .nickname(nickname)
+                        .weightKg(70)
+                        .role(MemberRole.USER)
+                        .build())
+                .memberId();
 
-        return socialProfileRepository.save(SocialProfile.of(socialType, authId, email, memberId));
+        return socialProfileRepository.save(SocialProfile.builder()
+                .socialType(socialType)
+                .oauthId(oauthId)
+                .oauthEmail(email)
+                .memberId(memberId)
+                .build());
     }
 }
