@@ -10,15 +10,10 @@ public record TokenResponse(
     String accessToken,
     //todo refresh token 구현 되면
     @Schema(description = "리프레시토큰(아직 리프레시 토큰 구현이 아직 안되어서 발급하면 'refreshToken'으로 리턴될 거에요.")
-    String refreshToken,
-    @Schema(
-        description = "토큰 타입",
-        example = "Bearer "
-    )
-    String grantType
+    String refreshToken
 ) {
 
     public static TokenResponse from(AuthTokenDto tokenDto) {
-        return new TokenResponse(tokenDto.accessToken(), "refreshToken", tokenDto.type());
+        return new TokenResponse(tokenDto.accessToken(), "refreshToken");
     }
 }
