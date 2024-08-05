@@ -2,7 +2,6 @@ package com.dnd.runus.infrastructure.persistence.jpa.member.entity;
 
 import com.dnd.runus.domain.badge.Badge;
 import com.dnd.runus.domain.common.BaseTimeEntity;
-import com.dnd.runus.domain.level.Level;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.global.constant.MemberRole;
 import jakarta.persistence.*;
@@ -46,10 +45,10 @@ public class MemberEntity extends BaseTimeEntity {
     }
 
     public Member toDomain() {
-        return toDomain(null, null, -1);
+        return toDomain(null);
     }
 
-    public Member toDomain(Badge mainBadge, Level level, int currentExp) {
+    public Member toDomain(Badge mainBadge) {
         return Member.builder()
                 .memberId(id)
                 .createdAt(getCreatedAt())
@@ -58,8 +57,6 @@ public class MemberEntity extends BaseTimeEntity {
                 .nickname(nickname)
                 .weightKg(weightKg)
                 .mainBadge(mainBadge)
-                .level(level)
-                .currentExp(currentExp)
                 .build();
     }
 }

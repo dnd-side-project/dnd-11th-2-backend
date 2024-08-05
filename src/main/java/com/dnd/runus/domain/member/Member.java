@@ -1,7 +1,6 @@
 package com.dnd.runus.domain.member;
 
 import com.dnd.runus.domain.badge.Badge;
-import com.dnd.runus.domain.level.Level;
 import com.dnd.runus.global.constant.MemberRole;
 import lombok.Builder;
 
@@ -15,6 +14,4 @@ public record Member(
         MemberRole role,
         String nickname,
         Badge mainBadge,
-        int weightKg,
-        Level level,
-        int currentExp) {}
+        int weightKg) {}

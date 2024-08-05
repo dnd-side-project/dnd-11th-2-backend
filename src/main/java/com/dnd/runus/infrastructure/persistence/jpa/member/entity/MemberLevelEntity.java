@@ -1,15 +1,14 @@
 package com.dnd.runus.infrastructure.persistence.jpa.member.entity;
 
 import com.dnd.runus.domain.common.BaseTimeEntity;
-import com.dnd.runus.domain.level.Level;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.dnd.runus.domain.member.Member;
+import com.dnd.runus.domain.member.MemberLevel;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
@@ -21,7 +20,8 @@ public class MemberLevelEntity extends BaseTimeEntity {
     private Long id;
 
     @NotNull
-    private Long memberId;
+    @OneToOne(fetch = LAZY)
+    private MemberEntity member;
 
     @NotNull
     private Long levelId;
@@ -29,15 +29,15 @@ public class MemberLevelEntity extends BaseTimeEntity {
     @NotNull
     private Integer exp;
 
-    public static MemberLevelEntity of(Long memberId, Long levelId, Integer exp) {
+    public static MemberLevelEntity of(Member member, long levelId, int exp) {
         MemberLevelEntity memberLevelEntity = new MemberLevelEntity();
-        memberLevelEntity.memberId = memberId;
+        memberLevelEntity.member = MemberEntity.from(member);
         memberLevelEntity.levelId = levelId;
         memberLevelEntity.exp = exp;
         return memberLevelEntity;
     }
 
-    public Level toDomain() {
-        return new Level(levelId, exp);
+    public MemberLevel toDomain() {
+        return new MemberLevel(levelId, exp);
     }
 }
