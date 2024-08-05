@@ -27,7 +27,7 @@ public class OauthController {
     @ApiErrorType({ErrorType.UNSUPPORTED_SOCIAL_TYPE, ErrorType.MALFORMED_ACCESS_TOKEN, ErrorType.UNSUPPORTED_JWT_TOKEN
     })
     @PostMapping
-    public TokenResponse SignIn(@Valid @RequestBody OauthRequest request) {
-        return oauthService.SignIn(request);
+    public TokenResponse signIn(@Valid @RequestBody OauthRequest request) {
+        return oauthService.signIn(request);
     }
 }
