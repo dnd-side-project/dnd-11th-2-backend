@@ -2,8 +2,8 @@ package com.dnd.runus.infrastructure.persistence.jpa.running.entity;
 
 import com.dnd.runus.domain.common.BaseTimeEntity;
 import com.dnd.runus.domain.common.Coordinate;
-import com.dnd.runus.domain.running.RunningEmoji;
 import com.dnd.runus.domain.running.RunningRecord;
+import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.infrastructure.persistence.jpa.member.entity.MemberEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.dnd.runus.global.constant.GeometryConstant.SRID;
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
@@ -65,7 +66,8 @@ public class RunningRecordEntity extends BaseTimeEntity {
     private String location;
 
     @NotNull
-    private Long emojiId;
+    @Enumerated(STRING)
+    private RunningEmoji emoji;
 
     public static RunningRecordEntity from(RunningRecord runningRecord) {
         org.locationtech.jts.geom.Coordinate[] coordinates = runningRecord.route().stream()
@@ -87,7 +89,7 @@ public class RunningRecordEntity extends BaseTimeEntity {
                 .endAt(runningRecord.endAt())
                 .route(route)
                 .location(runningRecord.location())
-                .emojiId(runningRecord.emoji().emojiId())
+                .emoji(runningRecord.emoji())
                 .build();
     }
 
@@ -107,7 +109,7 @@ public class RunningRecordEntity extends BaseTimeEntity {
                 .endAt(endAt)
                 .route(coordinates)
                 .location(location)
-                .emoji(new RunningEmoji(emojiId, null))
+                .emoji(emoji)
                 .build();
     }
 }

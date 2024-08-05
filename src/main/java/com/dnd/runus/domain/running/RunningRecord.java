@@ -2,6 +2,7 @@ package com.dnd.runus.domain.running;
 
 import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.member.Member;
+import com.dnd.runus.global.constant.RunningEmoji;
 import lombok.Builder;
 
 import java.time.OffsetDateTime;

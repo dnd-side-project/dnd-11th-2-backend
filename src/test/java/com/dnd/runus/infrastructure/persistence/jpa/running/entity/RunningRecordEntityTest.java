@@ -2,8 +2,9 @@ package com.dnd.runus.infrastructure.persistence.jpa.running.entity;
 
 import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.member.Member;
-import com.dnd.runus.domain.running.RunningEmoji;
 import com.dnd.runus.domain.running.RunningRecord;
+import com.dnd.runus.global.constant.MemberRole;
+import com.dnd.runus.global.constant.RunningEmoji;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ class RunningRecordEntityTest {
     void setUp() {
         runningRecord = RunningRecord.builder()
                 .runningId(1L)
-                .member(Member.builder().memberId(1L).build())
+                .member(new Member(MemberRole.USER, "nickname-1"))
                 .distanceMeter(500)
                 .durationSeconds(1)
                 .calorie(1.0)
@@ -29,7 +30,7 @@ class RunningRecordEntityTest {
                 .endAt(OffsetDateTime.now())
                 .route(List.of(new Coordinate(128.0, 36.0), new Coordinate(128.0, 37.0)))
                 .location("location 1")
-                .emoji(new RunningEmoji(1L, "https://emoji1.com"))
+                .emoji(RunningEmoji.VERY_GOOD)
                 .build();
     }
 
