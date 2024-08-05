@@ -1,5 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.annotation;
 
+import com.dnd.runus.config.TestcontainersConfig;
 import com.dnd.runus.global.config.JpaConfig;
 import com.dnd.runus.infrastructure.persistence.InfrastructurePersistencePackage;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -17,5 +18,5 @@ import java.lang.annotation.*;
 @DataJpaTest
 @ComponentScan(basePackageClasses = {InfrastructurePersistencePackage.class})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // H2 사용 금지
-@Import({JpaConfig.class})
+@Import({JpaConfig.class, TestcontainersConfig.class})
 public @interface RepositoryTest {}
