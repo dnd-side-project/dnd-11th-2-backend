@@ -19,15 +19,7 @@ class MemberEntityTest {
     void setUp() {
         Badge badge =
                 new Badge(1L, "badge name", "badge description", "https://badge.com", BadgeType.DISTANCE_METER, 1000);
-        member = Member.builder()
-                .memberId(1L)
-                .role(MemberRole.USER)
-                .nickname("nickname")
-                .weightKg(60)
-                .mainBadge(badge)
-                .createdAt(OffsetDateTime.now())
-                .updatedAt(OffsetDateTime.now())
-                .build();
+        member = new Member(1L, OffsetDateTime.now(), OffsetDateTime.now(), MemberRole.USER, "nickname", badge);
     }
 
     @Test

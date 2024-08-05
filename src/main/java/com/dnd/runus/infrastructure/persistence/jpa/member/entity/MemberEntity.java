@@ -29,8 +29,6 @@ public class MemberEntity extends BaseTimeEntity {
     @Size(max = 20)
     private String nickname;
 
-    private Integer weightKg;
-
     private Long mainBadgeId;
 
     public static MemberEntity from(Member member) {
@@ -38,7 +36,6 @@ public class MemberEntity extends BaseTimeEntity {
         memberEntity.id = member.memberId();
         memberEntity.role = member.role();
         memberEntity.nickname = member.nickname();
-        memberEntity.weightKg = member.weightKg();
         memberEntity.mainBadgeId =
                 member.mainBadge() == null ? null : member.mainBadge().badgeId();
         return memberEntity;
@@ -49,14 +46,6 @@ public class MemberEntity extends BaseTimeEntity {
     }
 
     public Member toDomain(Badge mainBadge) {
-        return Member.builder()
-                .memberId(id)
-                .createdAt(getCreatedAt())
-                .updatedAt(getUpdatedAt())
-                .role(role)
-                .nickname(nickname)
-                .weightKg(weightKg)
-                .mainBadge(mainBadge)
-                .build();
+        return new Member(id, getCreatedAt(), getUpdatedAt(), role, nickname, mainBadge);
     }
 }

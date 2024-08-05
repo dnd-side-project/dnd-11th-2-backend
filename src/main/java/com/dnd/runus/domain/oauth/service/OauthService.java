@@ -64,15 +64,8 @@ public class OauthService {
     }
 
     private SocialProfile createMember(String oauthId, String email, SocialType socialType, String nickname) {
-        // todo 체중 디폴트는 온보딩으로
-        // 현재는 들어갈 때 임시로 70이 들어가도록 하드 코딩해둠
-        long memberId = memberRepository
-                .save(Member.builder()
-                        .nickname(nickname)
-                        .weightKg(70)
-                        .role(MemberRole.USER)
-                        .build())
-                .memberId();
+        long memberId =
+                memberRepository.save(new Member(MemberRole.USER, nickname)).memberId();
 
         return socialProfileRepository.save(SocialProfile.builder()
                 .socialType(socialType)

@@ -5,7 +5,6 @@ create table member
     updated_at    timestamp(6) with time zone,
     nickname      varchar(20)  not null,
     role          varchar(255) not null,
-    weight_kg     integer,
     main_badge_id bigint
 );
 

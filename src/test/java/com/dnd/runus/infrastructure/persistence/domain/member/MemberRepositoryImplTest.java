@@ -25,14 +25,7 @@ class MemberRepositoryImplTest {
     @Test
     @DisplayName("save 메서드는 Member를 저장하고 id와 함께 반환한다.")
     void save() {
-        Member member = Member.builder()
-                .role(MemberRole.USER)
-                .nickname("nickname")
-                .weightKg(60)
-                .mainBadge(null)
-                .createdAt(null)
-                .updatedAt(null)
-                .build();
+        Member member = new Member(MemberRole.USER, "nickname");
         Member savedMember = memberRepository.save(member);
         assertNotEquals(0, savedMember.memberId());
         assertNotNull(savedMember.createdAt());
