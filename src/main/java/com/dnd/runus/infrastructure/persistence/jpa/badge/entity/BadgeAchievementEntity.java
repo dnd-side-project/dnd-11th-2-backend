@@ -25,16 +25,16 @@ public class BadgeAchievementEntity extends BaseTimeEntity {
 
     @NotNull
     @ManyToOne(fetch = LAZY)
-    private MemberEntity memberEntity;
+    private MemberEntity member;
 
     public static BadgeAchievementEntity from(BadgeAchievement badgeAchievement) {
         BadgeAchievementEntity badgeAchievementEntity = new BadgeAchievementEntity();
         badgeAchievementEntity.badgeId = badgeAchievement.badge().badgeId();
-        badgeAchievementEntity.memberEntity = MemberEntity.from(badgeAchievement.member());
+        badgeAchievementEntity.member = MemberEntity.from(badgeAchievement.member());
         return badgeAchievementEntity;
     }
 
     public BadgeAchievement toDomain(Badge badge) {
-        return new BadgeAchievement(badge, memberEntity.toDomain(), getCreatedAt(), getUpdatedAt());
+        return new BadgeAchievement(badge, member.toDomain(), getCreatedAt(), getUpdatedAt());
     }
 }
