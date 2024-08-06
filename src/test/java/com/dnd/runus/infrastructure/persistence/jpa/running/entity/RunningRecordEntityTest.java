@@ -1,6 +1,7 @@
 package com.dnd.runus.infrastructure.persistence.jpa.running.entity;
 
 import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.global.constant.MemberRole;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -23,9 +25,9 @@ class RunningRecordEntityTest {
                 .runningId(1L)
                 .member(new Member(MemberRole.USER, "nickname-1"))
                 .distanceMeter(500)
-                .durationSeconds(1)
+                .duration(Duration.ofSeconds(100))
                 .calorie(1.0)
-                .averagePace(1.0)
+                .averagePace(Pace.ofSeconds(100))
                 .startAt(OffsetDateTime.now())
                 .endAt(OffsetDateTime.now())
                 .route(List.of(new Coordinate(128.0, 36.0), new Coordinate(128.0, 37.0)))
