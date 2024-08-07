@@ -143,7 +143,7 @@ class SocialProfileRepositoryImplTest {
                 .build());
 
         // when
-        socialProfileRepository.deleteByMember(savedMember);
+        socialProfileRepository.deleteByMemberId(savedMember.memberId());
 
         // then
         assertFalse(socialProfileRepository

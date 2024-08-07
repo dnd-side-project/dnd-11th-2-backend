@@ -5,6 +5,7 @@ import com.dnd.runus.global.constant.SocialType;
 import java.util.Optional;
 
 public interface SocialProfileRepository {
+
     Optional<SocialProfile> findById(Long socialProfileId);
 
     Optional<SocialProfile> findBySocialTypeAndOauthId(SocialType socialType, String oauthId);
@@ -13,5 +14,5 @@ public interface SocialProfileRepository {
 
     void updateOauthEmail(long socialProfileId, String oauthEmail);
 
-    void deleteByMember(Member member);
+    void deleteByMemberId(long memberId);
 }
