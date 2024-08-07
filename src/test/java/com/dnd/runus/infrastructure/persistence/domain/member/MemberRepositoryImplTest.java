@@ -8,10 +8,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @RepositoryTest
 class MemberRepositoryImplTest {
+
     @Autowired
     private MemberRepository memberRepository;
 
@@ -30,5 +34,19 @@ class MemberRepositoryImplTest {
         assertNotEquals(0, savedMember.memberId());
         assertNotNull(savedMember.createdAt());
         assertNotNull(savedMember.updatedAt());
+    }
+
+    @Test
+    @DisplayName("Member를 삭제한다.")
+    void delete() {
+        // given
+        Member member = new Member(MemberRole.USER, "nickname");
+        long savedMemberId = memberRepository.save(member).memberId();
+
+        // when
+        memberRepository.deleteById(savedMemberId);
+
+        // then
+        assertFalse(memberRepository.findById(savedMemberId).isPresent());
     }
 }
