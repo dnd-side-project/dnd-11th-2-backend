@@ -56,7 +56,7 @@ public class RunningRecordEntity extends BaseTimeEntity {
     @NotNull
     private OffsetDateTime endAt;
 
-    @Column(columnDefinition = "geometry(LineString, " + SRID + ")")
+    @Column(columnDefinition = "geometry(LineStringZ, " + SRID + ")")
     private LineString route;
 
     @NotNull
