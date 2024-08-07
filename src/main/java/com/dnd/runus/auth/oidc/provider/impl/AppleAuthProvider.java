@@ -21,6 +21,7 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -28,7 +29,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -51,9 +51,6 @@ public class AppleAuthProvider implements OidcProvider {
 
     @Value("${oauth.apple.client_id}")
     private String clientId;
-
-    @Value("${oauth.apple.p8_file_path}")
-    private String filePath;
 
     @Override
     public SocialType getSocialType() {
@@ -131,12 +128,9 @@ public class AppleAuthProvider implements OidcProvider {
     }
 
     private PrivateKey getPrivateKey() {
-        Path fileName = Paths.get(filePath);
-        if (!Files.exists(fileName) || !Files.isRegularFile(fileName)) {
-            throw new RuntimeException("pem파일이 존재하지 않습니다.");
-        }
+        ClassPathResource resource = new ClassPathResource("AuthKey_" + keyId + ".p8");
         try {
-            String privateKey = new String(Files.readAllBytes(fileName));
+            String privateKey = new String(Files.readAllBytes(Paths.get(resource.getURI())));
             Reader pemReader = new StringReader(privateKey);
             PEMParser pemParser = new PEMParser(pemReader);
             JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
