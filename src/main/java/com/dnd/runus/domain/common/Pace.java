@@ -19,13 +19,13 @@ public record Pace(int minute, int second) {
     @JsonCreator
     public static Pace from(String pace) {
         // e.g. 5'30"
-        String[] paceArr = pace.split("'\"");
+        String[] paceArr = pace.split("'|''");
         return new Pace(Integer.parseInt(paceArr[0]), Integer.parseInt(paceArr[1]));
     }
 
     @JsonValue
     public String getPace() {
-        return minute + "'" + second + "\"";
+        return minute + "'" + second + "''";
     }
 
     public int toSeconds() {
