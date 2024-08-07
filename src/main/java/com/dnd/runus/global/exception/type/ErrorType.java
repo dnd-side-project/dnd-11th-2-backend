@@ -31,6 +31,12 @@ public enum ErrorType {
     // DatabaseErrorType
     ENTITY_NOT_FOUND(NOT_FOUND, "DB_001", "해당 엔티티를 찾을 수 없습니다"),
     VIOLATION_OCCURRED(NOT_ACCEPTABLE, "DB_002", "저장할 수 없는 값입니다"),
+
+    // TimeErrorType
+    START_AFTER_END(BAD_REQUEST, "TIME_001", "시작 시간이 종료 시간보다 빨라야 합니다"),
+
+    // RunningErrorType
+    ROUTE_MUST_HAVE_AT_LEAST_TWO_COORDINATES(BAD_REQUEST, "RUNNING_001", "경로는 최소 2개의 좌표를 가져야 합니다"),
     ;
     private final HttpStatus httpStatus;
     private final String code;

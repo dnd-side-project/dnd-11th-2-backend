@@ -27,6 +27,7 @@ app:
       access:
         expiration: ${ACCESS_TOKEN_EXPIRATION}
         secret-key: ${ACCESS_TOKEN_SECRET_KEY}
+  default-zone-offset: +09:00
 
 oauth:
   apple:
