@@ -17,6 +17,10 @@ public interface OidcProvider {
 
     Claims getClaimsBy(String idToken);
 
+    String getAccessToken(String code);
+
+    void revoke(String accessToken);
+
     default Map<String, String> parseHeaders(String token) {
         String header = token.split("\\.")[0];
 

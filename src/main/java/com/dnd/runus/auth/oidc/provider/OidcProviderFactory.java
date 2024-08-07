@@ -23,12 +23,24 @@ public class OidcProviderFactory {
     }
 
     public Claims getClaims(SocialType socialType, String idToken) {
+        return getOidcProviderBy(socialType).getClaimsBy(idToken);
+    }
+
+    public String getAccessToken(SocialType socialType, String code) {
+        return getOidcProviderBy(socialType).getAccessToken(code);
+    }
+
+    public void revoke(SocialType socialType, String accessToken) {
+        getOidcProviderBy(socialType).revoke(accessToken);
+    }
+
+    private OidcProvider getOidcProviderBy(SocialType socialType) {
         OidcProvider oidcProvider = authProviderMap.get(socialType);
 
         if (isNull(oidcProvider)) {
             throw new BusinessException(ErrorType.UNSUPPORTED_SOCIAL_TYPE, socialType.getValue());
         }
 
-        return oidcProvider.getClaimsBy(idToken);
+        return oidcProvider;
     }
 }
