@@ -48,7 +48,7 @@ class BadgeAchievementRepositoryImplTest {
                 jpaBadgeAchievementRepository.save(BadgeAchievementEntity.from(badgeAchievement));
 
         // when
-        badgeAchievementRepository.deleteByMember(savedMember);
+        badgeAchievementRepository.deleteByMemberId(savedMember.memberId());
 
         // then
         assertFalse(jpaBadgeAchievementRepository
