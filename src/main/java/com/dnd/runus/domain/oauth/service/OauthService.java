@@ -1,6 +1,7 @@
 package com.dnd.runus.domain.oauth.service;
 
 import com.dnd.runus.auth.exception.AuthException;
+import com.dnd.runus.auth.oidc.provider.OidcProvider;
 import com.dnd.runus.auth.oidc.provider.OidcProviderFactory;
 import com.dnd.runus.auth.token.TokenProviderModule;
 import com.dnd.runus.auth.token.dto.AuthTokenDto;
@@ -47,8 +48,9 @@ public class OauthService {
      */
     @Transactional
     public TokenResponse signIn(OauthRequest request) {
+        OidcProvider oidcProvider = oidcProviderFactory.getOidcProviderBy(request.socialType());
 
-        Claims claim = oidcProviderFactory.getClaims(request.socialType(), request.idToken());
+        Claims claim = oidcProvider.getClaimsBy(request.idToken());
         String oauthId = claim.getSubject();
         String email = String.valueOf(claim.get("email"));
         if (StringUtils.isBlank(email)) {
@@ -77,8 +79,10 @@ public class OauthService {
 
         memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
 
+        OidcProvider oidcProvider = oidcProviderFactory.getOidcProviderBy(request.socialType());
+
         // 토큰 검증 -> 애플 지침
-        Claims claim = oidcProviderFactory.getClaims(request.socialType(), request.idToken());
+        Claims claim = oidcProvider.getClaimsBy(request.idToken());
         String oauthId = claim.getSubject();
 
         SocialProfile socialProfile = socialProfileRepository
@@ -94,9 +98,8 @@ public class OauthService {
         }
 
         // 탈퇴를 위한 access token 발급
-        String accessToken = oidcProviderFactory.getAccessToken(request.socialType(), request.authorizationCode());
-
-        oidcProviderFactory.revoke(request.socialType(), accessToken);
+        String accessToken = oidcProvider.getAccessToken(request.authorizationCode());
+        oidcProvider.revoke(accessToken);
 
         deleteMember(memberId);
     }

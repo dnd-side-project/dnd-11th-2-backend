@@ -19,6 +19,10 @@ public interface OidcProvider {
 
     String getAccessToken(String code);
 
+    /**
+     *
+     * @param accessToken 엑세스토큰
+     */
     void revoke(String accessToken);
 
     default Map<String, String> parseHeaders(String token) {
