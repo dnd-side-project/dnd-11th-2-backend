@@ -31,6 +31,8 @@ dependencies {
     implementation(libs.jetbrains.annotations)
     implementation(libs.springdoc)
 
+    implementation(libs.bcpkix)
+
     // JWT
     implementation(libs.jjwt.api)
     runtimeOnly(libs.jjwt.impl)

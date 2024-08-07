@@ -18,6 +18,8 @@ spring-boot-devtools = { group = "org.springframework.boot", name = "spring-boot
 spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "spring-boot" }
 spring-boot-testcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers", version.ref = "spring-boot" }
 
+bcpkix = {group= "org.bouncycastle", name = "bcpkix-jdk18on", version = "1.78.1" }
+
 lombok = { group = "org.projectlombok", name = "lombok", version = "1.18.34" }
 dotenv = { group = "me.paulschwarz", name = "spring-dotenv", version = "4.0.0" }
 jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version = "24.1.0" }
