@@ -12,4 +12,6 @@ public interface SocialProfileRepository {
     SocialProfile save(SocialProfile socialProfile);
 
     void updateOauthEmail(long socialProfileId, String oauthEmail);
+
+    void deleteByMember(Member member);
 }

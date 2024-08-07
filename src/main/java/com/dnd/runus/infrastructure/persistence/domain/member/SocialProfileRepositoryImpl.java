@@ -1,9 +1,11 @@
 package com.dnd.runus.infrastructure.persistence.domain.member;
 
+import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.SocialProfile;
 import com.dnd.runus.domain.member.SocialProfileRepository;
 import com.dnd.runus.global.constant.SocialType;
 import com.dnd.runus.infrastructure.persistence.jpa.member.JpaSocialProfileRepository;
+import com.dnd.runus.infrastructure.persistence.jpa.member.entity.MemberEntity;
 import com.dnd.runus.infrastructure.persistence.jpa.member.entity.SocialProfileEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -39,5 +41,10 @@ public class SocialProfileRepositoryImpl implements SocialProfileRepository {
         jpaSocialProfileRepository
                 .findById(socialProfileId)
                 .ifPresent(socialProfileEntity -> socialProfileEntity.updateOauthEmail(oauthEmail));
+    }
+
+    @Override
+    public void deleteByMember(Member member) {
+        jpaSocialProfileRepository.deleteByMember(MemberEntity.from(member));
     }
 }
