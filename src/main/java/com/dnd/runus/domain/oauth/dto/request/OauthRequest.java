@@ -9,9 +9,7 @@ import jakarta.validation.constraints.NotNull;
 @Schema(description = "로그인 및 회원가입 요청 DTO")
 public record OauthRequest(
     @Schema(
-        description = "소셜 로그인 타입",
-        type = "string",
-        example = "APPLE"
+        description = "소셜 로그인 타입"
     )
     @NotNull
     SocialType socialType,

@@ -16,9 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Duration;
-import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -34,7 +33,7 @@ class RunningRecordRepositoryImplTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    private static Member savedMember;
+    private Member savedMember;
 
     @BeforeEach
     void beforeEach() {
@@ -49,17 +48,12 @@ class RunningRecordRepositoryImplTest {
                 0,
                 savedMember,
                 1,
-                Duration.between(LocalTime.of(0, 0, 0), LocalTime.of(12, 23, 56)),
+                Duration.ofHours(12).plusMinutes(23).plusSeconds(56),
                 1,
                 new Pace(5, 11),
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
-                new ArrayList<>() {
-                    {
-                        add(new Coordinate(1, 2, 3));
-                        add(new Coordinate(4, 5, 6));
-                    }
-                },
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                 "location",
                 RunningEmoji.BAD);
         RunningRecordEntity entity = RunningRecordEntity.from(runningRecord);

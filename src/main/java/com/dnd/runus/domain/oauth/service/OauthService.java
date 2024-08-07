@@ -75,7 +75,7 @@ public class OauthService {
     @Transactional
     public void withdraw(long memberId, WithdrawRequest request) {
 
-        memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException("존재하지 않은 사용자"));
+        memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
 
         // 토큰 검증 -> 애플 지침
         Claims claim = oidcProviderFactory.getClaims(request.socialType(), request.idToken());

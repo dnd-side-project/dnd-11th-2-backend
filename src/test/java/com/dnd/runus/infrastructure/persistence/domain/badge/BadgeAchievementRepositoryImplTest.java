@@ -29,7 +29,7 @@ class BadgeAchievementRepositoryImplTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    private static Member savedMember;
+    private Member savedMember;
 
     @BeforeEach
     void beforeEach() {
