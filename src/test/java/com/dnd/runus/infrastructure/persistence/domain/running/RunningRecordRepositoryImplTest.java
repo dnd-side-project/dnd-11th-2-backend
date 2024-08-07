@@ -66,7 +66,7 @@ class RunningRecordRepositoryImplTest {
         RunningRecordEntity savedRunningRecord = jpaRunningRecordRepository.save(entity);
 
         // when
-        runningRecordRepository.deleteByMember(savedMember);
+        runningRecordRepository.deleteByMemberId(savedMember.memberId());
 
         // then
         assertFalse(
