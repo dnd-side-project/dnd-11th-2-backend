@@ -26,3 +26,7 @@ app:
 oauth:
   apple:
     public-key-url: https://appleid.apple.com/auth
+    client_id: ${APPLE_CLIENT_ID}
+    key_id: ${APPLE_KEY_ID}
+    team_id: ${APPLE_TEAM_ID}
+    p8_file_path: ${APPLE_P8_FILE_PATH}
