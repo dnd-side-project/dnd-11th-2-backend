@@ -126,7 +126,7 @@ class RunningRecordServiceTest {
                         Duration.ofSeconds(10_100),
                         10_000,
                         500.0,
-                        List.of(new Coordinate(128.0, 37.0), new Coordinate(128.1, 37.1))));
+                        List.of(new Coordinate(128.0, 37.0))));
 
         // when
         BusinessException exception =
