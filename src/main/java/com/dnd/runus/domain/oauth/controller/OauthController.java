@@ -1,10 +1,12 @@
 package com.dnd.runus.domain.oauth.controller;
 
 import com.dnd.runus.domain.oauth.dto.request.OauthRequest;
+import com.dnd.runus.domain.oauth.dto.request.WithdrawRequest;
 import com.dnd.runus.domain.oauth.dto.response.TokenResponse;
 import com.dnd.runus.domain.oauth.service.OauthService;
 import com.dnd.runus.global.exception.type.ApiErrorType;
 import com.dnd.runus.global.exception.type.ErrorType;
+import com.dnd.runus.presentation.annotation.MemberId;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +31,10 @@ public class OauthController {
     @PostMapping
     public TokenResponse signIn(@Valid @RequestBody OauthRequest request) {
         return oauthService.signIn(request);
+    }
+
+    @PostMapping("/withdraw")
+    public void withdraw(@MemberId long memberId, @Valid @RequestBody WithdrawRequest request) {
+        oauthService.withdraw(memberId, request);
     }
 }
