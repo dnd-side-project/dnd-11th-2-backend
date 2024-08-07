@@ -12,7 +12,7 @@ import static lombok.AccessLevel.PRIVATE;
 public enum RunningEmoji {
     VERY_BAD("very-bad"),
     BAD("bad"),
-    NORMAL("normal"),
+    SOSO("soso"),
     GOOD("good"),
     VERY_GOOD("very-good"),
     ;
