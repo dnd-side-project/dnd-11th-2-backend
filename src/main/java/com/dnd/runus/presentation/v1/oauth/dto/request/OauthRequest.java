@@ -1,4 +1,4 @@
-package com.dnd.runus.domain.oauth.dto.request;
+package com.dnd.runus.presentation.v1.oauth.dto.request;
 
 import com.dnd.runus.global.constant.SocialType;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,4 +1,4 @@
-package com.dnd.runus.domain.oauth.dto.response;
+package com.dnd.runus.presentation.v1.oauth.dto.response;
 
 
 import com.dnd.runus.auth.token.dto.AuthTokenDto;

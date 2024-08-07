@@ -1,4 +1,4 @@
-package com.dnd.runus.domain.oauth.service;
+package com.dnd.runus.application.oauth;
 
 import com.dnd.runus.auth.exception.AuthException;
 import com.dnd.runus.auth.oidc.provider.OidcProvider;
@@ -11,14 +11,14 @@ import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.member.SocialProfile;
 import com.dnd.runus.domain.member.SocialProfileRepository;
-import com.dnd.runus.domain.oauth.dto.request.OauthRequest;
-import com.dnd.runus.domain.oauth.dto.request.WithdrawRequest;
-import com.dnd.runus.domain.oauth.dto.response.TokenResponse;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.SocialType;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.global.exception.type.ErrorType;
+import com.dnd.runus.presentation.v1.oauth.dto.request.OauthRequest;
+import com.dnd.runus.presentation.v1.oauth.dto.request.WithdrawRequest;
+import com.dnd.runus.presentation.v1.oauth.dto.response.TokenResponse;
 import io.jsonwebtoken.Claims;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;

@@ -1,12 +1,12 @@
-package com.dnd.runus.domain.oauth.controller;
+package com.dnd.runus.presentation.v1.oauth;
 
-import com.dnd.runus.domain.oauth.dto.request.OauthRequest;
-import com.dnd.runus.domain.oauth.dto.request.WithdrawRequest;
-import com.dnd.runus.domain.oauth.dto.response.TokenResponse;
-import com.dnd.runus.domain.oauth.service.OauthService;
+import com.dnd.runus.application.oauth.OauthService;
 import com.dnd.runus.global.exception.type.ApiErrorType;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.annotation.MemberId;
+import com.dnd.runus.presentation.v1.oauth.dto.request.OauthRequest;
+import com.dnd.runus.presentation.v1.oauth.dto.request.WithdrawRequest;
+import com.dnd.runus.presentation.v1.oauth.dto.response.TokenResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
