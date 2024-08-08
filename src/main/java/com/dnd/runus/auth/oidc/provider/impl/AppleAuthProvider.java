@@ -33,7 +33,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -118,21 +117,21 @@ public class AppleAuthProvider implements OidcProvider {
 
     private void verifyClaims(Claims claims) {
 
-        // FIXME 클라이언트에서 nonce 추가 확인 되면 주석 삭제
+        // FIXME 클라이언트에서 검증 관련해서 논의하고 삭제 또는 주석 삭제
         //        if (claims.get("nonce") == null) {
         //            throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify the nonce");
         //        }
-        if (!"https://appleid.apple.com".equals(claims.getIssuer())) {
-            throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify iss");
-        }
-        if (claims.getAudience() == null || !claims.getAudience().contains(clientId)) {
-            throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify audience");
-        }
-
-        Instant exp = Instant.ofEpochMilli(claims.getExpiration().getTime());
-        if (Instant.now().isAfter(exp)) {
-            throw new AuthException(ErrorType.EXPIRED_ACCESS_TOKEN, "Can't verify exp");
-        }
+        //        if (!"https://appleid.apple.com".equals(claims.getIssuer())) {
+        //            throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify iss");
+        //        }
+        //        if (claims.getAudience() == null || !claims.getAudience().contains(clientId)) {
+        //            throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify audience");
+        //        }
+        //
+        //        Instant exp = Instant.ofEpochMilli(claims.getExpiration().getTime());
+        //        if (Instant.now().isAfter(exp)) {
+        //            throw new AuthException(ErrorType.EXPIRED_ACCESS_TOKEN, "Can't verify exp");
+        //        }
     }
 
     private PrivateKey getPrivateKey() {
