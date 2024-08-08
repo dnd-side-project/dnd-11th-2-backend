@@ -10,9 +10,9 @@ import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.type.ErrorType;
-import com.dnd.runus.presentation.v1.running.dto.RunningRecordDataDto;
+import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordDetailResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordReportResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ class RunningRecordServiceTest {
                 LocalDateTime.of(2021, 1, 1, 13, 12, 10),
                 RunningEmoji.VERY_GOOD,
                 1L,
-                new RunningRecordDataDto(
+                new RunningRecordMetricsDto(
                         new Pace(5, 30),
                         "location name",
                         Duration.ofSeconds(10_100),
@@ -81,7 +81,7 @@ class RunningRecordServiceTest {
         given(runningRecordRepository.save(expected)).willReturn(expected);
 
         // when
-        RunningRecordDetailResponse response = runningRecordService.addRunningRecord(1L, request);
+        RunningRecordReportResponse response = runningRecordService.addRunningRecord(1L, request);
 
         // then
         assertEquals(request.startAt(), response.startAt());
@@ -97,7 +97,7 @@ class RunningRecordServiceTest {
                 LocalDateTime.of(2021, 1, 1, 11, 12, 10),
                 RunningEmoji.VERY_GOOD,
                 1L,
-                new RunningRecordDataDto(
+                new RunningRecordMetricsDto(
                         new Pace(5, 30),
                         "location name",
                         Duration.ofSeconds(10_100),
@@ -120,7 +120,7 @@ class RunningRecordServiceTest {
                 LocalDateTime.of(2021, 1, 1, 13, 12, 10),
                 RunningEmoji.VERY_GOOD,
                 1L,
-                new RunningRecordDataDto(
+                new RunningRecordMetricsDto(
                         new Pace(5, 30),
                         "location name",
                         Duration.ofSeconds(10_100),

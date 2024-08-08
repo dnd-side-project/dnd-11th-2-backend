@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 import java.time.Duration;
 import java.util.List;
 
-public record RunningRecordDataDto(
+public record RunningRecordMetricsDto(
         @Schema(description = "평균 페이스", example = "5'30''")
         Pace averagePace,
         @NotBlank

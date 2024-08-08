@@ -3,13 +3,13 @@ package com.dnd.runus.presentation.v1.running.dto.response;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.presentation.v1.running.dto.ChallengeDto;
-import com.dnd.runus.presentation.v1.running.dto.RunningRecordDataDto;
+import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public record RunningRecordDetailResponse(
+public record RunningRecordReportResponse(
         long runningRecordId,
         LocalDateTime startAt,
         LocalDateTime endAt,
@@ -20,10 +20,10 @@ public record RunningRecordDetailResponse(
         @Schema(description = "챌린지 정보")
         ChallengeDto challenge,
         @NotNull
-        RunningRecordDataDto runningData
+        RunningRecordMetricsDto runningData
 ) {
-    public static RunningRecordDetailResponse from(RunningRecord runningRecord) {
-        return new RunningRecordDetailResponse(
+    public static RunningRecordReportResponse from(RunningRecord runningRecord) {
+        return new RunningRecordReportResponse(
                 runningRecord.runningId(),
                 runningRecord.startAt().toLocalDateTime(),
                 runningRecord.endAt().toLocalDateTime(),
@@ -31,7 +31,7 @@ public record RunningRecordDetailResponse(
                 runningRecord.member().nickname(),
                 runningRecord.member().mainBadge() == null ? null : runningRecord.member().mainBadge().imageUrl(),
                 new ChallengeDto(-1), // TODO: 챌린지 기능 추가 후 수정
-                new RunningRecordDataDto(
+                new RunningRecordMetricsDto(
                         runningRecord.averagePace(),
                         runningRecord.location(),
                         runningRecord.duration(),
