@@ -77,7 +77,7 @@ public class AppleAuthProvider implements OidcProvider {
                             .code(code)
                             .grant_type("authorization_code")
                             .build())
-                    .access_token();
+                    .accessToken();
         } catch (HttpClientErrorException e) {
             throw new BusinessException(ErrorType.FAILED_AUTHENTICATION, e.getMessage());
         }
