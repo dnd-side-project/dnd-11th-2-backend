@@ -121,16 +121,15 @@ public class AppleAuthProvider implements OidcProvider {
         if (claims.get("nonce") == null) {
             throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify the nonce");
         }
-        if (!claims.getIssuer().contains("https://appleid.apple.com")) {
+        if (!"https://appleid.apple.com".equals(claims.getIssuer())) {
             throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify iss");
         }
-        if (!claims.getAudience().contains(clientId)) {
+        if (claims.getAudience() == null | !claims.getAudience().contains(clientId)) {
             throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify audience");
         }
 
         Instant exp = Instant.ofEpochMilli(claims.getExpiration().getTime());
-        Instant now = Instant.now();
-        if (now.isAfter(exp)) {
+        if (Instant.now().isAfter(exp)) {
             throw new AuthException(ErrorType.EXPIRED_ACCESS_TOKEN, "Can't verify exp");
         }
     }
