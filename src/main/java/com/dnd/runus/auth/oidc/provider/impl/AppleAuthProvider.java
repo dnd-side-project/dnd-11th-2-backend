@@ -17,6 +17,7 @@ import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -32,10 +33,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AppleAuthProvider implements OidcProvider {
@@ -59,12 +62,12 @@ public class AppleAuthProvider implements OidcProvider {
 
     @Override
     public Claims getClaimsBy(String identityToken) {
-        // 퍼블릭 키 리스트
         OidcPublicKeyList publicKeys = appleAuthClient.getPublicKeys();
-        // 토큰 헤더에서 디코딩 -> 퍼블릭 키 리스트 대조회 n,e갑 디코딩 후 퍼블릭 키 생성
         PublicKey publicKey = publicKeyProvider.generatePublicKey(parseHeaders(identityToken), publicKeys);
 
-        return parseClaims(identityToken, publicKey);
+        Claims claims = parseClaims(identityToken, publicKey);
+        verifyClaims(claims);
+        return claims;
     }
 
     @Override
@@ -93,6 +96,7 @@ public class AppleAuthProvider implements OidcProvider {
                     .token_type_hint("access_token")
                     .build());
         } catch (HttpClientErrorException e) {
+            log.warn("failed token revoke :{}", e.getMessage());
             throw new BusinessException(ErrorType.FAILED_AUTHENTICATION, e.getMessage());
         }
     }
@@ -112,19 +116,23 @@ public class AppleAuthProvider implements OidcProvider {
         }
     }
 
-    private void validateClaims(Claims claims) {
-        // todo 4가지 검증 추가
-        // 1. Verify the nonce for the authentication
-        // 2. Verify that the iss field contains https://appleid.apple.com
-        // 3. Verify that the aud field is the developer’s client_id
-        // 4. Verify that the time is earlier than the exp value of the token
-        // nonce 검증 방법 알아보기
-        //        if(claims.get("nonce") == null) {
-        //            throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN,
-        //        }
-        //        if (!claims.getIssuer().contains("https://appleid.apple.com")) {
-        //            throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "잘못된 iss");
-        //        }
+    private void verifyClaims(Claims claims) {
+
+        if (claims.get("nonce") == null) {
+            throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify the nonce");
+        }
+        if (!claims.getIssuer().contains("https://appleid.apple.com")) {
+            throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify iss");
+        }
+        if (!claims.getAudience().contains(clientId)) {
+            throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify audience");
+        }
+
+        Instant exp = Instant.ofEpochMilli(claims.getExpiration().getTime());
+        Instant now = Instant.now();
+        if (now.isAfter(exp)) {
+            throw new AuthException(ErrorType.EXPIRED_ACCESS_TOKEN, "Can't verify exp");
+        }
     }
 
     private PrivateKey getPrivateKey() {
