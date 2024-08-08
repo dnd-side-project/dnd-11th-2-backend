@@ -44,3 +44,5 @@ out/
 **/resources/.env
 **/resources/.env.*
 !**/resources/.env.example
+
+**/resources/*.p8
