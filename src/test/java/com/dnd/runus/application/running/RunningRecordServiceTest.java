@@ -12,7 +12,7 @@ import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.v1.running.dto.RunningRecordDataDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordSavingResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordDetailResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -81,7 +81,7 @@ class RunningRecordServiceTest {
         given(runningRecordRepository.save(expected)).willReturn(expected);
 
         // when
-        RunningRecordSavingResponse response = runningRecordService.addRunningRecord(1L, request);
+        RunningRecordDetailResponse response = runningRecordService.addRunningRecord(1L, request);
 
         // then
         assertEquals(request.startAt(), response.startAt());

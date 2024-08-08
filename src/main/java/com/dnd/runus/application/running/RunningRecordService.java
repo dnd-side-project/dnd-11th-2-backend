@@ -8,7 +8,7 @@ import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordSavingResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordDetailResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +31,7 @@ public class RunningRecordService {
     }
 
     @Transactional
-    public RunningRecordSavingResponse addRunningRecord(long memberId, RunningRecordRequest request) {
+    public RunningRecordDetailResponse addRunningRecord(long memberId, RunningRecordRequest request) {
         if (request.startAt().isAfter(request.endAt())) {
             throw new BusinessException(ErrorType.START_AFTER_END, request.startAt() + ", " + request.endAt());
         }
@@ -58,6 +58,6 @@ public class RunningRecordService {
                 .averagePace(request.runningData().averagePace())
                 .build());
 
-        return RunningRecordSavingResponse.from(record);
+        return RunningRecordDetailResponse.from(record);
     }
 }
