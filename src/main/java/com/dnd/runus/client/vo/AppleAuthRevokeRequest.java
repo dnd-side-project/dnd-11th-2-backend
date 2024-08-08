@@ -13,12 +13,11 @@ public record AppleAuthRevokeRequest(
     String token_type_hint
 ) {
     public MultiValueMap<String, String> toMultiValueMap() {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("client_id", client_id);
-        params.add("client_secret", client_secret);
-        params.add("token", token);
-        params.add("token_type_hint", token_type_hint);
-
-        return params;
+        return new LinkedMultiValueMap<>(){{
+            add("client_id", client_id);
+            add("client_secret", client_secret);
+            add("token", token);
+            add("token_type_hint", token_type_hint);
+        }};
     }
 }
