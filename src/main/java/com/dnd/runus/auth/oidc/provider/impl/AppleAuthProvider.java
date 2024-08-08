@@ -124,7 +124,7 @@ public class AppleAuthProvider implements OidcProvider {
         if (!"https://appleid.apple.com".equals(claims.getIssuer())) {
             throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify iss");
         }
-        if (claims.getAudience() == null | !claims.getAudience().contains(clientId)) {
+        if (claims.getAudience() == null || !claims.getAudience().contains(clientId)) {
             throw new AuthException(ErrorType.TAMPERED_ACCESS_TOKEN, "Can't verify audience");
         }
 
