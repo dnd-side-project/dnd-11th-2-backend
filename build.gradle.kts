@@ -1,3 +1,7 @@
+import org.jooq.codegen.DefaultGeneratorStrategy
+import org.jooq.codegen.GeneratorStrategy
+import org.jooq.meta.Definition
+
 buildscript {
     dependencies {
         classpath("${libs.testcontainers.postgresql.get()}")
@@ -11,6 +15,7 @@ plugins {
     alias(libs.plugins.spring.dependency.management)
     alias(libs.plugins.spotless)
     alias(libs.plugins.flyway)
+    alias(libs.plugins.jooq)
 }
 
 group = "com.dnd"
@@ -26,6 +31,7 @@ repositories {
 }
 
 dependencies {
+    // Version들은 gradle/libs.versions.toml 파일에서 관리합니다.
     implementation(libs.bundles.spring.boot)
     implementation(libs.dotenv)
     implementation(libs.jetbrains.annotations)
@@ -45,6 +51,10 @@ dependencies {
 
     implementation(libs.flyway.core)
     runtimeOnly(libs.flyway.database.postgresql)
+
+    // JOOQ
+    implementation(libs.bundles.jooq)
+    jooqCodegen(libs.postgresql)
 
     // Lombok
     implementation(libs.lombok)
@@ -112,15 +122,19 @@ tasks.register<Copy>("updateGitHooks") {
 
 tasks.compileJava {
     dependsOn("updateGitHooks")
+    dependsOn(tasks.jooqCodegen)
 }
 
 tasks.register("projectTest") {
-    dependsOn("spotlessJavaCheck")
-    dependsOn("compileJava")
-    dependsOn("test")
+    dependsOn(tasks.spotlessCheck)
+    dependsOn(tasks.compileJava)
+    dependsOn(tasks.test)
 }
 
-tasks.named<org.flywaydb.gradle.task.FlywayMigrateTask>("flywayMigrate") {
+// Here we register service for providing our database during the build.
+val dbContainerProvider = project.gradle.sharedServices.registerIfAbsent("postgres", PostgresService::class) {}
+
+tasks.flywayMigrate {
     usesService(dbContainerProvider)
     locations = arrayOf("filesystem:src/main/resources/db/migration")
     inputs.files(fileTree("src/main/resources/db/migration"))
@@ -131,17 +145,61 @@ tasks.named<org.flywaydb.gradle.task.FlywayMigrateTask>("flywayMigrate") {
         user = dbContainer.username
         password = dbContainer.password
     }
-    doLast {
-        if (dbContainerProvider.isPresent) {
-            dbContainerProvider.get().close()
+}
+
+afterEvaluate {
+    // For JOOQ to run we always need for flyway to be completed before.
+    tasks.jooqCodegen {
+        dependsOn(tasks.flywayMigrate)
+        doFirst {
+            val dbContainer = dbContainerProvider.get().container()
+            jooq.configuration {
+                jdbc = org.jooq.meta.jaxb.Jdbc().apply {
+                    driver = "org.postgresql.Driver"
+                    url = dbContainer.jdbcUrl
+                    user = dbContainer.username
+                    password = dbContainer.password
+                }
+            }
+        }
+        doLast {
+            dbContainerProvider.orNull?.close()
         }
     }
 }
 
-// Here we register service for providing our database during the build.
-val dbContainerProvider: Provider<PostgresService> = project.gradle
-    .sharedServices
-    .registerIfAbsent("postgres", PostgresService::class.java) {}
+jooq {
+    configuration {
+        logging = org.jooq.meta.jaxb.Logging.WARN
+        generator {
+            name = "org.jooq.codegen.DefaultGenerator"
+            database {
+                name = "org.jooq.meta.postgres.PostgresDatabase"
+                includes = ".*"
+                excludes = "flyway_schema_history"
+                inputSchema = "public"
+                forcedTypes {
+                    forcedType {
+                        userType = "com.dnd.runus.global.constant.MemberRole"
+                        includeExpression = ".*\\.role"
+                    }
+                    forcedType {
+                        userType = "com.dnd.runus.global.constant.SocialType"
+                        includeExpression = ".*\\.social_type"
+                    }
+                    forcedType {
+                        userType = "com.dnd.runus.global.constant.RunningEmoji"
+                        includeExpression = ".*\\.emoji"
+                    }
+                }
+            }
+            target {
+                packageName = "${group}.runus.jooq"
+                directory = "target/generated-sources/jooq"
+            }
+        }
+    }
+}
 
 // Build service for providing database container.
 abstract class PostgresService : BuildService<BuildServiceParameters.None>, AutoCloseable {

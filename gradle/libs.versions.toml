@@ -6,6 +6,7 @@ postgresql = "42.7.3"
 testcontainers = "1.20.1"
 flyway = "10.17.0"
 jjwt = "0.12.6"
+jooq = "3.19.10"
 
 [libraries]
 spring-boot-starter = { group = "org.springframework.boot", name = "spring-boot-starter", version.ref = "spring-boot" }
@@ -30,6 +31,8 @@ postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "pos
 hibernate-spatial = { group = "org.hibernate", name = "hibernate-spatial", version = "6.5.1.Final" }
 flyway-core = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
 flyway-database-postgresql = { group = "org.flywaydb", name = "flyway-database-postgresql", version.ref = "flyway" }
+jooq = { group = "org.jooq", name = "jooq", version.ref = "jooq" }
+jooq-meta = { group = "org.jooq", name = "jooq-meta", version.ref = "jooq" }
 springdoc = { group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version = "2.4.0" }
 testcontainers = { group = "org.testcontainers", name = "testcontainers", version.ref = "testcontainers" }
 testcontainers-junit-jupiter = { group = "org.testcontainers", name = "junit-jupiter", version.ref = "testcontainers" }
@@ -60,8 +63,14 @@ testcontainers = [
     "testcontainers-jdbc"
 ]
 
+jooq = [
+    "jooq",
+    "jooq-meta",
+]
+
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "dependency-management" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
+jooq = { id = "org.jooq.jooq-codegen-gradle", version.ref = "jooq" }
