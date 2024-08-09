@@ -27,10 +27,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.time.LocalDateTime;
@@ -137,8 +136,8 @@ public class AppleAuthProvider implements OidcProvider {
     private PrivateKey getPrivateKey() {
         ClassPathResource resource = new ClassPathResource("AuthKey_" + keyId + ".p8");
         try {
-            String privateKey = new String(Files.readAllBytes(Paths.get(resource.getURI())));
-            Reader pemReader = new StringReader(privateKey);
+            InputStream inputStream = resource.getInputStream();
+            Reader pemReader = new InputStreamReader(inputStream);
             PEMParser pemParser = new PEMParser(pemReader);
             JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
             PrivateKeyInfo object = (PrivateKeyInfo) pemParser.readObject();
