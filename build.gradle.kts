@@ -1,7 +1,3 @@
-import org.jooq.codegen.DefaultGeneratorStrategy
-import org.jooq.codegen.GeneratorStrategy
-import org.jooq.meta.Definition
-
 buildscript {
     dependencies {
         classpath("${libs.testcontainers.postgresql.get()}")
@@ -52,7 +48,7 @@ dependencies {
     implementation(libs.flyway.core)
     runtimeOnly(libs.flyway.database.postgresql)
 
-    // JOOQ
+    // jOOQ
     implementation(libs.bundles.jooq)
     jooqCodegen(libs.postgresql)
 
@@ -148,7 +144,7 @@ tasks.flywayMigrate {
 }
 
 afterEvaluate {
-    // For JOOQ to run we always need for flyway to be completed before.
+    // For jOOQ to run we always need for flyway to be completed before.
     tasks.jooqCodegen {
         dependsOn(tasks.flywayMigrate)
         doFirst {
