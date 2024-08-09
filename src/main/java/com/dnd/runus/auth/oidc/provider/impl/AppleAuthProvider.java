@@ -134,7 +134,7 @@ public class AppleAuthProvider implements OidcProvider {
     }
 
     private PrivateKey getPrivateKey() {
-        ClassPathResource resource = new ClassPathResource("AuthKey_" + keyId + ".p8");
+        ClassPathResource resource = new ClassPathResource("./app/apple/AuthKey_" + keyId + ".p8");
         try {
             InputStream inputStream = resource.getInputStream();
             Reader pemReader = new InputStreamReader(inputStream);
