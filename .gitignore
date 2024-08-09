@@ -46,4 +46,4 @@ out/
 !**/resources/.env.example
 
 **/resources/app/apple/*.p8
-!**/resources/*
+!**/resources/app/apple/*
