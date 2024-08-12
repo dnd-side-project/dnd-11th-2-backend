@@ -28,7 +28,7 @@ public class ChallengeService {
 
         List<RunningRecord> runningRecords =
                 runningRecordRepository.findByMemberIdAndStartAtBetween(memberId, yesterday, todayMidnight);
-
+        // todo 랜덤으로 변경할지 확정 후 변경(2024.08.12회의 이후)
         return ChallengeData.getChallenges(!runningRecords.isEmpty()).stream()
                 .map(ChallengesResponse::from)
                 .collect(Collectors.toList());
