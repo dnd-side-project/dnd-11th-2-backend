@@ -7,7 +7,10 @@ import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecord
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,5 +33,13 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     @Override
     public void deleteByMemberId(long memberId) {
         jpaRunningRecordRepository.deleteByMemberId(memberId);
+    }
+
+    @Override
+    public List<RunningRecord> findByMemberIdAndStartAtBetween(
+            long memberId, OffsetDateTime startTime, OffsetDateTime endTime) {
+        return jpaRunningRecordRepository.findByMemberIdAndStartAtBetween(memberId, startTime, endTime).stream()
+                .map(RunningRecordEntity::toDomain)
+                .collect(Collectors.toList());
     }
 }

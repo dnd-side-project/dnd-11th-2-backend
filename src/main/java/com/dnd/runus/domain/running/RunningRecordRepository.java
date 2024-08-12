@@ -1,5 +1,7 @@
 package com.dnd.runus.domain.running;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface RunningRecordRepository {
@@ -8,4 +10,7 @@ public interface RunningRecordRepository {
     RunningRecord save(RunningRecord runningRecord);
 
     void deleteByMemberId(long memberId);
+
+    List<RunningRecord> findByMemberIdAndStartAtBetween(
+            long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
 }
