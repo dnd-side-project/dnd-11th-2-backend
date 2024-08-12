@@ -117,6 +117,7 @@ public class OauthService {
 
     private void deleteMember(long memberId) {
         badgeAchievementRepository.deleteByMemberId(memberId);
+        // todo 챌린지 삭제(챌린지 기능 구현 완료 후)
         runningRecordRepository.deleteByMemberId(memberId);
         memberLevelRepository.deleteByMemberId(memberId);
         socialProfileRepository.deleteByMemberId(memberId);

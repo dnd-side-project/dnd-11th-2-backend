@@ -20,7 +20,7 @@ public interface OidcProvider {
     String getAccessToken(String code);
 
     /**
-     *
+     * 소셜로그인 연결 해제
      * @param accessToken 엑세스토큰
      */
     void revoke(String accessToken);
