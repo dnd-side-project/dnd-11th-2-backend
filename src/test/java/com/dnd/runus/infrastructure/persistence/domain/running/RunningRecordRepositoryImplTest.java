@@ -12,13 +12,17 @@ import com.dnd.runus.infrastructure.persistence.annotation.RepositoryTest;
 import com.dnd.runus.infrastructure.persistence.jpa.running.JpaRunningRecordRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @RepositoryTest
@@ -65,5 +69,39 @@ class RunningRecordRepositoryImplTest {
         // then
         assertFalse(
                 jpaRunningRecordRepository.findById(savedRunningRecord.getId()).isPresent());
+    }
+
+    @DisplayName("어제 러닝기록을 memberId로 select")
+    @Test
+    void getYesterdayRunningRecord() {
+        // given
+        OffsetDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID)
+                .atStartOfDay(SERVER_TIMEZONE_ID)
+                .toOffsetDateTime();
+        OffsetDateTime yesterday = todayMidnight.minusDays(1);
+        OffsetDateTime dayBeforeYesterday = yesterday.minusHours(1);
+        // 그제:2, 어제:4, 오늘:1개
+        for (int i = 0; i < 7; i++) {
+            RunningRecord runningRecord = new RunningRecord(
+                    0,
+                    savedMember,
+                    1,
+                    Duration.ofHours(12).plusMinutes(23).plusSeconds(56),
+                    1,
+                    new Pace(5, 11),
+                    dayBeforeYesterday.plusHours(i * i).plusMinutes(1),
+                    dayBeforeYesterday.plusHours(i * i).plusMinutes(30),
+                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    String.valueOf(i),
+                    RunningEmoji.SOSO);
+            RunningRecordEntity entity = RunningRecordEntity.from(runningRecord);
+            jpaRunningRecordRepository.save(entity);
+        }
+
+        // when & then
+        assertThat(runningRecordRepository
+                        .findByMemberIdAndStartAtBetween(savedMember.memberId(), yesterday, todayMidnight)
+                        .size())
+                .isEqualTo(4);
     }
 }
