@@ -1,7 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.jpa.member.entity;
 
 import com.dnd.runus.domain.common.BaseTimeEntity;
-import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberLevel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -29,15 +28,16 @@ public class MemberLevelEntity extends BaseTimeEntity {
     @NotNull
     private Integer exp;
 
-    public static MemberLevelEntity of(Member member, long levelId, int exp) {
+    public static MemberLevelEntity from(MemberLevel memberLevel) {
         MemberLevelEntity memberLevelEntity = new MemberLevelEntity();
-        memberLevelEntity.member = MemberEntity.from(member);
-        memberLevelEntity.levelId = levelId;
-        memberLevelEntity.exp = exp;
+        memberLevelEntity.id = memberLevel.memberLevelId();
+        memberLevelEntity.member = MemberEntity.from(memberLevel.member());
+        memberLevelEntity.levelId = memberLevel.levelId();
+        memberLevelEntity.exp = memberLevel.exp();
         return memberLevelEntity;
     }
 
     public MemberLevel toDomain() {
-        return new MemberLevel(levelId, exp);
+        return new MemberLevel(id, member.toDomain(), levelId, exp);
     }
 }
