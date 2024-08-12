@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "회원가입, 로그인, 회원탈퇴")
+@Tag(name = "OAuth")
 @RequestMapping("/api/v1/auth/oauth")
 @RestController
 @RequiredArgsConstructor
@@ -49,11 +49,7 @@ public class OauthController {
             """)
     @ApiErrorType({
         ErrorType.UNSUPPORTED_SOCIAL_TYPE,
-        ErrorType.UNSUPPORTED_JWT_TOKEN,
         ErrorType.FAILED_AUTHENTICATION,
-        ErrorType.MALFORMED_ACCESS_TOKEN,
-        ErrorType.EXPIRED_ACCESS_TOKEN,
-        ErrorType.UNHANDLED_EXCEPTION,
     })
     @PostMapping("/withdraw")
     @ResponseStatus(HttpStatus.OK)
