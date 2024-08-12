@@ -18,7 +18,7 @@ import java.util.List;
 @Tag(name = "오늘의 챌린지")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/challenge")
+@RequestMapping("/api/v1/challenges")
 public class ChallengeController {
 
     @Autowired
