@@ -1,6 +1,7 @@
 package com.dnd.runus.application.running;
 
 import com.dnd.runus.domain.member.Member;
+import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
@@ -19,14 +20,17 @@ import java.time.ZoneOffset;
 public class RunningRecordService {
     private final RunningRecordRepository runningRecordRepository;
     private final MemberRepository memberRepository;
+    private final MemberLevelRepository memberLevelRepository;
     private final ZoneOffset defaultZoneOffset;
 
     public RunningRecordService(
             RunningRecordRepository runningRecordRepository,
             MemberRepository memberRepository,
+            MemberLevelRepository memberLevelRepository,
             @Value("${app.default-zone-offset}") ZoneOffset defaultZoneOffset) {
         this.runningRecordRepository = runningRecordRepository;
         this.memberRepository = memberRepository;
+        this.memberLevelRepository = memberLevelRepository;
         this.defaultZoneOffset = defaultZoneOffset;
     }
 
@@ -57,6 +61,8 @@ public class RunningRecordService {
                 .calorie(request.runningData().calorie())
                 .averagePace(request.runningData().averagePace())
                 .build());
+
+        memberLevelRepository.updateMemberLevel(memberId, request.runningData().distanceMeter());
 
         return RunningRecordReportResponse.from(record);
     }

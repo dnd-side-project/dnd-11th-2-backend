@@ -3,6 +3,7 @@ package com.dnd.runus.application.running;
 import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
+import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
@@ -40,11 +41,15 @@ class RunningRecordServiceTest {
     @Mock
     private MemberRepository memberRepository;
 
+    @Mock
+    private MemberLevelRepository memberLevelRepository;
+
     private final ZoneOffset defaultZoneOffset = ZoneOffset.of("+9");
 
     @BeforeEach
     void setUp() {
-        runningRecordService = new RunningRecordService(runningRecordRepository, memberRepository, defaultZoneOffset);
+        runningRecordService = new RunningRecordService(
+                runningRecordRepository, memberRepository, memberLevelRepository, defaultZoneOffset);
     }
 
     @Test
