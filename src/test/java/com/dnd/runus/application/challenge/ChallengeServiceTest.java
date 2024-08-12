@@ -55,7 +55,7 @@ class ChallengeServiceTest {
                 .distanceMeter(10)
                 .duration(Duration.ofSeconds(1_800))
                 .calorie(100)
-                .averagePace(new Pace(6, 00))
+                .averagePace(new Pace(6, 0))
                 .build();
 
         when(runningRecordRepository.findByMemberIdAndStartAtBetween(
