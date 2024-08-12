@@ -10,7 +10,6 @@ public record WithdrawRequest(
     @Schema(description = "소셜 로그인 타입")
     @NotNull
     SocialType socialType,
-    @Schema(description = "authorizationCode")
     @NotBlank
     String authorizationCode,
     @NotBlank
