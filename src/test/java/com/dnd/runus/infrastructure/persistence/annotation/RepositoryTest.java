@@ -5,7 +5,6 @@ import com.dnd.runus.config.TestcontainersConfig;
 import com.dnd.runus.global.config.JooqConfig;
 import com.dnd.runus.global.config.JpaConfig;
 import com.dnd.runus.infrastructure.persistence.InfrastructurePersistencePackage;
-import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,6 +25,5 @@ import java.lang.annotation.*;
     JpaConfig.class,
     JooqConfig.class,
     TestJooqConfig.class,
-    JooqAutoConfiguration.class,
 })
 public @interface RepositoryTest {}
