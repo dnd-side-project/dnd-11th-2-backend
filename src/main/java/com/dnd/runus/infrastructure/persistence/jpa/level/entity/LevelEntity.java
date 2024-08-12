@@ -1,5 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.jpa.level.entity;
 
+import com.dnd.runus.domain.level.Level;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,4 +24,16 @@ public class LevelEntity {
 
     @NotNull
     private Integer expRangeEnd;
+
+    public static LevelEntity from(Level level) {
+        LevelEntity levelEntity = new LevelEntity();
+        levelEntity.id = level.levelId();
+        levelEntity.expRangeStart = level.expRangeStart();
+        levelEntity.expRangeEnd = level.expRangeEnd();
+        return levelEntity;
+    }
+
+    public Level toDomain() {
+        return new Level(id, expRangeStart, expRangeEnd);
+    }
 }
