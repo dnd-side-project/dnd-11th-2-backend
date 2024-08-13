@@ -23,7 +23,7 @@ import java.util.List;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class ChallengeServiceTest {
@@ -58,9 +58,9 @@ class ChallengeServiceTest {
                 .averagePace(new Pace(6, 0))
                 .build();
 
-        when(runningRecordRepository.findByMemberIdAndStartAtBetween(
+        given(runningRecordRepository.findByMemberIdAndStartAtBetween(
                         member.memberId(), todayMidnight.minusDays(1), todayMidnight))
-                .thenReturn(List.of(record));
+                .willReturn(List.of(record));
 
         // when
         List<ChallengesResponse> challenges = challengeService.getChallenges(member.memberId());
@@ -78,9 +78,9 @@ class ChallengeServiceTest {
                 .atStartOfDay(SERVER_TIMEZONE_ID)
                 .toOffsetDateTime();
 
-        when(runningRecordRepository.findByMemberIdAndStartAtBetween(
+        given(runningRecordRepository.findByMemberIdAndStartAtBetween(
                         member.memberId(), todayMidnight.minusDays(1), todayMidnight))
-                .thenReturn(Collections.emptyList());
+                .willReturn(Collections.emptyList());
 
         // when
         List<ChallengesResponse> challenges = challengeService.getChallenges(member.memberId());

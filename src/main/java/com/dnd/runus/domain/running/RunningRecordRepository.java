@@ -13,4 +13,6 @@ public interface RunningRecordRepository {
 
     List<RunningRecord> findByMemberIdAndStartAtBetween(
             long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
+
+    boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
 }

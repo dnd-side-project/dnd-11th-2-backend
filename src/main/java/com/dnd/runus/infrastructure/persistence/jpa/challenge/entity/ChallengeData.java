@@ -1,6 +1,7 @@
 package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
 
 import com.dnd.runus.domain.challenge.Challenge;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
@@ -22,7 +23,7 @@ import static com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.Goal
  * 거리+페이스면 거리면 거리(km)* 페이스(분)*60 으로, 페이스면 0으로 직접 입력합니다.
  * <p>{@code targetValues} : Map<GoalType, Integer> key: {@link com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.GoalType} 값, value: GoalType과 관련된 목표 값
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ChallengeData {
     DEFEAT_PAST_DISTANCE_1KM(1L, 8 * 60, "어제보다 1km더 뛰기", DEFEAT_YESTERDAY, Map.of(DISTANCE, 1000), "imageUrl"),
     DEFEAT_PAST_TIME_5MINUTE(2L, 5 * 60, "어제보다 5분 더 뛰기", DEFEAT_YESTERDAY, Map.of(TIME, 5 * 60), "imageUrl"),
@@ -34,7 +35,7 @@ public enum ChallengeData {
             7L, 6 * 60, "1km 6분안에 뛰기", DISTANCE_IN_TIME, Map.of(DISTANCE, 1000, PACE, 6 * 30), "imageUrl");
 
     private final long id;
-    private final int expectedTime;
+    private final int expectedTimeSecond;
     private final String name;
     private final ChallengeType challengeType;
     private final Map<GoalType, Integer> targetValues;
@@ -52,7 +53,7 @@ public enum ChallengeData {
                 .challengeId(id)
                 .name(name)
                 .imageUrl(imageUrl)
-                .expectedTime(expectedTime)
+                .expectedTime(expectedTimeSecond)
                 .build();
     }
 }

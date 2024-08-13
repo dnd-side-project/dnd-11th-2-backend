@@ -17,8 +17,7 @@ public record ChallengesResponse(
     @Schema(description = "챌린지 이미지 URL")
     @NotNull
     String imageUrl
-)
-{
+) {
     public static ChallengesResponse from(Challenge challenge) {
         return new ChallengesResponse(
             challenge.challengeId(),

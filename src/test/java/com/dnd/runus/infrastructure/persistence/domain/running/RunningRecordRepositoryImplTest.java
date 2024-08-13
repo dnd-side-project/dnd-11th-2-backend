@@ -9,7 +9,6 @@ import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.infrastructure.persistence.annotation.RepositoryTest;
-import com.dnd.runus.infrastructure.persistence.jpa.running.JpaRunningRecordRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,15 +23,13 @@ import java.util.List;
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RepositoryTest
 class RunningRecordRepositoryImplTest {
 
     @Autowired
     private RunningRecordRepository runningRecordRepository;
-
-    @Autowired
-    private JpaRunningRecordRepository jpaRunningRecordRepository;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -45,8 +42,9 @@ class RunningRecordRepositoryImplTest {
         savedMember = memberRepository.save(member);
     }
 
+    @DisplayName("MemberId로 runningRecord 삭제")
     @Test
-    void deleteByMember() {
+    void deleteByMemberId() {
         // given
         RunningRecord runningRecord = new RunningRecord(
                 0,
@@ -61,14 +59,14 @@ class RunningRecordRepositoryImplTest {
                 "location",
                 RunningEmoji.BAD);
         RunningRecordEntity entity = RunningRecordEntity.from(runningRecord);
-        RunningRecordEntity savedRunningRecord = jpaRunningRecordRepository.save(entity);
+        RunningRecord savedRunningRecord = runningRecordRepository.save(runningRecord);
 
         // when
         runningRecordRepository.deleteByMemberId(savedMember.memberId());
 
         // then
         assertFalse(
-                jpaRunningRecordRepository.findById(savedRunningRecord.getId()).isPresent());
+                runningRecordRepository.findById(savedRunningRecord.runningId()).isPresent());
     }
 
     @DisplayName("어제 러닝기록을 memberId로 select")
@@ -94,8 +92,7 @@ class RunningRecordRepositoryImplTest {
                     List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                     String.valueOf(i),
                     RunningEmoji.SOSO);
-            RunningRecordEntity entity = RunningRecordEntity.from(runningRecord);
-            jpaRunningRecordRepository.save(entity);
+            runningRecordRepository.save(runningRecord);
         }
 
         // when & then
@@ -103,5 +100,36 @@ class RunningRecordRepositoryImplTest {
                         .findByMemberIdAndStartAtBetween(savedMember.memberId(), yesterday, todayMidnight)
                         .size())
                 .isEqualTo(4);
+    }
+
+    @DisplayName("어제 러닝기록, memberId의 러닝 기록이 존재하는지 확인")
+    @Test
+    void hasYesterdayRunningRecord() {
+        // given
+        OffsetDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID)
+                .atStartOfDay(SERVER_TIMEZONE_ID)
+                .toOffsetDateTime();
+        OffsetDateTime yesterday = todayMidnight.minusDays(1);
+        OffsetDateTime dayBeforeYesterday = yesterday.minusHours(1);
+        // 그제:2, 어제:4, 오늘:1개
+        for (int i = 0; i < 7; i++) {
+            RunningRecord runningRecord = new RunningRecord(
+                    0,
+                    savedMember,
+                    1,
+                    Duration.ofHours(12).plusMinutes(23).plusSeconds(56),
+                    1,
+                    new Pace(5, 11),
+                    dayBeforeYesterday.plusHours(i * i).plusMinutes(1),
+                    dayBeforeYesterday.plusHours(i * i).plusMinutes(30),
+                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    String.valueOf(i),
+                    RunningEmoji.SOSO);
+            runningRecordRepository.save(runningRecord);
+        }
+
+        // when & then
+        assertTrue(runningRecordRepository.hasByMemberIdAndStartAtBetween(
+                savedMember.memberId(), yesterday, todayMidnight));
     }
 }

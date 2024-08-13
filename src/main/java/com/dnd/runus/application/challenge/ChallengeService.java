@@ -1,6 +1,5 @@
 package com.dnd.runus.application.challenge;
 
-import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeData;
 import com.dnd.runus.presentation.v1.challenge.dto.response.ChallengesResponse;
@@ -26,10 +25,10 @@ public class ChallengeService {
                 .toOffsetDateTime();
         OffsetDateTime yesterday = todayMidnight.minusDays(1);
 
-        List<RunningRecord> runningRecords =
-                runningRecordRepository.findByMemberIdAndStartAtBetween(memberId, yesterday, todayMidnight);
-        // todo 랜덤으로 변경할지 확정 후 변경(2024.08.12회의 이후)
-        return ChallengeData.getChallenges(!runningRecords.isEmpty()).stream()
+        boolean hasYesterdayRecords =
+                runningRecordRepository.hasByMemberIdAndStartAtBetween(memberId, yesterday, todayMidnight);
+
+        return ChallengeData.getChallenges(hasYesterdayRecords).stream()
                 .map(ChallengesResponse::from)
                 .collect(Collectors.toList());
     }

@@ -12,4 +12,6 @@ public interface JpaRunningRecordRepository extends JpaRepository<RunningRecordE
 
     List<RunningRecordEntity> findByMemberIdAndStartAtBetween(
             long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
+
+    boolean existsByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
 }

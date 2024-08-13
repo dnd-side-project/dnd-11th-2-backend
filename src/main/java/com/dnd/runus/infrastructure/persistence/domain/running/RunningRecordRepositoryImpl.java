@@ -42,4 +42,9 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
                 .map(RunningRecordEntity::toDomain)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime) {
+        return jpaRunningRecordRepository.existsByMemberIdAndStartAtBetween(memberId, startTime, endTime);
+    }
 }
