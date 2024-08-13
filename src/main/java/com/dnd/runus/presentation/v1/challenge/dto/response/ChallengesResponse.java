@@ -12,8 +12,11 @@ public record ChallengesResponse(
     @Schema(description = "챌린지 이름")
     @NotNull
     String name,
-    @Schema(description = "예상 소요 시간(단위 초), 페이스 관련 챌린지이면 0리턴")
-    Integer expectedTime,
+    @Schema(
+        description = "예상 소요 시간",
+        example = "25분"
+    )
+    String expectedTime,
     @Schema(description = "챌린지 이미지 URL")
     @NotNull
     String imageUrl
