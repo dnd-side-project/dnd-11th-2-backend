@@ -9,7 +9,6 @@ import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.infrastructure.persistence.annotation.RepositoryTest;
-import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,7 +57,6 @@ class RunningRecordRepositoryImplTest {
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                 "location",
                 RunningEmoji.BAD);
-        RunningRecordEntity entity = RunningRecordEntity.from(runningRecord);
         RunningRecord savedRunningRecord = runningRecordRepository.save(runningRecord);
 
         // when
