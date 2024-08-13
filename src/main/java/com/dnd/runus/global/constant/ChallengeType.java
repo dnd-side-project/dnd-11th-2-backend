@@ -1,4 +1,4 @@
-package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
+package com.dnd.runus.global.constant;
 
 /**
  * ChallengeType은 아래와 같은 타입을 나타낸다.

@@ -1,6 +1,8 @@
 package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
 
 import com.dnd.runus.domain.challenge.Challenge;
+import com.dnd.runus.global.constant.ChallengeGoalType;
+import com.dnd.runus.global.constant.ChallengeType;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -8,12 +10,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeType.DEFEAT_YESTERDAY;
-import static com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeType.DISTANCE_IN_TIME;
-import static com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeType.TODAY;
-import static com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.GoalType.DISTANCE;
-import static com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.GoalType.PACE;
-import static com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.GoalType.TIME;
+import static com.dnd.runus.global.constant.ChallengeGoalType.DISTANCE;
+import static com.dnd.runus.global.constant.ChallengeGoalType.PACE;
+import static com.dnd.runus.global.constant.ChallengeGoalType.TIME;
+import static com.dnd.runus.global.constant.ChallengeType.DEFEAT_YESTERDAY;
+import static com.dnd.runus.global.constant.ChallengeType.DISTANCE_IN_TIME;
+import static com.dnd.runus.global.constant.ChallengeType.TODAY;
 
 /**
  * ChallengeData 오늘의 챌린지 data입니다. (FIXME)
@@ -21,7 +23,7 @@ import static com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.Goal
  * <p>{@code expectedTime} : 예상 소모 시간(sec),
  * <p> 목표가 시간이면 해당 시간으로, 거리면 거리(km)* 기본페이스(8분)*60 으로,
  * 거리+페이스면 거리면 거리(km)* 페이스(분)*60 으로, 페이스면 0으로 직접 입력합니다.
- * <p>{@code targetValues} : Map<GoalType, Integer> key: {@link com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.GoalType} 값, value: GoalType과 관련된 목표 값
+ * <p>{@code targetValues} : Map<GoalType, Integer> key: {@link ChallengeGoalType} 값, value: GoalType과 관련된 목표 값
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ChallengeData {
@@ -38,7 +40,7 @@ public enum ChallengeData {
     private final int expectedTimeSecond;
     private final String name;
     private final ChallengeType challengeType;
-    private final Map<GoalType, Integer> targetValues;
+    private final Map<ChallengeGoalType, Integer> targetValues;
     private final String imageUrl;
 
     public static List<Challenge> getChallenges(boolean hasPreRecord) {
