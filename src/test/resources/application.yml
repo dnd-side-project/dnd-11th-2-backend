@@ -26,7 +26,7 @@ app:
 
 oauth:
   apple:
-    public-key-url: https://appleid.apple.com/auth
+    base-auth-url: https://appleid.apple.com/auth
     client_id: client_id
     key_id: key-id
     team_id: team-id
