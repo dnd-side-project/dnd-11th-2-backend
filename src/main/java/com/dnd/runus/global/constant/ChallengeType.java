@@ -15,5 +15,5 @@ package com.dnd.runus.global.constant;
 public enum ChallengeType {
     DEFEAT_YESTERDAY,
     TODAY,
-    DISTANCE_IN_TIME
+    DISTANCE_IN_TIME,
 }
