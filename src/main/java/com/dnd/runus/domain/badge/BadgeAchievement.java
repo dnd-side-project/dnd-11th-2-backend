@@ -4,9 +4,10 @@ import com.dnd.runus.domain.member.Member;
 
 import java.time.OffsetDateTime;
 
-public record BadgeAchievement(Badge badge, Member member, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+public record BadgeAchievement(
+        long badgeAchievementId, Badge badge, Member member, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
 
     public BadgeAchievement(Badge badge, Member member) {
-        this(badge, member, null, null);
+        this(0, badge, member, null, null);
     }
 }

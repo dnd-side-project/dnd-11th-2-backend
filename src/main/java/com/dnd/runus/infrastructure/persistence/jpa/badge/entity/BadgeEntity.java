@@ -47,4 +47,8 @@ public class BadgeEntity {
         badgeEntity.requiredValue = badge.requiredValue();
         return badgeEntity;
     }
+
+    public Badge toDomain() {
+        return new Badge(id, name, description, imagePath, type, requiredValue);
+    }
 }

@@ -8,6 +8,7 @@ import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.infrastructure.persistence.annotation.RepositoryTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -32,9 +33,7 @@ class MemberLevelRepositoryImplTest {
 
     @BeforeEach
     void beforeEach() {
-        // Member의 자식임으로 테스트 시 임의이 Member 추가
-        Member member = new Member(MemberRole.USER, "nickname");
-        savedMember = memberRepository.save(member);
+        savedMember = memberRepository.save(new Member(MemberRole.USER, "nickname"));
     }
 
     @DisplayName("멤버 레벨을 member id로 삭제한다.")

@@ -30,9 +30,7 @@ class SocialProfileRepositoryImplTest {
 
     @BeforeEach
     void beforeEach() {
-        // Member의 자식임으로 테스트 시 임의이 Member 추가
-        Member member = new Member(MemberRole.USER, "nickname");
-        savedMember = memberRepository.save(member);
+        savedMember = memberRepository.save(new Member(MemberRole.USER, "nickname"));
     }
 
     @DisplayName("소셜 프로파일 저장한다.")
@@ -54,8 +52,8 @@ class SocialProfileRepositoryImplTest {
         // then
         assertNotEquals(0, savedSocialProfile.socialProfileId());
         assertEquals(oauthId, savedSocialProfile.oauthId());
-        assertEquals(socialType, socialType);
-        assertEquals(email, email);
+        assertEquals(socialType, savedSocialProfile.socialType());
+        assertEquals(email, savedSocialProfile.oauthEmail());
     }
 
     @DisplayName("findById socialProfile 조회한다.")

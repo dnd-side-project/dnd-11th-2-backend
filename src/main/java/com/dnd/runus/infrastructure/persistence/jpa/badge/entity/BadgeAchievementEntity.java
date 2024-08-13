@@ -34,7 +34,11 @@ public class BadgeAchievementEntity extends BaseTimeEntity {
         return badgeAchievementEntity;
     }
 
+    public BadgeAchievement toDomain() {
+        return toDomain(new Badge(badgeId, null, null, null, null, 0));
+    }
+
     public BadgeAchievement toDomain(Badge badge) {
-        return new BadgeAchievement(badge, member.toDomain(), getCreatedAt(), getUpdatedAt());
+        return new BadgeAchievement(badgeId, badge, member.toDomain(), getCreatedAt(), getUpdatedAt());
     }
 }
