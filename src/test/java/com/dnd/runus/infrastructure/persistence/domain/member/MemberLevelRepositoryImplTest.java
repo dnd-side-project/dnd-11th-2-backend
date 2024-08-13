@@ -79,8 +79,10 @@ class MemberLevelRepositoryImplTest {
         @DisplayName("경험치가 주어지면, 경험치와 member level을 경험치와 맞는 level로 수정한다.")
         void updateMemberLevel(int plusExp, int expectedExp, long expectedLevelId) {
             // when
-            MemberLevel.Summary updatedMemberLevel =
-                    memberLevelRepository.updateMemberLevel(savedMember.memberId(), plusExp);
+            memberLevelRepository.updateMemberLevel(savedMember.memberId(), plusExp);
+
+            MemberLevel updatedMemberLevel =
+                    memberLevelRepository.findByMemberId(savedMember.memberId()).orElseThrow();
 
             // then
             assertEquals(expectedExp, updatedMemberLevel.exp());

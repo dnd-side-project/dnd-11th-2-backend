@@ -6,9 +6,9 @@ public interface MemberLevelRepository {
 
     MemberLevel save(MemberLevel memberLevel);
 
-    Optional<MemberLevel> findByMemberId(long memberLevelId);
+    Optional<MemberLevel> findByMemberId(long memberId);
 
     void deleteByMemberId(long memberId);
 
-    MemberLevel.Summary updateMemberLevel(long memberId, int exp);
+    void updateMemberLevel(long memberId, int plusExp);
 }

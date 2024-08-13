@@ -5,6 +5,7 @@ import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.infrastructure.persistence.jooq.member.JooqMemberLevelRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.member.JpaMemberLevelRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.member.entity.MemberLevelEntity;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +18,8 @@ public class MemberLevelRepositoryImpl implements MemberLevelRepository {
     private final JpaMemberLevelRepository jpaMemberLevelRepository;
     private final JooqMemberLevelRepository jooqMemberLevelRepository;
 
+    private final EntityManager entityManager;
+
     @Override
     public MemberLevel save(MemberLevel memberLevel) {
         return jpaMemberLevelRepository
@@ -25,8 +28,8 @@ public class MemberLevelRepositoryImpl implements MemberLevelRepository {
     }
 
     @Override
-    public Optional<MemberLevel> findByMemberId(long memberLevelId) {
-        return jpaMemberLevelRepository.findByMemberId(memberLevelId).map(MemberLevelEntity::toDomain);
+    public Optional<MemberLevel> findByMemberId(long memberId) {
+        return jpaMemberLevelRepository.findByMemberId(memberId).map(MemberLevelEntity::toDomain);
     }
 
     @Override
@@ -35,7 +38,9 @@ public class MemberLevelRepositoryImpl implements MemberLevelRepository {
     }
 
     @Override
-    public MemberLevel.Summary updateMemberLevel(long memberId, int exp) {
-        return jooqMemberLevelRepository.updateMemberLevel(memberId, exp);
+    public void updateMemberLevel(long memberId, int plusExp) {
+        entityManager.flush();
+        entityManager.clear();
+        jooqMemberLevelRepository.updateMemberLevel(memberId, plusExp);
     }
 }
