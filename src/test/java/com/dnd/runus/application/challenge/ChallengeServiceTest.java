@@ -1,12 +1,8 @@
 package com.dnd.runus.application.challenge;
 
-import com.dnd.runus.domain.common.Coordinate;
-import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
-import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.constant.MemberRole;
-import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.presentation.v1.challenge.dto.response.ChallengesResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -41,21 +36,6 @@ class ChallengeServiceTest {
         OffsetDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID)
                 .atStartOfDay(SERVER_TIMEZONE_ID)
                 .toOffsetDateTime();
-        OffsetDateTime startTime = todayMidnight.minusDays(1).plusHours(4);
-        OffsetDateTime endTime = startTime.plusMinutes(30);
-
-        RunningRecord record = RunningRecord.builder()
-                .member(member)
-                .startAt(startTime)
-                .endAt(endTime)
-                .route(List.of(new Coordinate(123, 34), new Coordinate(123.5, 38)))
-                .emoji(RunningEmoji.VERY_GOOD)
-                .location("location name")
-                .distanceMeter(10)
-                .duration(Duration.ofSeconds(1_800))
-                .calorie(100)
-                .averagePace(new Pace(6, 0))
-                .build();
 
         given(runningRecordRepository.hasByMemberIdAndStartAtBetween(
                         member.memberId(), todayMidnight.minusDays(1), todayMidnight))
