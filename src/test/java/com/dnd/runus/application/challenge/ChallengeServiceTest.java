@@ -85,6 +85,6 @@ class ChallengeServiceTest {
         List<ChallengesResponse> challenges = challengeService.getChallenges(member.memberId());
 
         // then
-        assertTrue(challenges.stream().anyMatch(c -> !c.name().contains("어제")));
+        assertTrue(challenges.stream().noneMatch(c -> c.name().contains("어제")));
     }
 }
