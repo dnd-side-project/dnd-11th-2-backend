@@ -7,13 +7,12 @@ import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "회원 탈퇴 DTO")
 public record WithdrawRequest(
-    @Schema(description = "소셜 로그인 타입")
-    @NotNull
-    SocialType socialType,
-    @NotBlank
-    String authorizationCode,
-    @NotBlank
-    String idToken
+        @Schema(description = "소셜 로그인 타입")
+        @NotNull
+        SocialType socialType,
+        @NotBlank
+        String authorizationCode,
+        @NotBlank
+        String idToken
 ) {
-
 }
