@@ -10,5 +10,5 @@ package com.dnd.runus.global.constant;
 public enum ChallengeGoalType {
     DISTANCE,
     TIME,
-    PACE;
+    PACE
 }
