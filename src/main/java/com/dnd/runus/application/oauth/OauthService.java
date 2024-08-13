@@ -2,15 +2,11 @@ package com.dnd.runus.application.oauth;
 
 import com.dnd.runus.auth.exception.AuthException;
 import com.dnd.runus.auth.oidc.provider.OidcProvider;
-import com.dnd.runus.auth.oidc.provider.OidcProviderFactory;
+import com.dnd.runus.auth.oidc.provider.OidcProviderRegistry;
 import com.dnd.runus.auth.token.TokenProviderModule;
 import com.dnd.runus.auth.token.dto.AuthTokenDto;
 import com.dnd.runus.domain.badge.BadgeAchievementRepository;
-import com.dnd.runus.domain.member.Member;
-import com.dnd.runus.domain.member.MemberLevelRepository;
-import com.dnd.runus.domain.member.MemberRepository;
-import com.dnd.runus.domain.member.SocialProfile;
-import com.dnd.runus.domain.member.SocialProfileRepository;
+import com.dnd.runus.domain.member.*;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.SocialType;
@@ -31,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OauthService {
 
-    private final OidcProviderFactory oidcProviderFactory;
+    private final OidcProviderRegistry oidcProviderRegistry;
     private final TokenProviderModule tokenProviderModule;
 
     private final MemberRepository memberRepository;
@@ -41,14 +37,14 @@ public class OauthService {
     private final MemberLevelRepository memberLevelRepository;
 
     /**
-     * 회원가입 유뮤 확인 후 회원가입/로그인 진행
+     * 회원가입 유무 확인 후 회원가입/로그인 진행
      *
      * @param request 로그인 request
      * @return TokenResponse
      */
     @Transactional
     public TokenResponse signIn(OauthRequest request) {
-        OidcProvider oidcProvider = oidcProviderFactory.getOidcProviderBy(request.socialType());
+        OidcProvider oidcProvider = oidcProviderRegistry.getOidcProviderBy(request.socialType());
 
         Claims claim = oidcProvider.getClaimsBy(request.idToken());
         String oauthId = claim.getSubject();
@@ -58,12 +54,12 @@ public class OauthService {
             throw new AuthException(ErrorType.FAILED_AUTHENTICATION, "Failed to get email from idToken");
         }
 
-        // 회원 가입 안되있으면 회원가입 진행
+        // 회원 가입하지 않았다면, 회원 가입 진행
         SocialProfile socialProfile = socialProfileRepository
                 .findBySocialTypeAndOauthId(request.socialType(), oauthId)
                 .orElseGet(() -> createMember(oauthId, email, request.socialType(), request.nickName()));
 
-        // 이메일 변경(사용자가 애플의 이메일을 변경한 후 로그인하면 해당 이메일 변경해줘야함. -> 리젝 사유 될 수 있음)
+        // 사용자가 소셜 계정의 이메일을 변경했다면, 해당 계정의 소셜 이메일을 새로 업데이트
         if (!email.equals(socialProfile.oauthEmail())) {
             socialProfileRepository.updateOauthEmail(socialProfile.socialProfileId(), email);
         }
@@ -78,10 +74,8 @@ public class OauthService {
     public void withdraw(long memberId, WithdrawRequest request) {
 
         memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
+        OidcProvider oidcProvider = oidcProviderRegistry.getOidcProviderBy(request.socialType());
 
-        OidcProvider oidcProvider = oidcProviderFactory.getOidcProviderBy(request.socialType());
-
-        // 토큰 검증 -> 애플 지침
         Claims claim = oidcProvider.getClaimsBy(request.idToken());
         String oauthId = claim.getSubject();
 
