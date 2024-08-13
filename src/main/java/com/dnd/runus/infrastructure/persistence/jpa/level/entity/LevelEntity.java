@@ -25,15 +25,19 @@ public class LevelEntity {
     @NotNull
     private Integer expRangeEnd;
 
+    @NotNull
+    private String imageUrl;
+
     public static LevelEntity from(Level level) {
         LevelEntity levelEntity = new LevelEntity();
         levelEntity.id = level.levelId();
         levelEntity.expRangeStart = level.expRangeStart();
         levelEntity.expRangeEnd = level.expRangeEnd();
+        levelEntity.imageUrl = level.imageUrl();
         return levelEntity;
     }
 
     public Level toDomain() {
-        return new Level(id, expRangeStart, expRangeEnd);
+        return new Level(id, expRangeStart, expRangeEnd, imageUrl);
     }
 }

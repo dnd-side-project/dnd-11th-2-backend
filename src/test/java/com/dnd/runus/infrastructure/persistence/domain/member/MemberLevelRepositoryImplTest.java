@@ -59,9 +59,9 @@ class MemberLevelRepositoryImplTest {
 
         @BeforeAll
         void beforeAll() {
-            levelRepository.save(new Level(1, 0, 100));
-            levelRepository.save(new Level(2, 101, 200));
-            levelRepository.save(new Level(3, 201, Integer.MAX_VALUE));
+            levelRepository.save(new Level(1, 0, 100, "https://image.com/level/1"));
+            levelRepository.save(new Level(2, 101, 200, "https://image.com/level/2"));
+            levelRepository.save(new Level(3, 201, Integer.MAX_VALUE, "https://image.com/level/3"));
         }
 
         @BeforeEach
