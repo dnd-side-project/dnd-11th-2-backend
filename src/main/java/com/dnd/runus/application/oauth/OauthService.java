@@ -101,6 +101,8 @@ public class OauthService {
     private SocialProfile createMember(String oauthId, String email, SocialType socialType, String nickname) {
         Member member = memberRepository.save(new Member(MemberRole.USER, nickname));
 
+        memberLevelRepository.save(new MemberLevel(member));
+
         return socialProfileRepository.save(SocialProfile.builder()
                 .member(member)
                 .socialType(socialType)
