@@ -1,6 +1,5 @@
 package com.dnd.runus.infrastructure.persistence.jpa.member.entity;
 
-import com.dnd.runus.domain.badge.Badge;
 import com.dnd.runus.domain.common.BaseTimeEntity;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.global.constant.MemberRole;
@@ -29,23 +28,15 @@ public class MemberEntity extends BaseTimeEntity {
     @Size(max = 20)
     private String nickname;
 
-    private Long mainBadgeId;
-
     public static MemberEntity from(Member member) {
         MemberEntity memberEntity = new MemberEntity();
         memberEntity.id = member.memberId();
         memberEntity.role = member.role();
         memberEntity.nickname = member.nickname();
-        memberEntity.mainBadgeId =
-                member.mainBadge() == null ? null : member.mainBadge().badgeId();
         return memberEntity;
     }
 
     public Member toDomain() {
-        return toDomain(null);
-    }
-
-    public Member toDomain(Badge mainBadge) {
-        return new Member(id, getCreatedAt(), getUpdatedAt(), role, nickname, mainBadge);
+        return new Member(id, role, nickname, getCreatedAt(), getUpdatedAt());
     }
 }

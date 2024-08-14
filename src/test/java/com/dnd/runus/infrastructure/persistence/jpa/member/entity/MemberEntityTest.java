@@ -1,8 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.jpa.member.entity;
 
-import com.dnd.runus.domain.badge.Badge;
 import com.dnd.runus.domain.member.Member;
-import com.dnd.runus.global.constant.BadgeType;
 import com.dnd.runus.global.constant.MemberRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,9 +15,7 @@ class MemberEntityTest {
 
     @BeforeEach
     void setUp() {
-        Badge badge =
-                new Badge(1L, "badge name", "badge description", "https://badge.com", BadgeType.DISTANCE_METER, 1000);
-        member = new Member(1L, OffsetDateTime.now(), OffsetDateTime.now(), MemberRole.USER, "nickname", badge);
+        member = new Member(1L, MemberRole.USER, "nickname", OffsetDateTime.now(), OffsetDateTime.now());
     }
 
     @Test

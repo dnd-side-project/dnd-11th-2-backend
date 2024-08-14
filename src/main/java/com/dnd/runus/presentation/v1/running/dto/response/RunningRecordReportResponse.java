@@ -15,8 +15,6 @@ public record RunningRecordReportResponse(
         LocalDateTime endAt,
         RunningEmoji emoji,
         String nickname,
-        @Schema(description = "프로필 이미지 URL")
-        String profileUrl,
         @Schema(description = "챌린지 정보")
         ChallengeDto challenge,
         @NotNull
@@ -29,7 +27,6 @@ public record RunningRecordReportResponse(
                 runningRecord.endAt().toLocalDateTime(),
                 runningRecord.emoji(),
                 runningRecord.member().nickname(),
-                runningRecord.member().mainBadge() == null ? null : runningRecord.member().mainBadge().imageUrl(),
                 new ChallengeDto(-1), // TODO: 챌린지 기능 추가 후 수정
                 new RunningRecordMetricsDto(
                         runningRecord.averagePace(),

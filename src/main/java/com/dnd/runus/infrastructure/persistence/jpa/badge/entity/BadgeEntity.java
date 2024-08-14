@@ -28,7 +28,8 @@ public class BadgeEntity {
     private String description;
 
     @NotNull
-    private String imagePath;
+    @Size(max = 500)
+    private String imageUrl;
 
     @NotNull
     @Enumerated(STRING)
@@ -42,13 +43,13 @@ public class BadgeEntity {
         badgeEntity.id = badge.badgeId();
         badgeEntity.name = badge.name();
         badgeEntity.description = badge.description();
-        badgeEntity.imagePath = badge.imageUrl();
+        badgeEntity.imageUrl = badge.imageUrl();
         badgeEntity.type = badge.type();
         badgeEntity.requiredValue = badge.requiredValue();
         return badgeEntity;
     }
 
     public Badge toDomain() {
-        return new Badge(id, name, description, imagePath, type, requiredValue);
+        return new Badge(id, name, description, imageUrl, type, requiredValue);
     }
 }
