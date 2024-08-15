@@ -33,6 +33,11 @@ public class MemberLevelRepositoryImpl implements MemberLevelRepository {
     }
 
     @Override
+    public MemberLevel.Current findByMemberIdWithLevel(long memberId) {
+        return jooqMemberLevelRepository.findByMemberIdWithLevel(memberId);
+    }
+
+    @Override
     public void deleteByMemberId(long memberId) {
         jpaMemberLevelRepository.deleteByMemberId(memberId);
     }

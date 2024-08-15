@@ -8,6 +8,8 @@ public interface MemberLevelRepository {
 
     Optional<MemberLevel> findByMemberId(long memberId);
 
+    MemberLevel.Current findByMemberIdWithLevel(long memberId);
+
     void deleteByMemberId(long memberId);
 
     void updateMemberLevel(long memberId, int plusExp);

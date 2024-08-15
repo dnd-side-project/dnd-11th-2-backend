@@ -1,8 +1,12 @@
 package com.dnd.runus.infrastructure.persistence.jooq.member;
 
+import com.dnd.runus.domain.level.Level;
+import com.dnd.runus.domain.member.MemberLevel;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.RecordMapper;
 import org.springframework.stereotype.Repository;
 
 import static com.dnd.runus.jooq.Tables.LEVEL;
@@ -26,5 +30,27 @@ public class JooqMemberLevelRepository {
                                 .limit(1))
                 .where(MEMBER_LEVEL.MEMBER_ID.eq(memberId))
                 .execute();
+    }
+
+    public MemberLevel.Current findByMemberIdWithLevel(long memberId) {
+        return dsl.select()
+                .from(MEMBER_LEVEL)
+                .leftJoin(LEVEL)
+                .on(MEMBER_LEVEL.LEVEL_ID.eq(LEVEL.ID))
+                .where(MEMBER_LEVEL.MEMBER_ID.eq(memberId))
+                .fetchOne(new MemberLevelWithLevelMapper());
+    }
+
+    private static class MemberLevelWithLevelMapper implements RecordMapper<Record, MemberLevel.Current> {
+        @Override
+        public MemberLevel.Current map(Record record) {
+            return new MemberLevel.Current(
+                    new Level(
+                            record.get(LEVEL.ID, long.class),
+                            record.get(LEVEL.EXP_RANGE_START, int.class),
+                            record.get(LEVEL.EXP_RANGE_END, int.class),
+                            record.get(LEVEL.IMAGE_URL, String.class)),
+                    record.get(MEMBER_LEVEL.EXP, int.class));
+        }
     }
 }
