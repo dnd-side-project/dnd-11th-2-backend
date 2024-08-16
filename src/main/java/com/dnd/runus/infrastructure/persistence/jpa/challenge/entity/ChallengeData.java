@@ -24,7 +24,8 @@ import static com.dnd.runus.domain.challenge.ChallengeType.TODAY;
  * <p>{@code expectedTime} : 예상 소모 시간(sec),
  * <p> 목표가 시간이면 해당 시간(분*60)으로, 거리면 거리(km)* 기본페이스(8분)*60 으로,
  * 거리+페이스면 거리면 거리(km)* 페이스(분)*60 으로, 페이스면 0으로 직접 입력합니다.
- * <p>{@code targetValues} : Map<GoalType, Integer> key: {@link ChallengeGoalType} 값, value: GoalType과 관련된 목표 값
+ * <p>{@code targetValues} : Map<GoalType, Integer> key: {@link ChallengeGoalType} 값, value:
+ * GoalType과 관련된 목표 값
  * DISTANCE는 미터, TIME과 PACE는 초단위다.
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -92,11 +93,6 @@ public enum ChallengeData {
     }
 
     public Challenge toDomain() {
-        return Challenge.builder()
-                .challengeId(id)
-                .name(name)
-                .imageUrl(imageUrl)
-                .expectedTime(expectedTimeSecond)
-                .build();
+        return new Challenge(id, name, expectedTime, imageUrl, challengeType, targetValues);
     }
 }
