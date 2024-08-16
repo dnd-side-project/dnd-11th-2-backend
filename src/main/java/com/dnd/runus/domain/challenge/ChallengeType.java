@@ -1,4 +1,4 @@
-package com.dnd.runus.global.constant;
+package com.dnd.runus.domain.challenge;
 
 /**
  * ChallengeType은 아래와 같은 타입을 나타낸다.

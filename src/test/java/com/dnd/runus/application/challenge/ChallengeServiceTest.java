@@ -1,5 +1,8 @@
 package com.dnd.runus.application.challenge;
 
+import com.dnd.runus.domain.challenge.Challenge;
+import com.dnd.runus.domain.challenge.ChallengeRepository;
+import com.dnd.runus.domain.challenge.ChallengeType;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.constant.MemberRole;
@@ -13,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
@@ -24,6 +28,9 @@ class ChallengeServiceTest {
 
     @Mock
     private RunningRecordRepository runningRecordRepository;
+
+    @Mock
+    private ChallengeRepository challengeRepository;
 
     @InjectMocks
     private ChallengeService challengeService;
@@ -40,6 +47,15 @@ class ChallengeServiceTest {
         given(runningRecordRepository.hasByMemberIdAndStartAtBetween(
                         member.memberId(), todayMidnight.minusDays(1), todayMidnight))
                 .willReturn(true);
+        given(challengeRepository.getChallenges(true))
+                .willReturn(Arrays.asList(
+                        new Challenge(1L, "어제보다 1km더 뛰기", "8분", "imageUrl", ChallengeType.DEFEAT_YESTERDAY, null),
+                        new Challenge(2L, "어제보다 5분 더 뛰기", "5분", "imageUrl", ChallengeType.DEFEAT_YESTERDAY, null),
+                        new Challenge(
+                                3L, "어제보다 평균 페이스 10초 빠르게", "0분", "imageUrl", ChallengeType.DEFEAT_YESTERDAY, null),
+                        new Challenge(4L, "오늘 5km 뛰기", "0분", "imageUrl", ChallengeType.TODAY, null),
+                        new Challenge(5L, "오늘 30분 동안 뛰기", "30분", "imageUrl", ChallengeType.TODAY, null),
+                        new Challenge(6L, "1km 6분안에 뛰기", "30분", "imageUrl", ChallengeType.DISTANCE_IN_TIME, null)));
 
         // when
         List<ChallengesResponse> challenges = challengeService.getChallenges(member.memberId());
@@ -60,6 +76,11 @@ class ChallengeServiceTest {
         given(runningRecordRepository.hasByMemberIdAndStartAtBetween(
                         member.memberId(), todayMidnight.minusDays(1), todayMidnight))
                 .willReturn(false);
+        given(challengeRepository.getChallenges(false))
+                .willReturn(Arrays.asList(
+                        new Challenge(4L, "오늘 5km 뛰기", "0분", "imageUrl", ChallengeType.TODAY, null),
+                        new Challenge(5L, "오늘 30분 동안 뛰기", "30분", "imageUrl", ChallengeType.TODAY, null),
+                        new Challenge(6L, "1km 6분안에 뛰기", "30분", "imageUrl", ChallengeType.DISTANCE_IN_TIME, null)));
 
         // when
         List<ChallengesResponse> challenges = challengeService.getChallenges(member.memberId());

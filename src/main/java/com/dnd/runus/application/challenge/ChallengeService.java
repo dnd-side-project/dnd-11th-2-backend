@@ -1,7 +1,7 @@
 package com.dnd.runus.application.challenge;
 
+import com.dnd.runus.domain.challenge.ChallengeRepository;
 import com.dnd.runus.domain.running.RunningRecordRepository;
-import com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeData;
 import com.dnd.runus.presentation.v1.challenge.dto.response.ChallengesResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,7 @@ import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
 public class ChallengeService {
 
     private final RunningRecordRepository runningRecordRepository;
+    private final ChallengeRepository challengeRepository;
 
     public List<ChallengesResponse> getChallenges(long memberId) {
         OffsetDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID)
@@ -28,7 +29,7 @@ public class ChallengeService {
         boolean hasYesterdayRecords =
                 runningRecordRepository.hasByMemberIdAndStartAtBetween(memberId, yesterday, todayMidnight);
 
-        return ChallengeData.getChallenges(hasYesterdayRecords).stream()
+        return challengeRepository.getChallenges(hasYesterdayRecords).stream()
                 .map(ChallengesResponse::from)
                 .collect(Collectors.toList());
     }

@@ -1,4 +1,4 @@
-package com.dnd.runus.global.constant;
+package com.dnd.runus.domain.challenge;
 
 /**
  * GoalType은 오늘의 챌린지의 목표 타겟에 대한 챌린지 타입이다.
