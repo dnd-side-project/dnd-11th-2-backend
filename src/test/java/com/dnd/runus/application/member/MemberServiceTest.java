@@ -35,7 +35,7 @@ class MemberServiceTest {
 
         // then
         assertEquals("imageUrl", myProfileResponse.profileImageUrl());
-        assertEquals("0km", myProfileResponse.currentKm());
+        assertEquals("0.5km", myProfileResponse.currentKm());
         assertEquals("Level 2", myProfileResponse.nextLevelName());
     }
 
@@ -52,7 +52,7 @@ class MemberServiceTest {
 
         // then
         assertEquals("imageUrl", myProfileResponse.profileImageUrl());
-        assertEquals("1km", myProfileResponse.currentKm());
+        assertEquals("1.5km", myProfileResponse.currentKm());
         assertEquals("Level 3", myProfileResponse.nextLevelName());
     }
 }
