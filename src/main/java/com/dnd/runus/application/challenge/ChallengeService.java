@@ -80,4 +80,21 @@ public class ChallengeService {
 
         return ChallengeAchievementResponse.from(savedAchievement, challenge);
     }
+
+    @Transactional(readOnly = true)
+    public ChallengeAchievementResponse findChallengeAchievementBy(long memberId, long runningId) {
+
+        ChallengeAchievement challengeAchievement = challengeAchievementRepository
+                .findByMemberIdAndRunningRecordId(memberId, runningId)
+                .orElse(null);
+        if (challengeAchievement == null) {
+            return null;
+        }
+
+        Challenge challenge = challengeRepository
+                .findById(challengeAchievement.challengeId())
+                .orElseThrow(() -> new NotFoundException(Challenge.class, challengeAchievement.challengeId()));
+
+        return ChallengeAchievementResponse.from(challengeAchievement, challenge);
+    }
 }

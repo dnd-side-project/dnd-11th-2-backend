@@ -7,6 +7,8 @@ import com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeAc
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class ChallengeAchievementRepositoryImpl implements ChallengeAchievementRepository {
@@ -18,5 +20,12 @@ public class ChallengeAchievementRepositoryImpl implements ChallengeAchievementR
         return challengeAchievementRepository
                 .save(ChallengeAchievementEntity.from(challengeAchievement))
                 .toDomain();
+    }
+
+    @Override
+    public Optional<ChallengeAchievement> findByMemberIdAndRunningRecordId(long memberId, long runningId) {
+        return challengeAchievementRepository
+                .findByMemberIdAndRunningRecordId(memberId, runningId)
+                .map(ChallengeAchievementEntity::toDomain);
     }
 }
