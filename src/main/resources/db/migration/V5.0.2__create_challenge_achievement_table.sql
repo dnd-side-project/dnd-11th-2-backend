@@ -4,8 +4,8 @@ CREATE TABLE challenge_achievement
     member_id           bigint  NOT NULL
         CONSTRAINT fk_challenge_achievement_member REFERENCES member,
     running_record_id          bigint  NOT NULL
-        constraint uk_challenge_achievement_running_id unique
-        CONSTRAINT fk_fk_challenge_achievement_running_id REFERENCES running_record,
+        CONSTRAINT uk_challenge_achievement_running_id UNIQUE
+        CONSTRAINT fk_challenge_achievement_running_id REFERENCES running_record,
     challenge_id        bigint  NOT NULL,
     success_status      bool    NOT NULL,
     has_percentage      bool    NOT NULL,
