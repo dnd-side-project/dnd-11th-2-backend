@@ -76,7 +76,7 @@ public class ChallengeService {
         ChallengeAchievementRecord achievementRecord = challenge.getAchievementRecord(runningRecord);
 
         ChallengeAchievement savedAchievement = challengeAchievementRepository.save(
-                new ChallengeAchievement(member, runningRecord.runningId(), challengeId, achievementRecord));
+                new ChallengeAchievement(member, runningRecord, challengeId, achievementRecord));
 
         return ChallengeAchievementResponse.from(savedAchievement, challenge);
     }

@@ -168,7 +168,7 @@ class ChallengeServiceTest {
                 runningRecord.distanceMeter(), 0, yesterdayrunningRecord.distanceMeter() + goalDistance);
         ChallengeAchievement expected = new ChallengeAchievement(
                 member,
-                runningRecord.runningId(),
+                runningRecord,
                 challenge.challengeId(),
                 new ChallengeAchievementRecord(true, true, percentageValues));
         given(challengeAchievementRepository.save(expected)).willReturn(expected);
@@ -222,7 +222,7 @@ class ChallengeServiceTest {
                 new ChallengePercentageValues(runningRecord.distanceMeter(), 0, goalDistance);
         ChallengeAchievement expected = new ChallengeAchievement(
                 member,
-                runningRecord.runningId(),
+                runningRecord,
                 challenge.challengeId(),
                 new ChallengeAchievementRecord(true, true, percentageValues));
         given(challengeAchievementRepository.save(expected)).willReturn(expected);

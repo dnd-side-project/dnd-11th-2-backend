@@ -5,11 +5,14 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengePercentageValues;
 import com.dnd.runus.domain.common.BaseTimeEntity;
 import com.dnd.runus.infrastructure.persistence.jpa.member.entity.MemberEntity;
+import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,7 +38,9 @@ public class ChallengeAchievementEntity extends BaseTimeEntity {
     private MemberEntity member;
 
     @NotNull
-    private Long runningId;
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "running_record_id")
+    private RunningRecordEntity runningRecord;
 
     @NotNull
     private Long challengeId;
@@ -57,7 +62,7 @@ public class ChallengeAchievementEntity extends BaseTimeEntity {
     public static ChallengeAchievementEntity from(ChallengeAchievement challengeAchievement) {
         ChallengeAchievementEntityBuilder builder = ChallengeAchievementEntity.builder()
                 .member(MemberEntity.from(challengeAchievement.member()))
-                .runningId(challengeAchievement.runningId())
+                .runningRecord(RunningRecordEntity.from(challengeAchievement.runningRecord()))
                 .challengeId(challengeAchievement.challengeId())
                 .successStatus(challengeAchievement.record().successStatus())
                 .hasPercentage(challengeAchievement.record().hasPercentage());
@@ -84,7 +89,7 @@ public class ChallengeAchievementEntity extends BaseTimeEntity {
 
         return ChallengeAchievement.builder()
                 .member(member.toDomain())
-                .runningId(runningId)
+                .runningRecord(runningRecord.toDomain())
                 .challengeId(challengeId)
                 .record(record)
                 .build();
