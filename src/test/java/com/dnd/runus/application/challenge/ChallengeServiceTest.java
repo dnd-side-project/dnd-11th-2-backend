@@ -20,6 +20,7 @@ import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.presentation.v1.challenge.dto.response.ChallengeAchievementResponse;
 import com.dnd.runus.presentation.v1.challenge.dto.response.ChallengesResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
@@ -58,14 +60,20 @@ class ChallengeServiceTest {
     @InjectMocks
     private ChallengeService challengeService;
 
+    private OffsetDateTime todayMidnight;
+
+    @BeforeEach
+    public void setUp() {
+        todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID)
+                .atStartOfDay(SERVER_TIMEZONE_ID)
+                .toOffsetDateTime();
+    }
+
     @DisplayName("어제 기록이 있는경우 챌린지 리스트 조회 : 챌린지 name에 '어제'값이 포함한 값이 있어야함")
     @Test
     void getChallengesWithYesterdayRecords() {
         // given
         Member member = new Member(MemberRole.USER, "nickname1");
-        OffsetDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID)
-                .atStartOfDay(SERVER_TIMEZONE_ID)
-                .toOffsetDateTime();
 
         given(runningRecordRepository.hasByMemberIdAndStartAtBetween(
                         member.memberId(), todayMidnight.minusDays(1), todayMidnight))
@@ -92,10 +100,6 @@ class ChallengeServiceTest {
     void getChallengesWithoutYesterdayRecords() {
         // given
         Member member = new Member(MemberRole.USER, "nickname1");
-        OffsetDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID)
-                .atStartOfDay(SERVER_TIMEZONE_ID)
-                .toOffsetDateTime();
-
         given(runningRecordRepository.hasByMemberIdAndStartAtBetween(
                         member.memberId(), todayMidnight.minusDays(1), todayMidnight))
                 .willReturn(false);
@@ -128,10 +132,7 @@ class ChallengeServiceTest {
                 List.of(new ChallengeCondition(
                         1, 1, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, goalDistance)));
 
-        OffsetDateTime midnight = LocalDate.now(SERVER_TIMEZONE_ID)
-                .atStartOfDay(SERVER_TIMEZONE_ID)
-                .toOffsetDateTime();
-        OffsetDateTime yesterdayMidnight = midnight.minusDays(1);
+        OffsetDateTime yesterdayMidnight = todayMidnight.minusDays(1);
 
         RunningRecord runningRecord = new RunningRecord(
                 2,
@@ -140,8 +141,8 @@ class ChallengeServiceTest {
                 Duration.ofMinutes(30),
                 1,
                 new Pace(5, 10),
-                midnight.plusHours(6),
-                midnight.plusHours(6).plusMinutes(30),
+                todayMidnight.plusHours(6),
+                todayMidnight.plusHours(6).plusMinutes(30),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                 "location",
                 RunningEmoji.SOSO);
@@ -161,7 +162,8 @@ class ChallengeServiceTest {
 
         given(memberRepository.findById(member.memberId())).willReturn(Optional.of(member));
         given(challengeRepository.findById(challenge.challengeId())).willReturn(Optional.of(challenge));
-        given(runningRecordRepository.findByMemberIdAndStartAtBetween(member.memberId(), yesterdayMidnight, midnight))
+        given(runningRecordRepository.findByMemberIdAndStartAtBetween(
+                        member.memberId(), yesterdayMidnight, todayMidnight))
                 .willReturn(Collections.singletonList(yesterdayrunningRecord));
 
         ChallengePercentageValues percentageValues = new ChallengePercentageValues(
@@ -198,10 +200,6 @@ class ChallengeServiceTest {
                 List.of(new ChallengeCondition(
                         1, 1, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, goalDistance)));
 
-        OffsetDateTime midnight = LocalDate.now(SERVER_TIMEZONE_ID)
-                .atStartOfDay(SERVER_TIMEZONE_ID)
-                .toOffsetDateTime();
-
         RunningRecord runningRecord = new RunningRecord(
                 2,
                 member,
@@ -209,8 +207,8 @@ class ChallengeServiceTest {
                 Duration.ofMinutes(30),
                 1,
                 new Pace(5, 10),
-                midnight.plusHours(6),
-                midnight.plusHours(6).plusMinutes(30),
+                todayMidnight.plusHours(6),
+                todayMidnight.plusHours(6).plusMinutes(30),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                 "location",
                 RunningEmoji.SOSO);
@@ -234,5 +232,68 @@ class ChallengeServiceTest {
         // then
         assertNotNull(response);
         assertTrue(response.successStatus());
+    }
+
+    @DisplayName("챌린지 기록 조회 : 챌린지 기록이 있는 경우")
+    @Test
+    void findChallengeAchievement() {
+        // given
+        Member member = new Member(MemberRole.USER, "nickname1");
+        long runningId = 1L;
+        long challengeId = 1L;
+        Challenge challenge = new Challenge(
+                challengeId,
+                "1km 달리기",
+                "25분",
+                "url",
+                ChallengeType.TODAY,
+                List.of(new ChallengeCondition(
+                        1L, challengeId, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, 1000)));
+        RunningRecord runningRecord = new RunningRecord(
+                runningId,
+                new Member(MemberRole.USER, "nickname"),
+                3000,
+                Duration.ofMinutes(30),
+                1,
+                new Pace(5, 10),
+                todayMidnight,
+                todayMidnight.plusHours(1),
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                "location",
+                RunningEmoji.SOSO);
+
+        ChallengePercentageValues percentageValues = new ChallengePercentageValues(1000, 1000, 0);
+        ChallengeAchievement achievement = new ChallengeAchievement(
+                member, runningRecord, challengeId, new ChallengeAchievementRecord(true, percentageValues));
+
+        given(challengeAchievementRepository.findByMemberIdAndRunningRecordId(member.memberId(), runningId))
+                .willReturn(Optional.of(achievement));
+        given(challengeRepository.findById(challengeId)).willReturn(Optional.of(challenge));
+
+        // when
+        ChallengeAchievementResponse response =
+                challengeService.findChallengeAchievementBy(member.memberId(), runningId);
+
+        // then
+        assertNotNull(response);
+        assertTrue(response.successStatus());
+    }
+
+    @DisplayName("챌린지 기록 조회 : 챌린지 기록이 없는 경우 null 리턴")
+    @Test
+    void findChallengeAchievement_returnNull() {
+        // given
+        Member member = new Member(MemberRole.USER, "nickname1");
+        long runningId = 1L;
+
+        given(challengeAchievementRepository.findByMemberIdAndRunningRecordId(member.memberId(), runningId))
+                .willReturn(Optional.empty());
+
+        // when
+        ChallengeAchievementResponse response =
+                challengeService.findChallengeAchievementBy(member.memberId(), runningId);
+
+        // then
+        assertNull(response);
     }
 }

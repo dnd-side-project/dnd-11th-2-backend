@@ -18,7 +18,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -108,5 +110,36 @@ public class ChallengeAchievementRepositoryImplTest {
         assertTrue(saved.record().successStatus());
         assertFalse(saved.record().hasPercentage());
         assertNull(saved.record().percentageValues());
+    }
+
+    @DisplayName("사용자 챌린지 기록 조회 : runningid로 조회")
+    @Test
+    void findByRunningId() {
+        // given
+        Member member = memberRepository.save(new Member(MemberRole.USER, "nickname"));
+        RunningRecord runningRecord = runningRecordRepository.save(new RunningRecord(
+                1L,
+                member,
+                3000,
+                Duration.ofMinutes(30),
+                1,
+                new Pace(5, 10),
+                LocalDateTime.of(2021, 1, 1, 13, 10, 0).atOffset(ZoneOffset.of("+9")),
+                LocalDateTime.of(2021, 1, 1, 13, 40, 30).atOffset(ZoneOffset.of("+9")),
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                "location",
+                RunningEmoji.SOSO));
+
+        ChallengeAchievementRecord record =
+                new ChallengeAchievementRecord(true, true, new ChallengePercentageValues(3000, 0, 1000));
+        challengeAchievementRepository.save(new ChallengeAchievement(member, runningRecord, 1L, record));
+
+        // when
+        ChallengeAchievement challengeAchievement = challengeAchievementRepository
+                .findByMemberIdAndRunningRecordId(member.memberId(), runningRecord.runningId())
+                .orElse(null);
+
+        // then
+        assertNotNull(challengeAchievement);
     }
 }
