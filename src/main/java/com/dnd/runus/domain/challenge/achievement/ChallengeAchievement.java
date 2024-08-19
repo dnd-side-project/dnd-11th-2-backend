@@ -1,4 +1,4 @@
-package com.dnd.runus.domain.challenge;
+package com.dnd.runus.domain.challenge.achievement;
 
 import com.dnd.runus.domain.member.Member;
 import lombok.Builder;

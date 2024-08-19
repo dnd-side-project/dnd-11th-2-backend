@@ -1,9 +1,9 @@
 package com.dnd.runus.infrastructure.persistence.domain.challenge;
 
-import com.dnd.runus.domain.challenge.ChallengeAchievement;
-import com.dnd.runus.domain.challenge.ChallengeAchievementRecord;
-import com.dnd.runus.domain.challenge.ChallengeAchievementRepository;
-import com.dnd.runus.domain.challenge.ChallengePercentageValues;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
+import com.dnd.runus.domain.challenge.achievement.ChallengePercentageValues;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.global.constant.MemberRole;

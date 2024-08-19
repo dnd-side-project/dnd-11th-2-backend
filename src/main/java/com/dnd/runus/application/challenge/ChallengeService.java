@@ -1,9 +1,10 @@
 package com.dnd.runus.application.challenge;
 
 import com.dnd.runus.domain.challenge.Challenge;
-import com.dnd.runus.domain.challenge.ChallengeAchievement;
-import com.dnd.runus.domain.challenge.ChallengeAchievementRepository;
 import com.dnd.runus.domain.challenge.ChallengeRepository;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.RunningRecord;
@@ -62,18 +63,21 @@ public class ChallengeService {
                     .toOffsetDateTime();
             OffsetDateTime yesterdayMidnight = midnight.minusDays(1);
 
-            RunningRecord yesterdayRecord =
-                    runningRecordRepository
-                            .findByMemberIdAndStartAtBetween(memberId, yesterdayMidnight, midnight)
-                            .stream()
-                            .findFirst()
-                            .orElseThrow(() -> new NotFoundException("not found yesterday running record"));
+            // 전날 기록중, 가장 마지막 기록을 가져오던지 첫번째 기록을 가져오던지 정하면 좋을 것 같아요
+            RunningRecord yesterdayRecord = runningRecordRepository
+                    .findByMemberIdAndStartAtBetween(memberId, yesterdayMidnight, midnight)
+                    .get(0); // 또는 .get(size - 1)
 
-            challenge.convertGoalValuesWithYesterdayRecord(yesterdayRecord);
+            challenge
+                    .conditions()
+                    .forEach(condition -> condition.registerComparisonValue(
+                            condition.goalType().getActualValue(yesterdayRecord)));
         }
 
-        ChallengeAchievement savedAchievement = challengeAchievementRepository.save(new ChallengeAchievement(
-                member, runningRecord.runningId(), challengeId, challenge.toAchievementRecordBy(runningRecord)));
+        ChallengeAchievementRecord achievementRecord = challenge.getAchievementRecord(runningRecord);
+
+        ChallengeAchievement savedAchievement = challengeAchievementRepository.save(
+                new ChallengeAchievement(member, runningRecord.runningId(), challengeId, achievementRecord));
 
         return ChallengeAchievementResponse.from(savedAchievement, challenge);
     }

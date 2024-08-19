@@ -1,13 +1,15 @@
 package com.dnd.runus.application.challenge;
 
 import com.dnd.runus.domain.challenge.Challenge;
-import com.dnd.runus.domain.challenge.ChallengeAchievement;
-import com.dnd.runus.domain.challenge.ChallengeAchievementRecord;
-import com.dnd.runus.domain.challenge.ChallengeAchievementRepository;
+import com.dnd.runus.domain.challenge.ChallengeCondition;
 import com.dnd.runus.domain.challenge.ChallengeGoalType;
-import com.dnd.runus.domain.challenge.ChallengePercentageValues;
 import com.dnd.runus.domain.challenge.ChallengeRepository;
 import com.dnd.runus.domain.challenge.ChallengeType;
+import com.dnd.runus.domain.challenge.ComparisonType;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
+import com.dnd.runus.domain.challenge.achievement.ChallengePercentageValues;
 import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
@@ -30,12 +32,12 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -117,12 +119,14 @@ class ChallengeServiceTest {
         int goalDistance = 1000;
         Member member = new Member(MemberRole.USER, "nickname1");
 
-        Challenge challenge =
-                new Challenge(1L, "어제보다 1km 더 달리기", "25분", "url", ChallengeType.DEFEAT_YESTERDAY, new HashMap<>() {
-                    {
-                        put(ChallengeGoalType.DISTANCE, goalDistance);
-                    }
-                });
+        Challenge challenge = new Challenge(
+                1L,
+                "어제보다 1km 더 달리기",
+                "25분",
+                "url",
+                ChallengeType.DEFEAT_YESTERDAY,
+                List.of(new ChallengeCondition(
+                        1, 1, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, goalDistance)));
 
         OffsetDateTime midnight = LocalDate.now(SERVER_TIMEZONE_ID)
                 .atStartOfDay(SERVER_TIMEZONE_ID)
@@ -185,11 +189,14 @@ class ChallengeServiceTest {
         int goalDistance = 1000;
         Member member = new Member(MemberRole.USER, "nickname1");
 
-        Challenge challenge = new Challenge(1L, "1km 달리기", "25분", "url", ChallengeType.TODAY, new HashMap<>() {
-            {
-                put(ChallengeGoalType.DISTANCE, goalDistance);
-            }
-        });
+        Challenge challenge = new Challenge(
+                1L,
+                "1km 더 달리기",
+                "25분",
+                "url",
+                ChallengeType.TODAY,
+                List.of(new ChallengeCondition(
+                        1, 1, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, goalDistance)));
 
         OffsetDateTime midnight = LocalDate.now(SERVER_TIMEZONE_ID)
                 .atStartOfDay(SERVER_TIMEZONE_ID)

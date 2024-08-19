@@ -1,4 +1,4 @@
-package com.dnd.runus.domain.challenge;
+package com.dnd.runus.domain.challenge.achievement;
 
 /**
  * 사용자의 챌린지 퍼센테이지를 표시하기 위해 필요한 DTO입니다.

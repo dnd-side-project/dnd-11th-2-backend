@@ -1,6 +1,7 @@
 package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
 
 import com.dnd.runus.domain.challenge.Challenge;
+import com.dnd.runus.domain.challenge.ChallengeCondition;
 import com.dnd.runus.domain.challenge.ChallengeGoalType;
 import com.dnd.runus.domain.challenge.ChallengeType;
 import lombok.AccessLevel;
@@ -93,6 +94,10 @@ public enum ChallengeData {
     }
 
     public Challenge toDomain() {
-        return new Challenge(id, name, expectedTime, imageUrl, challengeType, targetValues);
+        List<ChallengeCondition> conditions = targetValues.entrySet().stream()
+                .map(entry -> new ChallengeCondition(
+                        1, id, entry.getKey(), entry.getKey().getComparisonType(), entry.getValue()))
+                .toList();
+        return new Challenge(id, name, expectedTime, imageUrl, challengeType, conditions);
     }
 }

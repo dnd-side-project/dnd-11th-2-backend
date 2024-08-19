@@ -2,7 +2,7 @@ package com.dnd.runus.presentation.v1.challenge.dto.response;
 
 
 import com.dnd.runus.domain.challenge.Challenge;
-import com.dnd.runus.domain.challenge.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.global.constant.ChallengeResultComment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.jetbrains.annotations.NotNull;
