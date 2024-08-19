@@ -10,7 +10,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
@@ -39,7 +38,6 @@ public class ChallengeAchievementEntity extends BaseTimeEntity {
 
     @NotNull
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "running_record_id")
     private RunningRecordEntity runningRecord;
 
     @NotNull
