@@ -10,4 +10,6 @@ public record BadgeAchievement(
     public BadgeAchievement(Badge badge, Member member) {
         this(0, badge, member, null, null);
     }
+
+    public record OnlyBadge(long badgeAchievementId, Badge badge, OffsetDateTime createdAt, OffsetDateTime updatedAt) {}
 }
