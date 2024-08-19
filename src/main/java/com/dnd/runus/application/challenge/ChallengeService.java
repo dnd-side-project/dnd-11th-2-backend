@@ -63,10 +63,9 @@ public class ChallengeService {
                     .toOffsetDateTime();
             OffsetDateTime yesterdayMidnight = midnight.minusDays(1);
 
-            // 전날 기록중, 가장 마지막 기록을 가져오던지 첫번째 기록을 가져오던지 정하면 좋을 것 같아요
             RunningRecord yesterdayRecord = runningRecordRepository
                     .findByMemberIdAndStartAtBetween(memberId, yesterdayMidnight, midnight)
-                    .get(0); // 또는 .get(size - 1)
+                    .get(0);
 
             challenge
                     .conditions()
