@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 public record ChallengeAchievementResponse(
     @NotNull
+    @Schema(description = "챌린지 id")
+    long challengeId,
+    @NotNull
     @Schema(description = "챌린지 이미지 url")
     String imageUrl,
     @NotNull
@@ -26,6 +29,7 @@ public record ChallengeAchievementResponse(
 ) {
     public static ChallengeAchievementResponse from(ChallengeAchievement achievement, Challenge challenge) {
         return new ChallengeAchievementResponse(
+            challenge.challengeId(),
             challenge.imageUrl(),
             challenge.name(),
             ChallengeResultComment.getComment(achievement.record().successStatus()),
