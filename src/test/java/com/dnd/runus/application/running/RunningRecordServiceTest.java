@@ -59,11 +59,12 @@ class RunningRecordServiceTest {
         RunningRecordRequest request = new RunningRecordRequest(
                 LocalDateTime.of(2021, 1, 1, 12, 10, 30),
                 LocalDateTime.of(2021, 1, 1, 13, 12, 10),
+                "start location",
+                "end location",
                 RunningEmoji.VERY_GOOD,
                 1L,
                 new RunningRecordMetricsDto(
                         new Pace(5, 30),
-                        "location name",
                         Duration.ofSeconds(10_100),
                         10_000,
                         500.0,
@@ -76,7 +77,8 @@ class RunningRecordServiceTest {
                 .endAt(request.endAt().atOffset(defaultZoneOffset))
                 .route(request.runningData().route())
                 .emoji(request.emoji())
-                .location(request.runningData().location())
+                .startLocation(request.startLocation())
+                .endLocation(request.endLocation())
                 .distanceMeter(request.runningData().distanceMeter())
                 .duration(request.runningData().runningTime())
                 .calorie(request.runningData().calorie())
@@ -100,11 +102,12 @@ class RunningRecordServiceTest {
         RunningRecordRequest request = new RunningRecordRequest(
                 LocalDateTime.of(2021, 1, 1, 12, 10, 30),
                 LocalDateTime.of(2021, 1, 1, 11, 12, 10),
+                "start location",
+                "end location",
                 RunningEmoji.VERY_GOOD,
                 1L,
                 new RunningRecordMetricsDto(
                         new Pace(5, 30),
-                        "location name",
                         Duration.ofSeconds(10_100),
                         10_000,
                         500.0,
@@ -123,11 +126,12 @@ class RunningRecordServiceTest {
         RunningRecordRequest request = new RunningRecordRequest(
                 LocalDateTime.of(2021, 1, 1, 12, 10, 30),
                 LocalDateTime.of(2021, 1, 1, 13, 12, 10),
+                "start location",
+                "end location",
                 RunningEmoji.VERY_GOOD,
                 1L,
                 new RunningRecordMetricsDto(
                         new Pace(5, 30),
-                        "location name",
                         Duration.ofSeconds(10_100),
                         10_000,
                         500.0,

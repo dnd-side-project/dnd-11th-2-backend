@@ -56,7 +56,8 @@ public class ChallengeAchievementRepositoryImplTest {
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO));
         long challengeId = 1L;
         ChallengeAchievementRecord record =
@@ -96,7 +97,8 @@ public class ChallengeAchievementRepositoryImplTest {
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO));
         ChallengeAchievementRecord record = new ChallengeAchievementRecord(true, false, null);
         ChallengeAchievement challengeAchievement =
@@ -127,7 +129,8 @@ public class ChallengeAchievementRepositoryImplTest {
                 LocalDateTime.of(2021, 1, 1, 13, 10, 0).atOffset(ZoneOffset.of("+9")),
                 LocalDateTime.of(2021, 1, 1, 13, 40, 30).atOffset(ZoneOffset.of("+9")),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO));
 
         ChallengeAchievementRecord record =

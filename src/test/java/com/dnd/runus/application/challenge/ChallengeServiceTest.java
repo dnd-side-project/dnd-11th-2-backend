@@ -1,15 +1,10 @@
 package com.dnd.runus.application.challenge;
 
-import com.dnd.runus.domain.challenge.Challenge;
-import com.dnd.runus.domain.challenge.ChallengeCondition;
-import com.dnd.runus.domain.challenge.ChallengeGoalType;
-import com.dnd.runus.domain.challenge.ChallengeRepository;
-import com.dnd.runus.domain.challenge.ChallengeType;
-import com.dnd.runus.domain.challenge.ComparisonType;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
 import com.dnd.runus.domain.challenge.achievement.ChallengePercentageValues;
+import com.dnd.runus.domain.challenge.*;
 import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
@@ -144,7 +139,8 @@ class ChallengeServiceTest {
                 todayMidnight.plusHours(6),
                 todayMidnight.plusHours(6).plusMinutes(30),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         RunningRecord yesterdayrunningRecord = new RunningRecord(
@@ -157,7 +153,8 @@ class ChallengeServiceTest {
                 yesterdayMidnight.plusHours(6),
                 yesterdayMidnight.plusHours(6).plusMinutes(30),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         given(memberRepository.findById(member.memberId())).willReturn(Optional.of(member));
@@ -210,7 +207,8 @@ class ChallengeServiceTest {
                 todayMidnight.plusHours(6),
                 todayMidnight.plusHours(6).plusMinutes(30),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         given(memberRepository.findById(member.memberId())).willReturn(Optional.of(member));
@@ -259,7 +257,8 @@ class ChallengeServiceTest {
                 todayMidnight,
                 todayMidnight.plusHours(1),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         ChallengePercentageValues percentageValues = new ChallengePercentageValues(1000, 1000, 0);

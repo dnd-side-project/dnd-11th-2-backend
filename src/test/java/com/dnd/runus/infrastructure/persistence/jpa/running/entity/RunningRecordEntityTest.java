@@ -31,7 +31,8 @@ class RunningRecordEntityTest {
                 .startAt(OffsetDateTime.now())
                 .endAt(OffsetDateTime.now())
                 .route(List.of(new Coordinate(128.0, 36.0), new Coordinate(128.0, 37.0)))
-                .location("location 1")
+                .startLocation("start location")
+                .endLocation("end location")
                 .emoji(RunningEmoji.VERY_GOOD)
                 .build();
     }

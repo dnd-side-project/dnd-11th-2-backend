@@ -106,7 +106,8 @@ class ChallengeTest {
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         // when
@@ -160,7 +161,8 @@ class ChallengeTest {
                 LocalDateTime.of(2021, 1, 1, 13, 10, 0).atOffset(defaultZoneOffset),
                 LocalDateTime.of(2021, 1, 1, 13, 40, 30).atOffset(defaultZoneOffset),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         // when
@@ -201,7 +203,8 @@ class ChallengeTest {
                 LocalDateTime.of(2021, 1, 1, 13, 10, 0).atOffset(defaultZoneOffset),
                 LocalDateTime.of(2021, 1, 1, 13, 40, 30).atOffset(defaultZoneOffset),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         // when
@@ -241,7 +244,8 @@ class ChallengeTest {
                 startAt,
                 startAt.plusHours(1).plusMinutes(30),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         // when
@@ -286,7 +290,8 @@ class ChallengeTest {
                 startAt,
                 startAt.plusHours(1).plusMinutes(29),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         // when
@@ -330,7 +335,8 @@ class ChallengeTest {
                 LocalDateTime.of(2021, 1, 1, 13, 10, 0).atOffset(defaultZoneOffset),
                 LocalDateTime.of(2021, 1, 1, 13, 40, 30).atOffset(defaultZoneOffset),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         // when
@@ -365,7 +371,8 @@ class ChallengeTest {
                 LocalDateTime.of(2021, 1, 1, 13, 10, 0).atOffset(defaultZoneOffset),
                 LocalDateTime.of(2021, 1, 1, 13, 40, 30).atOffset(defaultZoneOffset),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         // when
@@ -405,7 +412,8 @@ class ChallengeTest {
                 LocalDateTime.of(2021, 1, 1, 13, 10, 0).atOffset(defaultZoneOffset),
                 LocalDateTime.of(2021, 1, 1, 13, 40, 30).atOffset(defaultZoneOffset),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         // when
@@ -445,7 +453,8 @@ class ChallengeTest {
                 LocalDateTime.of(2021, 1, 1, 13, 10, 0).atOffset(defaultZoneOffset),
                 LocalDateTime.of(2021, 1, 1, 13, 40, 30).atOffset(defaultZoneOffset),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         // when
@@ -486,7 +495,8 @@ class ChallengeTest {
                 LocalDateTime.of(2021, 1, 1, 13, 10, 0).atOffset(defaultZoneOffset),
                 LocalDateTime.of(2021, 1, 1, 13, 40, 30).atOffset(defaultZoneOffset),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         // when
@@ -527,7 +537,8 @@ class ChallengeTest {
                 LocalDateTime.of(2021, 1, 1, 13, 10, 0).atOffset(defaultZoneOffset),
                 LocalDateTime.of(2021, 1, 1, 13, 40, 30).atOffset(defaultZoneOffset),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.SOSO);
 
         // when

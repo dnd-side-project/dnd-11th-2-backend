@@ -55,7 +55,8 @@ class RunningRecordRepositoryImplTest {
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                "location",
+                "start location",
+                "end location",
                 RunningEmoji.BAD);
         RunningRecord savedRunningRecord = runningRecordRepository.save(runningRecord);
 
@@ -88,7 +89,8 @@ class RunningRecordRepositoryImplTest {
                     dayBeforeYesterday.plusHours(i * i).plusMinutes(1),
                     dayBeforeYesterday.plusHours(i * i).plusMinutes(30),
                     List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                    String.valueOf(i),
+                    "start location",
+                    "end location",
                     RunningEmoji.SOSO);
             runningRecordRepository.save(runningRecord);
         }
@@ -121,7 +123,8 @@ class RunningRecordRepositoryImplTest {
                     dayBeforeYesterday.plusHours(i * i).plusMinutes(1),
                     dayBeforeYesterday.plusHours(i * i).plusMinutes(30),
                     List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
-                    String.valueOf(i),
+                    "start location",
+                    "end location",
                     RunningEmoji.SOSO);
             runningRecordRepository.save(runningRecord);
         }
