@@ -5,8 +5,8 @@ import com.dnd.runus.global.exception.type.ApiErrorType;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.annotation.MemberId;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlyDatesResponse;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordReportResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordSummaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,8 +41,8 @@ public class RunningRecordController {
     }
 
     @Operation(
-            summary = "러닝 기록 추가 API. RunningRecordRequest, RunningRecordReportResponse 스키마를 참고해 주세요.",
-            description = "러닝 기록을 추가합니다. RunningRecordRequest, RunningRecordSavingResponse 스키마를 참고해 주세요.<br>"
+            summary = "러닝 기록 추가 API",
+            description = "러닝 기록을 추가합니다.<br>"
                     + "러닝 기록은 시작 시간, 종료 시간, 이모지, 챌린지 ID, 러닝 데이터로 구성됩니다. <br> "
                     + "러닝 데이터는 route(코스), 위치, 거리, 시간, 칼로리, 평균 페이스로 구성됩니다. <br> "
                     + "route는 최소 2개의 좌표를 가져야 합니다. <br> "
@@ -50,7 +50,7 @@ public class RunningRecordController {
     @ApiErrorType({ErrorType.START_AFTER_END, ErrorType.ROUTE_MUST_HAVE_AT_LEAST_TWO_COORDINATES})
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public RunningRecordReportResponse addRunningRecord(
+    public RunningRecordAddResultResponse addRunningRecord(
             @MemberId long memberId, @Valid @RequestBody RunningRecordRequest request) {
         return runningRecordService.addRunningRecord(memberId, request);
     }
