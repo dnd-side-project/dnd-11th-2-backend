@@ -12,9 +12,6 @@ import java.util.List;
 public record RunningRecordMetricsDto(
         @Schema(description = "평균 페이스", example = "5'30''")
         Pace averagePace,
-        @NotBlank
-        @Schema(description = "시작 위치", example = "서울시,연남동")
-        String location,
         @Schema(description = "멈춘 시간을 제외한 실제로 달린 시간", example = "123:45:56", format = "HH:mm:ss")
         Duration runningTime,
         int distanceMeter,
