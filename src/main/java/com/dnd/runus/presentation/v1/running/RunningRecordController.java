@@ -5,18 +5,39 @@ import com.dnd.runus.global.exception.type.ApiErrorType;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.annotation.MemberId;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordDateResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordReportResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordSummaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+
+@Tag(name = "러닝 기록")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/running-records")
 public class RunningRecordController {
     private final RunningRecordService runningRecordService;
+
+    @GetMapping("monthly")
+    @Operation(summary = "해당 월의 러닝 기록 조회", description = "해당 월의 러닝 기록을 조회합니다. 해당 월에 러닝 기록이 있는 날짜를 반환합니다.")
+    public RunningRecordDateResponse getRunningRecords(
+            @MemberId long memberId, @RequestParam int year, @RequestParam int month) {
+        List<LocalDate> days = runningRecordService.getRunningRecordDates(memberId, year, month);
+        return new RunningRecordDateResponse(days);
+    }
+
+    @GetMapping("daily")
+    @Operation(summary = "해당 일자의 러닝 기록 요약 조회", description = "해당 일자의 러닝 기록을 조회합니다. 해당 일자의 러닝 기록들을 반환합니다.")
+    public RunningRecordSummaryResponse getRunningRecords(@MemberId long memberId, @RequestParam LocalDate date) {
+        return runningRecordService.getRunningRecordSummaries(memberId, date);
+    }
 
     @Operation(
             summary = "러닝 기록 추가 API. RunningRecordRequest, RunningRecordReportResponse 스키마를 참고해 주세요.",
