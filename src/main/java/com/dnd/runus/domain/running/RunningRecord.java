@@ -21,5 +21,6 @@ public record RunningRecord(
         OffsetDateTime startAt,
         OffsetDateTime endAt,
         List<Coordinate> route,
-        String location,
+        String startLocation,
+        String endLocation,
         RunningEmoji emoji) {}

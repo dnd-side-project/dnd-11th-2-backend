@@ -8,6 +8,7 @@ import com.dnd.runus.infrastructure.persistence.domain.GeometryMapper;
 import com.dnd.runus.infrastructure.persistence.jpa.member.entity.MemberEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,7 +61,12 @@ public class RunningRecordEntity extends BaseTimeEntity {
     private LineString route;
 
     @NotNull
-    private String location;
+    @Size(max = 50)
+    private String startLocation;
+
+    @NotNull
+    @Size(max = 50)
+    private String endLocation;
 
     @NotNull
     @Enumerated(STRING)
@@ -77,7 +83,8 @@ public class RunningRecordEntity extends BaseTimeEntity {
                 .startAt(runningRecord.startAt())
                 .endAt(runningRecord.endAt())
                 .route(GeometryMapper.toLineString(runningRecord.route()))
-                .location(runningRecord.location())
+                .startLocation(runningRecord.startLocation())
+                .endLocation(runningRecord.endLocation())
                 .emoji(runningRecord.emoji())
                 .build();
     }
@@ -93,7 +100,8 @@ public class RunningRecordEntity extends BaseTimeEntity {
                 .startAt(startAt)
                 .endAt(endAt)
                 .route(GeometryMapper.toDomain(route))
-                .location(location)
+                .startLocation(startLocation)
+                .endLocation(endLocation)
                 .emoji(emoji)
                 .build();
     }
