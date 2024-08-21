@@ -54,18 +54,23 @@ public class OauthService {
             throw new AuthException(ErrorType.FAILED_AUTHENTICATION, "Failed to get email from idToken");
         }
 
-        // 회원 가입하지 않았다면, 회원 가입 진행
-        SocialProfile socialProfile = socialProfileRepository
+        // 사용자가 존재하면 -> 이메일, 닉네임 update
+        // 비회원일 경우 insert
+        Long memberId = socialProfileRepository
                 .findBySocialTypeAndOauthId(request.socialType(), oauthId)
-                .orElseGet(() -> createMember(oauthId, email, request.socialType(), request.nickName()));
+                .map(socialProfile -> {
+                    // 이메일, 닉네임 update
+                    if (!email.equals(socialProfile.oauthEmail())) {
+                        socialProfileRepository.updateOauthEmail(socialProfile.socialProfileId(), email);
+                    }
+                    memberRepository.updateNicknameById(socialProfile.member().memberId(), request.nickName());
+                    return socialProfile.member().memberId();
+                })
+                .orElseGet(() -> createMember(oauthId, email, request.socialType(), request.nickName())
+                        .member()
+                        .memberId());
 
-        // 사용자가 소셜 계정의 이메일을 변경했다면, 해당 계정의 소셜 이메일을 새로 업데이트
-        if (!email.equals(socialProfile.oauthEmail())) {
-            socialProfileRepository.updateOauthEmail(socialProfile.socialProfileId(), email);
-        }
-
-        AuthTokenDto tokenDto = tokenProviderModule.generate(
-                String.valueOf(socialProfile.member().memberId()));
+        AuthTokenDto tokenDto = tokenProviderModule.generate(String.valueOf(memberId));
 
         return TokenResponse.from(tokenDto);
     }
@@ -101,6 +106,7 @@ public class OauthService {
     private SocialProfile createMember(String oauthId, String email, SocialType socialType, String nickname) {
         Member member = memberRepository.save(new Member(MemberRole.USER, nickname));
 
+        // default level 설정
         memberLevelRepository.save(new MemberLevel(member));
 
         return socialProfileRepository.save(SocialProfile.builder()

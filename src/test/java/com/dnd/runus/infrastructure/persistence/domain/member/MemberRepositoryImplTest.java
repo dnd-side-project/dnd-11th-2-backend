@@ -7,7 +7,9 @@ import com.dnd.runus.infrastructure.persistence.annotation.RepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,5 +50,22 @@ class MemberRepositoryImplTest {
 
         // then
         assertFalse(memberRepository.findById(savedMemberId).isPresent());
+    }
+
+    @Transactional
+    @DisplayName("사용자 nickname을 update한다.")
+    @Test
+    void updateNickName() {
+        // given
+        Member member = memberRepository.save(new Member(MemberRole.USER, "nickname"));
+        String newNickName = "newNickName";
+
+        // when
+        memberRepository.updateNicknameById(member.memberId(), newNickName);
+
+        // then
+        Member updatedMember = memberRepository.findById(member.memberId()).orElse(null);
+        assertNotNull(updatedMember);
+        assertThat(updatedMember.nickname()).isEqualTo(newNickName);
     }
 }

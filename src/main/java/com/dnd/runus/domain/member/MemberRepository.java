@@ -8,4 +8,6 @@ public interface MemberRepository {
     Member save(Member member);
 
     void deleteById(long memberId);
+
+    void updateNicknameById(long memberId, String newNickname);
 }
