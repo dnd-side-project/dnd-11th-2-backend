@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "로그인 및 회원가입 응답 DTO")
 public record SignResponse(
     @Schema(description = "사용자 닉네임")
-    String nickName,
+    String nickname,
     @Schema(description = "사용자 이메일")
     String email,
     @Schema(description = "엑세스 토큰")
@@ -17,9 +17,9 @@ public record SignResponse(
     String refreshToken
 ) {
 
-    public static SignResponse from(String nickName, String email, AuthTokenDto tokenDto) {
+    public static SignResponse from(String nickname, String email, AuthTokenDto tokenDto) {
         return new SignResponse(
-            nickName,
+            nickname,
             email,
             tokenDto.accessToken(),
             "refreshToken");

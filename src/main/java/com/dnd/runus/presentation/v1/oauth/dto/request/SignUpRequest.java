@@ -15,6 +15,6 @@ public record SignUpRequest(
         String idToken,
         @Schema(description = "사용자 이름")
         @NotBlank
-        String nickName
+        String nickname
 ) {
 }

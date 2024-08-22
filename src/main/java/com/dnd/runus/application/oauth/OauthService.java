@@ -43,7 +43,7 @@ public class OauthService {
         OidcProvider oidcProvider = oidcProviderRegistry.getOidcProviderBy(request.socialType());
         Claims claim = oidcProvider.getClaimsBy(request.idToken());
         String oauthId = claim.getSubject();
-        String email = String.valueOf(claim.get("email"));
+        String email = (String) claim.get("email");
         if (StringUtils.isBlank(email)) {
             log.warn("Failed to get email from idToken! type: {}, claim: {}", request.socialType(), claim);
             throw new AuthException(ErrorType.FAILED_AUTHENTICATION, "Failed to get email from idToken");
@@ -72,7 +72,7 @@ public class OauthService {
         OidcProvider oidcProvider = oidcProviderRegistry.getOidcProviderBy(request.socialType());
         Claims claim = oidcProvider.getClaimsBy(request.idToken());
         String oauthId = claim.getSubject();
-        String email = String.valueOf(claim.get("email"));
+        String email = (String) claim.get("email");
         if (StringUtils.isBlank(email)) {
             log.warn("Failed to get email from idToken! type: {}, claim: {}", request.socialType(), claim);
             throw new AuthException(ErrorType.FAILED_AUTHENTICATION, "Failed to get email from idToken");
@@ -81,7 +81,7 @@ public class OauthService {
         // 기존 사용자 없을 경우 insert
         SocialProfile socialProfile = socialProfileRepository
                 .findBySocialTypeAndOauthId(request.socialType(), oauthId)
-                .orElseGet(() -> createMember(oauthId, email, request.socialType(), request.nickName()));
+                .orElseGet(() -> createMember(oauthId, email, request.socialType(), request.nickname()));
 
         // 이메일 변경 되었을 경우 update
         if (!email.equals(socialProfile.oauthEmail())) {

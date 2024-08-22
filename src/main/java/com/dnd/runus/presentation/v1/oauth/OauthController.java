@@ -42,7 +42,7 @@ public class OauthController {
         ErrorType.FAILED_AUTHENTICATION,
         ErrorType.UNSUPPORTED_JWT_TOKEN
     })
-    @PostMapping("/sing-in")
+    @PostMapping("/sign-in")
     @ResponseStatus(HttpStatus.OK)
     public SignResponse signIn(@Valid @RequestBody SignInRequest request) {
         return oauthService.signIn(request);
