@@ -3,7 +3,7 @@ package com.dnd.runus.domain.challenge.achievement.dto;
 
 import com.dnd.runus.domain.challenge.Challenge;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
-import com.dnd.runus.global.constant.RunningResultComment;
+import com.dnd.runus.global.constant.ChallengeResultComment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,7 @@ public record ChallengeAchievementDto(
         return new ChallengeAchievementDto(
             challenge.imageUrl(),
             challenge.name(),
-            RunningResultComment.getComment(achievement.record().successStatus()),
+            ChallengeResultComment.getComment(achievement.record().successStatus()),
             achievement.record().successStatus()
         );
     }
