@@ -38,7 +38,7 @@ public class OauthService {
     private final RunningRecordRepository runningRecordRepository;
     private final MemberLevelRepository memberLevelRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public SignResponse signIn(SignInRequest request) {
         OidcProvider oidcProvider = oidcProviderRegistry.getOidcProviderBy(request.socialType());
         Claims claim = oidcProvider.getClaimsBy(request.idToken());
@@ -53,6 +53,11 @@ public class OauthService {
                 .findBySocialTypeAndOauthId(request.socialType(), oauthId)
                 .orElseThrow(
                         () -> new BusinessException(ErrorType.USER_NOT_FOUND, "socialType: " + request.socialType()));
+
+        // 이메일 변경 되었을 경우 update
+        if (!email.equals(socialProfile.oauthEmail())) {
+            socialProfileRepository.updateOauthEmail(socialProfile.socialProfileId(), email);
+        }
 
         Member member =
                 memberRepository.findById(socialProfile.member().memberId()).orElseThrow(RuntimeException::new);
