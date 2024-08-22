@@ -5,12 +5,12 @@ import com.dnd.runus.domain.challenge.ChallengeRepository;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
+import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievementDto;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.exception.NotFoundException;
-import com.dnd.runus.presentation.v1.challenge.dto.response.ChallengeAchievementResponse;
 import com.dnd.runus.presentation.v1.challenge.dto.response.ChallengesResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,9 +48,7 @@ public class ChallengeService {
     }
 
     @Transactional
-    public ChallengeAchievementResponse save(long memberId, RunningRecord runningRecord, long challengeId) {
-        Member member =
-                memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
+    public ChallengeAchievementDto save(Member member, RunningRecord runningRecord, long challengeId) {
         Challenge challenge = challengeRepository
                 .findById(challengeId)
                 .orElseThrow(() -> new NotFoundException(Challenge.class, challengeId));
@@ -64,7 +62,7 @@ public class ChallengeService {
             OffsetDateTime yesterdayMidnight = midnight.minusDays(1);
 
             RunningRecord yesterdayRecord = runningRecordRepository
-                    .findByMemberIdAndStartAtBetween(memberId, yesterdayMidnight, midnight)
+                    .findByMemberIdAndStartAtBetween(member.memberId(), yesterdayMidnight, midnight)
                     .get(0);
 
             challenge
@@ -78,11 +76,11 @@ public class ChallengeService {
         ChallengeAchievement savedAchievement = challengeAchievementRepository.save(
                 new ChallengeAchievement(member, runningRecord, challengeId, achievementRecord));
 
-        return ChallengeAchievementResponse.from(savedAchievement, challenge);
+        return ChallengeAchievementDto.from(savedAchievement, challenge);
     }
 
     @Transactional(readOnly = true)
-    public ChallengeAchievementResponse findChallengeAchievementBy(long memberId, long runningId) {
+    public ChallengeAchievementDto findChallengeAchievementBy(long memberId, long runningId) {
 
         ChallengeAchievement challengeAchievement = challengeAchievementRepository
                 .findByMemberIdAndRunningRecordId(memberId, runningId)
@@ -95,6 +93,6 @@ public class ChallengeService {
                 .findById(challengeAchievement.challengeId())
                 .orElseThrow(() -> new NotFoundException(Challenge.class, challengeAchievement.challengeId()));
 
-        return ChallengeAchievementResponse.from(challengeAchievement, challenge);
+        return ChallengeAchievementDto.from(challengeAchievement, challenge);
     }
 }

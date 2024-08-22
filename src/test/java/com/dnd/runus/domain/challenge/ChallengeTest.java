@@ -38,14 +38,14 @@ class ChallengeTest {
                 "0분",
                 "url",
                 ChallengeType.DEFEAT_YESTERDAY,
-                List.of(new ChallengeCondition(1L, 1L, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, 500)));
+                List.of(new ChallengeCondition(1L, 1L, GoalType.DISTANCE, ComparisonType.GREATER, 500)));
         Challenge todyaChallenge = new Challenge(
                 1L,
                 "otherChallenge",
                 "0분",
                 "url",
                 ChallengeType.TODAY,
-                List.of(new ChallengeCondition(1L, 1L, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, 500)));
+                List.of(new ChallengeCondition(1L, 1L, GoalType.DISTANCE, ComparisonType.GREATER, 500)));
         Challenge otherChallenge = new Challenge(
                 1L,
                 "otherChallenge",
@@ -53,8 +53,8 @@ class ChallengeTest {
                 "url",
                 ChallengeType.DISTANCE_IN_TIME,
                 List.of(
-                        new ChallengeCondition(1L, 1L, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, 500),
-                        new ChallengeCondition(1L, 1L, ChallengeGoalType.PACE, ComparisonType.GREATER, 6 * 60)));
+                        new ChallengeCondition(1L, 1L, GoalType.DISTANCE, ComparisonType.GREATER, 500),
+                        new ChallengeCondition(1L, 1L, GoalType.PACE, ComparisonType.GREATER, 6 * 60)));
 
         // when & then
         assertTrue(defeatYesterdayChallenge.isDefeatYesterdayChallenge());
@@ -76,8 +76,7 @@ class ChallengeTest {
                 "4분",
                 "url",
                 ChallengeType.DEFEAT_YESTERDAY,
-                List.of(new ChallengeCondition(
-                        1L, 1L, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, goalChallengeDis)));
+                List.of(new ChallengeCondition(1L, 1L, GoalType.DISTANCE, ComparisonType.GREATER, goalChallengeDis)));
 
         Challenge challengeDataForTime = new Challenge(
                 2L,
@@ -85,8 +84,7 @@ class ChallengeTest {
                 "10분",
                 "url",
                 ChallengeType.DEFEAT_YESTERDAY,
-                List.of(new ChallengeCondition(
-                        1L, 2L, ChallengeGoalType.TIME, ComparisonType.GREATER, goalChallengeTime)));
+                List.of(new ChallengeCondition(1L, 2L, GoalType.TIME, ComparisonType.GREATER, goalChallengeTime)));
         Challenge challengeDataForPace = new Challenge(
                 3L,
                 "어제보다 10초 더빠른 페이스로 달리기",
@@ -94,7 +92,7 @@ class ChallengeTest {
                 "url",
                 ChallengeType.DEFEAT_YESTERDAY,
                 List.of(new ChallengeCondition(
-                        3L, 2L, ChallengeGoalType.PACE, ComparisonType.LESS, goalChallengePace.toSeconds())));
+                        3L, 2L, GoalType.PACE, ComparisonType.LESS, goalChallengePace.toSeconds())));
 
         RunningRecord yesterdayRecord = new RunningRecord(
                 0,
@@ -149,8 +147,7 @@ class ChallengeTest {
                 "25분",
                 "url",
                 ChallengeType.TODAY,
-                List.of(new ChallengeCondition(
-                        1L, 1L, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, goalDistance)));
+                List.of(new ChallengeCondition(1L, 1L, GoalType.DISTANCE, ComparisonType.GREATER, goalDistance)));
         RunningRecord runningRecord = new RunningRecord(
                 0,
                 new Member(MemberRole.USER, "nickname"),
@@ -190,8 +187,7 @@ class ChallengeTest {
                 "25분",
                 "url",
                 ChallengeType.TODAY,
-                List.of(new ChallengeCondition(
-                        1L, 1L, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, goalDistance)));
+                List.of(new ChallengeCondition(1L, 1L, GoalType.DISTANCE, ComparisonType.GREATER, goalDistance)));
 
         RunningRecord runningRecord = new RunningRecord(
                 0,
@@ -233,7 +229,7 @@ class ChallengeTest {
                 "1시간 30분",
                 "url",
                 ChallengeType.TODAY,
-                List.of(new ChallengeCondition(1L, 1L, ChallengeGoalType.TIME, ComparisonType.GREATER, goalTime)));
+                List.of(new ChallengeCondition(1L, 1L, GoalType.TIME, ComparisonType.GREATER, goalTime)));
         RunningRecord runningRecord = new RunningRecord(
                 0,
                 new Member(MemberRole.USER, "nickname"),
@@ -278,7 +274,7 @@ class ChallengeTest {
                 "1시간 30분",
                 "url",
                 ChallengeType.TODAY,
-                List.of(new ChallengeCondition(1L, 1L, ChallengeGoalType.TIME, ComparisonType.GREATER, goalTime)));
+                List.of(new ChallengeCondition(1L, 1L, GoalType.TIME, ComparisonType.GREATER, goalTime)));
 
         RunningRecord runningRecord = new RunningRecord(
                 0,
@@ -323,7 +319,7 @@ class ChallengeTest {
                 "0분",
                 "url",
                 ChallengeType.TODAY,
-                List.of(new ChallengeCondition(1L, 1L, ChallengeGoalType.PACE, ComparisonType.LESS, pace.toSeconds())));
+                List.of(new ChallengeCondition(1L, 1L, GoalType.PACE, ComparisonType.LESS, pace.toSeconds())));
 
         RunningRecord runningRecord = new RunningRecord(
                 0,
@@ -359,7 +355,7 @@ class ChallengeTest {
                 "1시간 30분",
                 "url",
                 ChallengeType.TODAY,
-                List.of(new ChallengeCondition(1L, 1L, ChallengeGoalType.PACE, ComparisonType.LESS, pace.toSeconds())));
+                List.of(new ChallengeCondition(1L, 1L, GoalType.PACE, ComparisonType.LESS, pace.toSeconds())));
 
         RunningRecord runningRecord = new RunningRecord(
                 0,
@@ -398,10 +394,8 @@ class ChallengeTest {
                 "url",
                 ChallengeType.DISTANCE_IN_TIME,
                 List.of(
-                        new ChallengeCondition(
-                                1L, 1L, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, goalDistance),
-                        new ChallengeCondition(
-                                1L, 1L, ChallengeGoalType.PACE, ComparisonType.LESS, goalPace.toSeconds())));
+                        new ChallengeCondition(1L, 1L, GoalType.DISTANCE, ComparisonType.GREATER, goalDistance),
+                        new ChallengeCondition(1L, 1L, GoalType.PACE, ComparisonType.LESS, goalPace.toSeconds())));
         RunningRecord runningRecord = new RunningRecord(
                 0,
                 new Member(MemberRole.USER, "nickname"),
@@ -439,10 +433,8 @@ class ChallengeTest {
                 "url",
                 ChallengeType.DISTANCE_IN_TIME,
                 List.of(
-                        new ChallengeCondition(
-                                1L, 1L, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, goalDistance),
-                        new ChallengeCondition(
-                                1L, 1L, ChallengeGoalType.PACE, ComparisonType.LESS, goalPace.toSeconds())));
+                        new ChallengeCondition(1L, 1L, GoalType.DISTANCE, ComparisonType.GREATER, goalDistance),
+                        new ChallengeCondition(1L, 1L, GoalType.PACE, ComparisonType.LESS, goalPace.toSeconds())));
         RunningRecord runningRecord = new RunningRecord(
                 0,
                 new Member(MemberRole.USER, "nickname"),
@@ -480,10 +472,8 @@ class ChallengeTest {
                 "url",
                 ChallengeType.DISTANCE_IN_TIME,
                 List.of(
-                        new ChallengeCondition(
-                                1L, 1L, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, goalDistance),
-                        new ChallengeCondition(
-                                1L, 1L, ChallengeGoalType.PACE, ComparisonType.LESS, goalPace.toSeconds())));
+                        new ChallengeCondition(1L, 1L, GoalType.DISTANCE, ComparisonType.GREATER, goalDistance),
+                        new ChallengeCondition(1L, 1L, GoalType.PACE, ComparisonType.LESS, goalPace.toSeconds())));
 
         RunningRecord runningRecord = new RunningRecord(
                 0,
@@ -522,10 +512,8 @@ class ChallengeTest {
                 "url",
                 ChallengeType.DISTANCE_IN_TIME,
                 List.of(
-                        new ChallengeCondition(
-                                1L, 1L, ChallengeGoalType.DISTANCE, ComparisonType.GREATER, goalDistance),
-                        new ChallengeCondition(
-                                1L, 1L, ChallengeGoalType.PACE, ComparisonType.LESS, goalPace.toSeconds())));
+                        new ChallengeCondition(1L, 1L, GoalType.DISTANCE, ComparisonType.GREATER, goalDistance),
+                        new ChallengeCondition(1L, 1L, GoalType.PACE, ComparisonType.LESS, goalPace.toSeconds())));
 
         RunningRecord runningRecord = new RunningRecord(
                 0,

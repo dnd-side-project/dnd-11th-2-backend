@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
  * <p>챌린지 타입에 따라 챌린지 결과 기록을 다르게 계산합니다.
  */
 @RequiredArgsConstructor
-public enum ChallengeGoalType {
+public enum GoalType {
     DISTANCE,
     TIME,
     PACE,

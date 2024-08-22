@@ -11,7 +11,7 @@ public class ChallengeCondition {
 
     private final long challengeConditionId;
     private final long challengeId;
-    private final ChallengeGoalType goalType;
+    private final GoalType goalType;
     private final ComparisonType comparisonType;
     private final int goalValue; // 목표 값(챌린지가 지정한)
 
@@ -20,7 +20,7 @@ public class ChallengeCondition {
     public ChallengeCondition(
             long challengeConditionId,
             long challengeId,
-            ChallengeGoalType goalType,
+            GoalType goalType,
             ComparisonType comparisonType,
             int goalValue) {
         this.challengeConditionId = challengeConditionId;

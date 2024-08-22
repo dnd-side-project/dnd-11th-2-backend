@@ -2,8 +2,8 @@ package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
 
 import com.dnd.runus.domain.challenge.Challenge;
 import com.dnd.runus.domain.challenge.ChallengeCondition;
-import com.dnd.runus.domain.challenge.ChallengeGoalType;
 import com.dnd.runus.domain.challenge.ChallengeType;
+import com.dnd.runus.domain.challenge.GoalType;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.dnd.runus.domain.challenge.ChallengeGoalType.DISTANCE;
-import static com.dnd.runus.domain.challenge.ChallengeGoalType.PACE;
-import static com.dnd.runus.domain.challenge.ChallengeGoalType.TIME;
 import static com.dnd.runus.domain.challenge.ChallengeType.DEFEAT_YESTERDAY;
 import static com.dnd.runus.domain.challenge.ChallengeType.DISTANCE_IN_TIME;
 import static com.dnd.runus.domain.challenge.ChallengeType.TODAY;
+import static com.dnd.runus.domain.challenge.GoalType.DISTANCE;
+import static com.dnd.runus.domain.challenge.GoalType.PACE;
+import static com.dnd.runus.domain.challenge.GoalType.TIME;
 
 /**
  * ChallengeData 오늘의 챌린지 data입니다. (FIXME)
@@ -25,7 +25,7 @@ import static com.dnd.runus.domain.challenge.ChallengeType.TODAY;
  * <p>{@code expectedTime} : 예상 소모 시간(sec),
  * <p> 목표가 시간이면 해당 시간(분*60)으로, 거리면 거리(km)* 기본페이스(8분)*60 으로,
  * 거리+페이스면 거리면 거리(km)* 페이스(분)*60 으로, 페이스면 0으로 직접 입력합니다.
- * <p>{@code targetValues} : Map<GoalType, Integer> key: {@link ChallengeGoalType} 값, value:
+ * <p>{@code targetValues} : Map<GoalType, Integer> key: {@link GoalType} 값, value:
  * GoalType과 관련된 목표 값
  * DISTANCE는 미터, TIME과 PACE는 초단위다.
  */
@@ -78,7 +78,7 @@ public enum ChallengeData {
     private final String expectedTime;
     private final String name;
     private final ChallengeType challengeType;
-    private final Map<ChallengeGoalType, Integer> targetValues;
+    private final Map<GoalType, Integer> targetValues;
     private final String imageUrl;
 
     public static List<ChallengeData> getChallenges(boolean hasPreRecord) {
