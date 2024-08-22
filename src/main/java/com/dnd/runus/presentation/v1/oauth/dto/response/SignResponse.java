@@ -2,7 +2,6 @@ package com.dnd.runus.presentation.v1.oauth.dto.response;
 
 
 import com.dnd.runus.auth.token.dto.AuthTokenDto;
-import com.dnd.runus.domain.member.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "로그인 및 회원가입 응답 DTO")
