@@ -167,7 +167,7 @@ class ChallengeServiceTest {
         given(challengeAchievementRepository.save(expected)).willReturn(expected);
 
         // when
-        ChallengeAchievementDto response = challengeService.save(member, runningRecord, challenge.challengeId());
+        ChallengeAchievementDto response = challengeService.save(runningRecord, challenge.challengeId());
 
         // then
         assertNotNull(response);
@@ -215,7 +215,7 @@ class ChallengeServiceTest {
         given(challengeAchievementRepository.save(expected)).willReturn(expected);
 
         // when
-        ChallengeAchievementDto response = challengeService.save(member, runningRecord, challenge.challengeId());
+        ChallengeAchievementDto response = challengeService.save(runningRecord, challenge.challengeId());
 
         // then
         assertNotNull(response);
