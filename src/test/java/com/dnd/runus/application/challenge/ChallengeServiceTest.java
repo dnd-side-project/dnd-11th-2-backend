@@ -9,7 +9,6 @@ import com.dnd.runus.domain.challenge.*;
 import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
-import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.constant.MemberRole;
@@ -48,9 +47,6 @@ class ChallengeServiceTest {
 
     @Mock
     private ChallengeRepository challengeRepository;
-
-    @Mock
-    private MemberRepository memberRepository;
 
     @InjectMocks
     private ChallengeService challengeService;
@@ -156,7 +152,6 @@ class ChallengeServiceTest {
                 "end location",
                 RunningEmoji.SOSO);
 
-        given(memberRepository.findById(member.memberId())).willReturn(Optional.of(member));
         given(challengeRepository.findById(challenge.challengeId())).willReturn(Optional.of(challenge));
         given(runningRecordRepository.findByMemberIdAndStartAtBetween(
                         member.memberId(), yesterdayMidnight, todayMidnight))
