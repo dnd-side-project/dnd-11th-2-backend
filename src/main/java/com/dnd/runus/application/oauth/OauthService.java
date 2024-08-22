@@ -10,11 +10,13 @@ import com.dnd.runus.domain.member.*;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.SocialType;
+import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.global.exception.type.ErrorType;
-import com.dnd.runus.presentation.v1.oauth.dto.request.OauthRequest;
+import com.dnd.runus.presentation.v1.oauth.dto.request.SignInRequest;
+import com.dnd.runus.presentation.v1.oauth.dto.request.SignUpRequest;
 import com.dnd.runus.presentation.v1.oauth.dto.request.WithdrawRequest;
-import com.dnd.runus.presentation.v1.oauth.dto.response.TokenResponse;
+import com.dnd.runus.presentation.v1.oauth.dto.response.SignResponse;
 import io.jsonwebtoken.Claims;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
@@ -36,16 +38,9 @@ public class OauthService {
     private final RunningRecordRepository runningRecordRepository;
     private final MemberLevelRepository memberLevelRepository;
 
-    /**
-     * 회원가입 유무 확인 후 회원가입/로그인 진행
-     *
-     * @param request 로그인 request
-     * @return TokenResponse
-     */
-    @Transactional
-    public TokenResponse signIn(OauthRequest request) {
+    @Transactional(readOnly = true)
+    public SignResponse signIn(SignInRequest request) {
         OidcProvider oidcProvider = oidcProviderRegistry.getOidcProviderBy(request.socialType());
-
         Claims claim = oidcProvider.getClaimsBy(request.idToken());
         String oauthId = claim.getSubject();
         String email = String.valueOf(claim.get("email"));
@@ -54,25 +49,47 @@ public class OauthService {
             throw new AuthException(ErrorType.FAILED_AUTHENTICATION, "Failed to get email from idToken");
         }
 
-        // 사용자가 존재하면 -> 이메일, 닉네임 update
-        // 비회원일 경우 insert
-        Long memberId = socialProfileRepository
+        SocialProfile socialProfile = socialProfileRepository
                 .findBySocialTypeAndOauthId(request.socialType(), oauthId)
-                .map(socialProfile -> {
-                    // 이메일, 닉네임 update
-                    if (!email.equals(socialProfile.oauthEmail())) {
-                        socialProfileRepository.updateOauthEmail(socialProfile.socialProfileId(), email);
-                    }
-                    memberRepository.updateNicknameById(socialProfile.member().memberId(), request.nickName());
-                    return socialProfile.member().memberId();
-                })
-                .orElseGet(() -> createMember(oauthId, email, request.socialType(), request.nickName())
-                        .member()
-                        .memberId());
+                .orElseThrow(
+                        () -> new BusinessException(ErrorType.USER_NOT_FOUND, "socialType: " + request.socialType()));
 
-        AuthTokenDto tokenDto = tokenProviderModule.generate(String.valueOf(memberId));
+        Member member =
+                memberRepository.findById(socialProfile.member().memberId()).orElseThrow(RuntimeException::new);
 
-        return TokenResponse.from(tokenDto);
+        AuthTokenDto tokenDto = tokenProviderModule.generate(String.valueOf(member.memberId()));
+
+        return SignResponse.from(member.nickname(), email, tokenDto);
+    }
+
+    @Transactional
+    public SignResponse signUp(SignUpRequest request) {
+        OidcProvider oidcProvider = oidcProviderRegistry.getOidcProviderBy(request.socialType());
+        Claims claim = oidcProvider.getClaimsBy(request.idToken());
+        String oauthId = claim.getSubject();
+        String email = String.valueOf(claim.get("email"));
+        if (StringUtils.isBlank(email)) {
+            log.warn("Failed to get email from idToken! type: {}, claim: {}", request.socialType(), claim);
+            throw new AuthException(ErrorType.FAILED_AUTHENTICATION, "Failed to get email from idToken");
+        }
+
+        // 기존 사용자 없을 경우 insert
+        SocialProfile socialProfile = socialProfileRepository
+                .findBySocialTypeAndOauthId(request.socialType(), oauthId)
+                .orElseGet(() -> createMember(oauthId, email, request.socialType(), request.nickName()));
+
+        // 이메일 변경 되었을 경우 update
+        if (!email.equals(socialProfile.oauthEmail())) {
+            socialProfileRepository.updateOauthEmail(socialProfile.socialProfileId(), email);
+        }
+
+        Member member = memberRepository
+                .findById(socialProfile.member().memberId())
+                .orElseThrow(() -> new BusinessException(
+                        ErrorType.UNHANDLED_EXCEPTION, "잘못된 데이터: member 데이터가 존재하지 않으면 socialProfile이 존재할 수 없음"));
+
+        AuthTokenDto tokenDto = tokenProviderModule.generate(String.valueOf(member.memberId()));
+        return SignResponse.from(member.nickname(), email, tokenDto);
     }
 
     @Transactional

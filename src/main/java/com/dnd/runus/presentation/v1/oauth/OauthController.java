@@ -4,9 +4,10 @@ import com.dnd.runus.application.oauth.OauthService;
 import com.dnd.runus.global.exception.type.ApiErrorType;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.annotation.MemberId;
-import com.dnd.runus.presentation.v1.oauth.dto.request.OauthRequest;
+import com.dnd.runus.presentation.v1.oauth.dto.request.SignInRequest;
+import com.dnd.runus.presentation.v1.oauth.dto.request.SignUpRequest;
 import com.dnd.runus.presentation.v1.oauth.dto.request.WithdrawRequest;
-import com.dnd.runus.presentation.v1.oauth.dto.response.TokenResponse;
+import com.dnd.runus.presentation.v1.oauth.dto.response.SignResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,15 +28,40 @@ public class OauthController {
     private final OauthService oauthService;
 
     @Operation(
-            summary = "회원가입 및 로그인",
-            description = "인증토큰(idToken)과 사용자 정보로 사용자 등록을 합니다."
-                    + " 이메일, 사용자 이름에 대해 변경사항 있는 경우 알려 주세요!(OauthRequest 스키마를 참고해 주세요.)")
-    @ApiErrorType({ErrorType.UNSUPPORTED_SOCIAL_TYPE, ErrorType.MALFORMED_ACCESS_TOKEN, ErrorType.UNSUPPORTED_JWT_TOKEN
+            summary = "로그인",
+            description =
+                    """
+                    ## 로그인 API 입니다.<br>
+                    인증토큰(idToken)만 존재할 경우 해당 api를 호출합니다.<br>
+                    인증토큰(idToken)을 이용해 사용자를 인증합니다.<br>
+                    해당 유저가 회원가입이 안되었을 경우, `404 USER_NOT_FOUND`(statusCode:404, code:OAUTH_001) 에러를 발생합니다.
+                    """)
+    @ApiErrorType({
+        ErrorType.UNSUPPORTED_SOCIAL_TYPE,
+        ErrorType.USER_NOT_FOUND,
+        ErrorType.FAILED_AUTHENTICATION,
+        ErrorType.UNSUPPORTED_JWT_TOKEN
     })
-    @PostMapping
+    @PostMapping("/sing-in")
     @ResponseStatus(HttpStatus.OK)
-    public TokenResponse signIn(@Valid @RequestBody OauthRequest request) {
+    public SignResponse signIn(@Valid @RequestBody SignInRequest request) {
         return oauthService.signIn(request);
+    }
+
+    @Operation(
+            summary = "회원가입",
+            description =
+                    """
+                ## 회원가입 API입니다.
+                인증토큰(idToken), 사용자 정보가 존재할 경우 해당 API를 호출합니다.<br>
+                인증토큰(idToken)과 사용자 정보로 사용자 등록을 합니다.<br>
+                사용자의 닉네임은 처음 등록한 이름으로 저장 됩니다.
+                """)
+    @ApiErrorType({ErrorType.UNSUPPORTED_SOCIAL_TYPE, ErrorType.MALFORMED_ACCESS_TOKEN})
+    @PostMapping("/sign-up")
+    @ResponseStatus(HttpStatus.OK)
+    public SignResponse signUp(@Valid @RequestBody SignUpRequest request) {
+        return oauthService.signUp(request);
     }
 
     @Operation(
