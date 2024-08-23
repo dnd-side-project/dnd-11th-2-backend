@@ -160,10 +160,7 @@ class ChallengeServiceTest {
         ChallengePercentageValues percentageValues = new ChallengePercentageValues(
                 runningRecord.distanceMeter(), 0, yesterdayrunningRecord.distanceMeter() + goalDistance);
         ChallengeAchievement expected = new ChallengeAchievement(
-                member,
-                runningRecord,
-                challenge.challengeId(),
-                new ChallengeAchievementRecord(true, true, percentageValues));
+                runningRecord, challenge.challengeId(), new ChallengeAchievementRecord(true, true, percentageValues));
         given(challengeAchievementRepository.save(expected)).willReturn(expected);
 
         // when
@@ -208,10 +205,7 @@ class ChallengeServiceTest {
         ChallengePercentageValues percentageValues =
                 new ChallengePercentageValues(runningRecord.distanceMeter(), 0, goalDistance);
         ChallengeAchievement expected = new ChallengeAchievement(
-                member,
-                runningRecord,
-                challenge.challengeId(),
-                new ChallengeAchievementRecord(true, true, percentageValues));
+                runningRecord, challenge.challengeId(), new ChallengeAchievementRecord(true, true, percentageValues));
         given(challengeAchievementRepository.save(expected)).willReturn(expected);
 
         // when
@@ -226,7 +220,6 @@ class ChallengeServiceTest {
     @Test
     void findChallengeAchievement() {
         // given
-        Member member = new Member(MemberRole.USER, "nickname1");
         long runningId = 1L;
         long challengeId = 1L;
         Challenge challenge = new Challenge(
@@ -252,14 +245,13 @@ class ChallengeServiceTest {
 
         ChallengePercentageValues percentageValues = new ChallengePercentageValues(1000, 1000, 0);
         ChallengeAchievement achievement = new ChallengeAchievement(
-                member, runningRecord, challengeId, new ChallengeAchievementRecord(true, percentageValues));
+                runningRecord, challengeId, new ChallengeAchievementRecord(true, percentageValues));
 
-        given(challengeAchievementRepository.findByMemberIdAndRunningRecordId(member.memberId(), runningId))
-                .willReturn(Optional.of(achievement));
+        given(challengeAchievementRepository.findByRunningRecordId(runningId)).willReturn(Optional.of(achievement));
         given(challengeRepository.findById(challengeId)).willReturn(Optional.of(challenge));
 
         // when
-        ChallengeAchievementDto response = challengeService.findChallengeAchievementBy(member.memberId(), runningId);
+        ChallengeAchievementDto response = challengeService.findChallengeAchievementBy(runningId);
 
         // then
         assertNotNull(response);
@@ -270,14 +262,12 @@ class ChallengeServiceTest {
     @Test
     void findChallengeAchievement_returnNull() {
         // given
-        Member member = new Member(MemberRole.USER, "nickname1");
         long runningId = 1L;
 
-        given(challengeAchievementRepository.findByMemberIdAndRunningRecordId(member.memberId(), runningId))
-                .willReturn(Optional.empty());
+        given(challengeAchievementRepository.findByRunningRecordId(runningId)).willReturn(Optional.empty());
 
         // when
-        ChallengeAchievementDto response = challengeService.findChallengeAchievementBy(member.memberId(), runningId);
+        ChallengeAchievementDto response = challengeService.findChallengeAchievementBy(runningId);
 
         // then
         assertNull(response);

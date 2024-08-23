@@ -62,8 +62,7 @@ public class ChallengeAchievementRepositoryImplTest {
         long challengeId = 1L;
         ChallengeAchievementRecord record =
                 new ChallengeAchievementRecord(true, true, new ChallengePercentageValues(3000, 0, 1000));
-        ChallengeAchievement challengeAchievement =
-                new ChallengeAchievement(savedMember, runningRecord, challengeId, record);
+        ChallengeAchievement challengeAchievement = new ChallengeAchievement(runningRecord, challengeId, record);
 
         // when
         ChallengeAchievement saved = challengeAchievementRepository.save(challengeAchievement);
@@ -101,8 +100,7 @@ public class ChallengeAchievementRepositoryImplTest {
                 "end location",
                 RunningEmoji.SOSO));
         ChallengeAchievementRecord record = new ChallengeAchievementRecord(true, false, null);
-        ChallengeAchievement challengeAchievement =
-                new ChallengeAchievement(savedMember, runningRecord, challengeId, record);
+        ChallengeAchievement challengeAchievement = new ChallengeAchievement(runningRecord, challengeId, record);
 
         // when
         ChallengeAchievement saved = challengeAchievementRepository.save(challengeAchievement);
@@ -135,11 +133,11 @@ public class ChallengeAchievementRepositoryImplTest {
 
         ChallengeAchievementRecord record =
                 new ChallengeAchievementRecord(true, true, new ChallengePercentageValues(3000, 0, 1000));
-        challengeAchievementRepository.save(new ChallengeAchievement(member, runningRecord, 1L, record));
+        challengeAchievementRepository.save(new ChallengeAchievement(runningRecord, 1L, record));
 
         // when
         ChallengeAchievement challengeAchievement = challengeAchievementRepository
-                .findByMemberIdAndRunningRecordId(member.memberId(), runningRecord.runningId())
+                .findByRunningRecordId(runningRecord.runningId())
                 .orElse(null);
 
         // then

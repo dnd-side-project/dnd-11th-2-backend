@@ -23,9 +23,9 @@ public class ChallengeAchievementRepositoryImpl implements ChallengeAchievementR
     }
 
     @Override
-    public Optional<ChallengeAchievement> findByMemberIdAndRunningRecordId(long memberId, long runningId) {
+    public Optional<ChallengeAchievement> findByRunningRecordId(long runningId) {
         return challengeAchievementRepository
-                .findByMemberIdAndRunningRecordId(memberId, runningId)
+                .findByRunningRecordId(runningId)
                 .map(ChallengeAchievementEntity::toDomain);
     }
 }

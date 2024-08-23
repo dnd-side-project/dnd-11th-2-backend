@@ -71,17 +71,16 @@ public class ChallengeService {
         ChallengeAchievementRecord achievementRecord = challenge.getAchievementRecord(runningRecord);
 
         ChallengeAchievement savedAchievement = challengeAchievementRepository.save(
-                new ChallengeAchievement(runningRecord.member(), runningRecord, challengeId, achievementRecord));
+                new ChallengeAchievement(runningRecord, challengeId, achievementRecord));
 
         return ChallengeAchievementDto.from(savedAchievement, challenge);
     }
 
     @Transactional(readOnly = true)
-    public ChallengeAchievementDto findChallengeAchievementBy(long memberId, long runningId) {
+    public ChallengeAchievementDto findChallengeAchievementBy(long runningId) {
 
-        ChallengeAchievement challengeAchievement = challengeAchievementRepository
-                .findByMemberIdAndRunningRecordId(memberId, runningId)
-                .orElse(null);
+        ChallengeAchievement challengeAchievement =
+                challengeAchievementRepository.findByRunningRecordId(runningId).orElse(null);
         if (challengeAchievement == null) {
             return null;
         }

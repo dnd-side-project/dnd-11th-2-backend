@@ -4,13 +4,11 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengePercentageValues;
 import com.dnd.runus.domain.common.BaseTimeEntity;
-import com.dnd.runus.infrastructure.persistence.jpa.member.entity.MemberEntity;
 import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,10 +29,6 @@ public class ChallengeAchievementEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotNull
-    @ManyToOne(fetch = LAZY)
-    private MemberEntity member;
 
     @NotNull
     @OneToOne(fetch = LAZY)
@@ -59,7 +53,6 @@ public class ChallengeAchievementEntity extends BaseTimeEntity {
 
     public static ChallengeAchievementEntity from(ChallengeAchievement challengeAchievement) {
         ChallengeAchievementEntityBuilder builder = ChallengeAchievementEntity.builder()
-                .member(MemberEntity.from(challengeAchievement.member()))
                 .runningRecord(RunningRecordEntity.from(challengeAchievement.runningRecord()))
                 .challengeId(challengeAchievement.challengeId())
                 .successStatus(challengeAchievement.record().successStatus())
@@ -86,7 +79,6 @@ public class ChallengeAchievementEntity extends BaseTimeEntity {
                 new ChallengeAchievementRecord(successStatus, hasPercentage, percentageValues);
 
         return ChallengeAchievement.builder()
-                .member(member.toDomain())
                 .runningRecord(runningRecord.toDomain())
                 .challengeId(challengeId)
                 .record(record)
