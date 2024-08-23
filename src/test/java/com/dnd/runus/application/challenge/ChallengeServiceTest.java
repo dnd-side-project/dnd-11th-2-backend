@@ -14,6 +14,7 @@ import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.presentation.v1.challenge.dto.response.ChallengesResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
@@ -270,6 +270,6 @@ class ChallengeServiceTest {
         ChallengeAchievementDto response = challengeService.findChallengeAchievementBy(runningId);
 
         // then
-        assertNull(response);
+        Assertions.assertNull(response);
     }
 }
