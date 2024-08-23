@@ -3,14 +3,12 @@ package com.dnd.runus.infrastructure.persistence.jpa.goalAchievement.entity;
 import com.dnd.runus.domain.challenge.GoalType;
 import com.dnd.runus.domain.common.BaseTimeEntity;
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
-import com.dnd.runus.infrastructure.persistence.jpa.member.entity.MemberEntity;
 import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -34,10 +32,6 @@ public class GoalAchievementEntity extends BaseTimeEntity {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = LAZY)
-    private MemberEntity member;
-
-    @NotNull
     @OneToOne(fetch = LAZY)
     private RunningRecordEntity runningRecord;
 
@@ -53,7 +47,6 @@ public class GoalAchievementEntity extends BaseTimeEntity {
 
     public static GoalAchievementEntity from(GoalAchievement goalAchievement) {
         return GoalAchievementEntity.builder()
-                .member(MemberEntity.from(goalAchievement.member()))
                 .runningRecord(RunningRecordEntity.from(goalAchievement.runningRecord()))
                 .goalType(goalAchievement.goalType())
                 .achievementValue(goalAchievement.achievementValue())
@@ -62,6 +55,6 @@ public class GoalAchievementEntity extends BaseTimeEntity {
     }
 
     public GoalAchievement toDomain() {
-        return new GoalAchievement(member.toDomain(), runningRecord.toDomain(), goalType, achievementValue, isAchieved);
+        return new GoalAchievement(runningRecord.toDomain(), goalType, achievementValue, isAchieved);
     }
 }

@@ -7,8 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record GoalAchievementSaveDto(
     @Schema(description = "목표 타입")
     GoalType goalType,
-    //프런트와 상의 예정
-    //time, 거링에 따라 다르게 받을 지.....도 확인
+    //todo 프런트와 어떤 형식으로 받을 지 의논해야될 것 같아요.
     Integer goalValue
 ) {
 
