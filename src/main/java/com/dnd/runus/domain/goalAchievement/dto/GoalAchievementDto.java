@@ -7,7 +7,7 @@ import com.dnd.runus.global.constant.RunningResultComment;
 public record GoalAchievementDto(
     String title,
     String comment,
-    boolean successStatus
+    boolean isSuccess
 ) {
     public static GoalAchievementDto from(GoalAchievement achievement) {
         return new GoalAchievementDto(

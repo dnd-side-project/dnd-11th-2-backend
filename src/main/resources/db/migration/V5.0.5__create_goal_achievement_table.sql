@@ -4,7 +4,7 @@ CREATE TABLE goal_achievement
     running_record_id          bigint  NOT NULL
         CONSTRAINT uk_goal_achievement_running_id UNIQUE
         CONSTRAINT fk_goal_achievement_running_id REFERENCES running_record,
-    goal_type           varchar(25) NOT NULL CHECK (goal_type IN ('TIME', 'DISTANCE')),
+    goal_type           varchar(25) NOT NULL,
     achievement_value        integer NOT NULL,
     is_achieved     bool NOT NULL,
     created_at timestamp(6) with time zone,
