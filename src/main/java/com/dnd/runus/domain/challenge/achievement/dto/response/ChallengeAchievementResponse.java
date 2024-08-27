@@ -1,4 +1,4 @@
-package com.dnd.runus.domain.challenge.achievement.dto;
+package com.dnd.runus.domain.challenge.achievement.dto.response;
 
 import com.dnd.runus.domain.challenge.ChallengeData;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
@@ -6,7 +6,7 @@ import com.dnd.runus.global.constant.RunningResultComment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.jetbrains.annotations.NotNull;
 
-public record ChallengeAchievementResponseDto(
+public record ChallengeAchievementResponse(
     @NotNull
     @Schema(description = "챌린지 이미지 url")
     String icon,
