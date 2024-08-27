@@ -19,10 +19,3 @@ CREATE TABLE challenge_achievement_percentage
     created_at timestamp(6) with time zone,
     updated_at timestamp(6) with time zone
 );
-
--- add comment
-COMMENT ON TABLE challenge_achievement_percentage IS 'challenge_achievement에서 퍼센테이지가 있는 성취값(거리, 시간에 관한 성취값)의 퍼센테이지 데이터';
-COMMENT ON COLUMN challenge_achievement_percentage.challenge_achievement_id IS 'challenge_achievement id (fk), unique';
-COMMENT ON COLUMN challenge_achievement_percentage.start_value IS '퍼센테이지바 시작 값(거리:0, 시간:러닝 시작 시각(초단위) 등)';
-COMMENT ON COLUMN challenge_achievement_percentage.end_value IS '퍼센테이지바 끝(목표) 값(거리:목표 값, 시간: 러닝 시작 시간 + 목표 값)';
-COMMENT ON COLUMN challenge_achievement_percentage.achievement_value IS '퍼센테이지에 사용자가 달성한 값(10km 챌리지에 3km을 완주 했을 경우, achievement_value는 3km이다.)';
