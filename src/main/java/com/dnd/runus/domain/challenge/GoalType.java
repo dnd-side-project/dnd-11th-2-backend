@@ -30,12 +30,4 @@ public enum GoalType {
             case PACE -> record.averagePace().toSeconds();
         };
     }
-
-    public ComparisonType getComparisonType() {
-        // 임시(테이블에 추가 될 값)로 ComparisonType을 지정
-        return switch (this) {
-            case TIME, DISTANCE -> ComparisonType.GREATER;
-            case PACE -> ComparisonType.LESS;
-        };
-    }
 }

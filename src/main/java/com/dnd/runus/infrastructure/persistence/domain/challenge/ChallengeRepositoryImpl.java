@@ -1,25 +1,26 @@
 package com.dnd.runus.infrastructure.persistence.domain.challenge;
 
-import com.dnd.runus.domain.challenge.Challenge;
+import com.dnd.runus.domain.challenge.ChallengeData;
 import com.dnd.runus.domain.challenge.ChallengeRepository;
-import com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeData;
+import com.dnd.runus.infrastructure.persistence.jooq.challenge.JooqChallengeRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class ChallengeRepositoryImpl implements ChallengeRepository {
 
+    private final JooqChallengeRepository jooqChallengeRepository;
+
     @Override
-    public List<Challenge> getChallenges(boolean hasYesterdayRecord) {
-        return ChallengeData.getChallenges(hasYesterdayRecord).stream()
-                .map(ChallengeData::toDomain)
-                .toList();
+    public List<ChallengeData.Challenge> findAllChallenges(boolean hasYesterdayRecord) {
+        return jooqChallengeRepository.findAllBy(hasYesterdayRecord);
     }
 
     @Override
-    public Optional<Challenge> findById(Long id) {
-        return ChallengeData.getChallengeById(id).map(ChallengeData::toDomain);
+    public ChallengeData findChallengeWithConditionsByChallengeId(long challengeId) {
+        return jooqChallengeRepository.findChallengeWithConditionsBy(challengeId);
     }
 }

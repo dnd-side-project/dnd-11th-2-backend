@@ -1,6 +1,6 @@
 package com.dnd.runus.domain.challenge;
 
 public enum ComparisonType {
-    GREATER,
-    LESS,
+    GREATER_THAN_OR_EQUAL_TO,
+    LESS_THAN_OR_EQUAL_TO,
 }
