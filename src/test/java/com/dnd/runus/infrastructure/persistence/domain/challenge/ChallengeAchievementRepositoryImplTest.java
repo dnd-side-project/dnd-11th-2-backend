@@ -35,12 +35,11 @@ public class ChallengeAchievementRepositoryImplTest {
     @Autowired
     private RunningRecordRepository runningRecordRepository;
 
-    private Member savedMember;
     private RunningRecord runningRecord;
 
     @BeforeEach
     void setUp() {
-        savedMember = memberRepository.save(new Member(MemberRole.USER, "nickname"));
+        Member savedMember = memberRepository.save(new Member(MemberRole.USER, "nickname"));
         runningRecord = runningRecordRepository.save(new RunningRecord(
                 1,
                 savedMember,

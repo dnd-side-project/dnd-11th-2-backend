@@ -378,7 +378,7 @@ class ChallengeWithConditionTest {
             RunningRecord runningRecord = new RunningRecord(
                     0,
                     new Member(MemberRole.USER, "nickname"),
-                    3000,
+                    goalDistance + 2000,
                     Duration.ofHours(1).plusMinutes(29),
                     1,
                     new Pace(6, 0),
@@ -405,7 +405,7 @@ class ChallengeWithConditionTest {
             RunningRecord runningRecord = new RunningRecord(
                     0,
                     new Member(MemberRole.USER, "nickname"),
-                    999,
+                    goalDistance - 1,
                     Duration.ofHours(1).plusMinutes(29),
                     1,
                     new Pace(6, 1),
