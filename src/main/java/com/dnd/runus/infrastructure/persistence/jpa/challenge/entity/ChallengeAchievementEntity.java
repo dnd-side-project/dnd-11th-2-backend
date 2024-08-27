@@ -1,6 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
 
-import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.common.BaseTimeEntity;
 import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
 import jakarta.persistence.Entity;

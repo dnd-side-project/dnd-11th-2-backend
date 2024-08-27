@@ -1,8 +1,8 @@
 package com.dnd.runus.infrastructure.persistence.domain.challenge;
 
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentageRepository;
-import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievementRecord;
-import com.dnd.runus.domain.challenge.achievement.dto.PercentageValues;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
+import com.dnd.runus.domain.challenge.achievement.PercentageValues;
 import com.dnd.runus.infrastructure.persistence.jpa.challenge.JpaChallengeAchievementPercentageRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeAchievementPercentageEntity;
 import lombok.RequiredArgsConstructor;

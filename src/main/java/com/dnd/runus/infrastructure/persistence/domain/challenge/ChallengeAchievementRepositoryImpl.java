@@ -1,7 +1,7 @@
 package com.dnd.runus.infrastructure.persistence.domain.challenge;
 
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
-import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievement;
 import com.dnd.runus.infrastructure.persistence.jpa.challenge.JpaChallengeAchievementRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeAchievementEntity;
 import lombok.RequiredArgsConstructor;

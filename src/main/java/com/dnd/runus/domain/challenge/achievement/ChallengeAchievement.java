@@ -1,4 +1,4 @@
-package com.dnd.runus.domain.challenge.achievement.dto;
+package com.dnd.runus.domain.challenge.achievement;
 
 import com.dnd.runus.domain.running.RunningRecord;
 

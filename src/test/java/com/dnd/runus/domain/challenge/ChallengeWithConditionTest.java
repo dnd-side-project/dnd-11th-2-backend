@@ -1,9 +1,9 @@
 package com.dnd.runus.domain.challenge;
 
 import com.dnd.runus.annotation.IntegrationTest;
-import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievement;
-import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievementRecord;
-import com.dnd.runus.domain.challenge.achievement.dto.PercentageValues;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
+import com.dnd.runus.domain.challenge.achievement.PercentageValues;
 import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;

@@ -1,7 +1,7 @@
 package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
 
-import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievement;
-import com.dnd.runus.domain.challenge.achievement.dto.PercentageValues;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.PercentageValues;
 import com.dnd.runus.domain.common.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
