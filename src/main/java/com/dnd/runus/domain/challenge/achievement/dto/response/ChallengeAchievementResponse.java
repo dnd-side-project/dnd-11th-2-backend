@@ -1,7 +1,7 @@
 package com.dnd.runus.domain.challenge.achievement.dto.response;
 
 import com.dnd.runus.domain.challenge.ChallengeData;
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
+import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievementRecord;
 import com.dnd.runus.global.constant.RunningResultComment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +23,9 @@ public record ChallengeAchievementResponse(
     @Schema(description = "챌린지 성공, 실패 여부")
     Boolean isSuccess
 ) {
-    public static ChallengeAchievementResponseDto from(
+    public static ChallengeAchievementResponse from(
         ChallengeAchievementRecord challengeAchievementRecord, ChallengeData.Challenge challenge) {
-        return new ChallengeAchievementResponseDto(
+        return new ChallengeAchievementResponse(
             challenge.imageUrl(),
             challenge.name(),
             RunningResultComment.getComment(challengeAchievementRecord.challengeAchievement().isSuccess()),

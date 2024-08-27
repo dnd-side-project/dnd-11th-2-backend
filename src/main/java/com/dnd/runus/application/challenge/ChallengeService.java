@@ -3,7 +3,9 @@ package com.dnd.runus.application.challenge;
 import com.dnd.runus.domain.challenge.ChallengeCondition;
 import com.dnd.runus.domain.challenge.ChallengeData;
 import com.dnd.runus.domain.challenge.ChallengeRepository;
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
+import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievementRecord;
+import com.dnd.runus.domain.challenge.achievement.dto.PercentageValues;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
@@ -69,7 +71,7 @@ public class ChallengeService {
             RunningRecord runningRecord, ChallengeData challengeDataWithConditions) {
         boolean allSuccess = true;
         boolean allHasPercentage = true;
-        ChallengeAchievementRecord.PercentageValues percentageValues = null;
+        PercentageValues percentageValues = null;
 
         for (ChallengeCondition condition : challengeDataWithConditions.challengeConditions()) {
             boolean success = condition.isAchieved(condition.goalType().getActualValue(runningRecord));
@@ -78,16 +80,15 @@ public class ChallengeService {
             if (!condition.hasPercentage()) allHasPercentage = false;
 
             if (allHasPercentage) {
-                percentageValues = new ChallengeAchievementRecord.PercentageValues(
+                percentageValues = new PercentageValues(
                         condition.goalType().getActualValue(runningRecord), 0, condition.requiredValue());
             } else {
                 percentageValues = null;
             }
         }
 
-        ChallengeAchievementRecord.ChallengeAchievement challengeAchievement =
-                new ChallengeAchievementRecord.ChallengeAchievement(
-                        challengeDataWithConditions.challengeInfo().challengeId(), runningRecord, allSuccess);
+        ChallengeAchievement challengeAchievement = new ChallengeAchievement(
+                challengeDataWithConditions.challengeInfo().challengeId(), runningRecord, allSuccess);
 
         return new ChallengeAchievementRecord(challengeAchievement, percentageValues);
     }

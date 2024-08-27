@@ -1,6 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
 
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
+import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievement;
 import com.dnd.runus.domain.common.BaseTimeEntity;
 import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
 import jakarta.persistence.Entity;
@@ -38,8 +38,7 @@ public class ChallengeAchievementEntity extends BaseTimeEntity {
     @NotNull
     private Boolean successStatus;
 
-    public static ChallengeAchievementEntity from(
-            ChallengeAchievementRecord.ChallengeAchievement challengeAchievement) {
+    public static ChallengeAchievementEntity from(ChallengeAchievement challengeAchievement) {
         return ChallengeAchievementEntity.builder()
                 .runningRecord(RunningRecordEntity.from(challengeAchievement.runningRecord()))
                 .challengeId(challengeAchievement.challengeId())
@@ -47,8 +46,7 @@ public class ChallengeAchievementEntity extends BaseTimeEntity {
                 .build();
     }
 
-    public ChallengeAchievementRecord.ChallengeAchievement toDomain() {
-        return new ChallengeAchievementRecord.ChallengeAchievement(
-                id, challengeId, runningRecord.toDomain(), successStatus);
+    public ChallengeAchievement toDomain() {
+        return new ChallengeAchievement(id, challengeId, runningRecord.toDomain(), successStatus);
     }
 }

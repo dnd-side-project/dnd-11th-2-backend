@@ -1,7 +1,7 @@
 package com.dnd.runus.infrastructure.persistence.domain.challenge;
 
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
+import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievement;
 import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
@@ -61,12 +61,10 @@ public class ChallengeAchievementRepositoryImplTest {
     void saveAchievement() {
         // given
         long challengeId = 1L;
-        ChallengeAchievementRecord.ChallengeAchievement challengeAchievement =
-                new ChallengeAchievementRecord.ChallengeAchievement(challengeId, runningRecord, true);
+        ChallengeAchievement challengeAchievement = new ChallengeAchievement(challengeId, runningRecord, true);
 
         // when
-        ChallengeAchievementRecord.ChallengeAchievement saved =
-                challengeAchievementRepository.save(challengeAchievement);
+        ChallengeAchievement saved = challengeAchievementRepository.save(challengeAchievement);
 
         // then
         assertNotNull(saved);
@@ -78,11 +76,10 @@ public class ChallengeAchievementRepositoryImplTest {
     void findByRunningId() {
         // given
         long challengeId = 1L;
-        challengeAchievementRepository.save(
-                new ChallengeAchievementRecord.ChallengeAchievement(challengeId, runningRecord, true));
+        challengeAchievementRepository.save(new ChallengeAchievement(challengeId, runningRecord, true));
 
         // when
-        ChallengeAchievementRecord.ChallengeAchievement challengeAchievement = challengeAchievementRepository
+        ChallengeAchievement challengeAchievement = challengeAchievementRepository
                 .findByRunningId(runningRecord.runningId())
                 .orElse(null);
 

@@ -1,10 +1,11 @@
 package com.dnd.runus.domain.challenge.achievement;
 
+import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievement;
+
 import java.util.Optional;
 
 public interface ChallengeAchievementRepository {
-    ChallengeAchievementRecord.ChallengeAchievement save(
-            ChallengeAchievementRecord.ChallengeAchievement challengeAchievement);
+    ChallengeAchievement save(ChallengeAchievement challengeAchievement);
 
-    Optional<ChallengeAchievementRecord.ChallengeAchievement> findByRunningId(Long runningId);
+    Optional<ChallengeAchievement> findByRunningId(Long runningId);
 }

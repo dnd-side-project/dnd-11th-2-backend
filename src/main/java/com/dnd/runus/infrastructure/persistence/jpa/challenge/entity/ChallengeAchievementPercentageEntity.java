@@ -1,8 +1,7 @@
 package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
 
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord.ChallengeAchievement;
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord.PercentageValues;
+import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.dto.PercentageValues;
 import com.dnd.runus.domain.common.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -53,7 +52,7 @@ public class ChallengeAchievementPercentageEntity extends BaseTimeEntity {
                 .build();
     }
 
-    public ChallengeAchievementRecord.PercentageValues toDomain() {
-        return new ChallengeAchievementRecord.PercentageValues(achievementValue, startValue, endValue);
+    public PercentageValues toDomain() {
+        return new PercentageValues(achievementValue, startValue, endValue);
     }
 }

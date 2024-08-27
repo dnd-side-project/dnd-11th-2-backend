@@ -1,7 +1,9 @@
 package com.dnd.runus.domain.challenge;
 
 import com.dnd.runus.annotation.IntegrationTest;
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
+import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievementRecord;
+import com.dnd.runus.domain.challenge.achievement.dto.PercentageValues;
 import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
@@ -165,8 +167,7 @@ class ChallengeDataTest {
             // then
             assertTrue(challengeAchievementRecord.challengeAchievement().isSuccess());
             assertTrue(challengeAchievementRecord.hasPercentage());
-            ChallengeAchievementRecord.PercentageValues percentageValues =
-                    challengeAchievementRecord.percentageValues();
+            PercentageValues percentageValues = challengeAchievementRecord.percentageValues();
             assertThat(percentageValues.startValue()).isEqualTo(0);
             assertThat(percentageValues.endValue()).isEqualTo(goalDistance);
             assertThat(percentageValues.achievementValue()).isEqualTo(runningRecord.distanceMeter());
@@ -198,8 +199,7 @@ class ChallengeDataTest {
             // then
             assertFalse(challengeAchievementRecord.challengeAchievement().isSuccess());
             assertTrue(challengeAchievementRecord.hasPercentage());
-            ChallengeAchievementRecord.PercentageValues percentageValues =
-                    challengeAchievementRecord.percentageValues();
+            PercentageValues percentageValues = challengeAchievementRecord.percentageValues();
             assertThat(percentageValues.startValue()).isEqualTo(0);
             assertThat(percentageValues.endValue()).isEqualTo(3000);
             assertThat(percentageValues.achievementValue()).isEqualTo(runningRecord.distanceMeter());
@@ -246,8 +246,7 @@ class ChallengeDataTest {
             // then
             assertTrue(challengeAchievementRecord.challengeAchievement().isSuccess());
             assertTrue(challengeAchievementRecord.hasPercentage());
-            ChallengeAchievementRecord.PercentageValues percentageValues =
-                    challengeAchievementRecord.percentageValues();
+            PercentageValues percentageValues = challengeAchievementRecord.percentageValues();
             int expectedStartValue = 0;
             int expectedEndValue = expectedStartValue + goalTime;
             assertThat(percentageValues.startValue()).isEqualTo(expectedStartValue);
@@ -282,8 +281,7 @@ class ChallengeDataTest {
             assertFalse(challengeAchievementRecord.challengeAchievement().isSuccess());
             assertTrue(challengeAchievementRecord.hasPercentage());
 
-            ChallengeAchievementRecord.PercentageValues percentageValues =
-                    challengeAchievementRecord.percentageValues();
+            PercentageValues percentageValues = challengeAchievementRecord.percentageValues();
             int expectedStartValue = 0;
             int expectedEndValue = expectedStartValue + goalTime;
             assertThat(percentageValues.startValue()).isEqualTo(expectedStartValue);
@@ -498,7 +496,7 @@ class ChallengeDataTest {
             RunningRecord runningRecord, ChallengeData challengeDataWithConditions) {
         boolean allSuccess = true;
         boolean allHasPercentage = true;
-        ChallengeAchievementRecord.PercentageValues percentageValues = null;
+        PercentageValues percentageValues = null;
 
         for (ChallengeCondition condition : challengeDataWithConditions.challengeConditions()) {
             boolean success = condition.isAchieved(condition.goalType().getActualValue(runningRecord));
@@ -509,16 +507,15 @@ class ChallengeDataTest {
             }
 
             if (allHasPercentage) {
-                percentageValues = new ChallengeAchievementRecord.PercentageValues(
+                percentageValues = new PercentageValues(
                         condition.goalType().getActualValue(runningRecord), 0, condition.requiredValue());
             } else {
                 percentageValues = null;
             }
         }
 
-        ChallengeAchievementRecord.ChallengeAchievement challengeAchievement =
-                new ChallengeAchievementRecord.ChallengeAchievement(
-                        challengeDataWithConditions.challengeInfo().challengeId(), runningRecord, allSuccess);
+        ChallengeAchievement challengeAchievement = new ChallengeAchievement(
+                challengeDataWithConditions.challengeInfo().challengeId(), runningRecord, allSuccess);
 
         return new ChallengeAchievementRecord(challengeAchievement, percentageValues);
     }
