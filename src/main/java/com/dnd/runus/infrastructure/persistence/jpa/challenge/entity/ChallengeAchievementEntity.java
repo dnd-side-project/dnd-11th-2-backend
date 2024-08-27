@@ -1,8 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
 
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
-import com.dnd.runus.domain.challenge.achievement.ChallengePercentageValues;
 import com.dnd.runus.domain.common.BaseTimeEntity;
 import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
 import jakarta.persistence.Entity;
@@ -40,48 +38,17 @@ public class ChallengeAchievementEntity extends BaseTimeEntity {
     @NotNull
     private Boolean successStatus;
 
-    @NotNull
-    private Boolean hasPercentage;
-
-    private Integer startValue;
-
-    private Integer endValue;
-
-    private Integer achievementValue;
-
-    private Integer percentage;
-
-    public static ChallengeAchievementEntity from(ChallengeAchievement challengeAchievement) {
-        ChallengeAchievementEntityBuilder builder = ChallengeAchievementEntity.builder()
+    public static ChallengeAchievementEntity from(
+            ChallengeAchievementRecord.ChallengeAchievement challengeAchievement) {
+        return ChallengeAchievementEntity.builder()
                 .runningRecord(RunningRecordEntity.from(challengeAchievement.runningRecord()))
                 .challengeId(challengeAchievement.challengeId())
-                .successStatus(challengeAchievement.record().successStatus())
-                .hasPercentage(challengeAchievement.record().hasPercentage());
-
-        if (challengeAchievement.record().hasPercentage()) {
-            builder.startValue(challengeAchievement.record().percentageValues().startValue())
-                    .endValue(challengeAchievement.record().percentageValues().endValue())
-                    .achievementValue(
-                            challengeAchievement.record().percentageValues().myValue())
-                    .percentage(challengeAchievement.record().percentageValues().percentage());
-        }
-
-        return builder.build();
+                .successStatus(challengeAchievement.isSuccess())
+                .build();
     }
 
-    public ChallengeAchievement toDomain() {
-        ChallengePercentageValues percentageValues = null;
-        if (hasPercentage) {
-            percentageValues = new ChallengePercentageValues(achievementValue, startValue, endValue, percentage);
-        }
-
-        ChallengeAchievementRecord record =
-                new ChallengeAchievementRecord(successStatus, hasPercentage, percentageValues);
-
-        return ChallengeAchievement.builder()
-                .runningRecord(runningRecord.toDomain())
-                .challengeId(challengeId)
-                .record(record)
-                .build();
+    public ChallengeAchievementRecord.ChallengeAchievement toDomain() {
+        return new ChallengeAchievementRecord.ChallengeAchievement(
+                id, challengeId, runningRecord.toDomain(), successStatus);
     }
 }

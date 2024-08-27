@@ -1,6 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.domain.challenge;
 
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.challenge.JpaChallengeAchievementRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeAchievementEntity;
@@ -13,18 +13,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ChallengeAchievementRepositoryImpl implements ChallengeAchievementRepository {
 
-    private final JpaChallengeAchievementRepository challengeAchievementRepository;
+    private final JpaChallengeAchievementRepository jpaChallengeAchievementRepository;
 
     @Override
-    public ChallengeAchievement save(ChallengeAchievement challengeAchievement) {
-        return challengeAchievementRepository
+    public ChallengeAchievementRecord.ChallengeAchievement save(
+            ChallengeAchievementRecord.ChallengeAchievement challengeAchievement) {
+        return jpaChallengeAchievementRepository
                 .save(ChallengeAchievementEntity.from(challengeAchievement))
                 .toDomain();
     }
 
     @Override
-    public Optional<ChallengeAchievement> findByRunningRecordId(long runningId) {
-        return challengeAchievementRepository
+    public Optional<ChallengeAchievementRecord.ChallengeAchievement> findByRunningId(Long runningId) {
+        return jpaChallengeAchievementRepository
                 .findByRunningRecordId(runningId)
                 .map(ChallengeAchievementEntity::toDomain);
     }

@@ -1,14 +1,30 @@
 package com.dnd.runus.domain.challenge.achievement;
 
-/**
- * 사용자의 챌린지 성취 기록에 관한 DTO입니다.
- * @param successStatus 챌린지 성공 여부
- * @param hasPercentage 퍼센테이지 바 표시 유뮤(percentageValues이 null이면 false)
- * @param percentageValues 퍼센테이지 바 표시를 위한 값들 (hasPercentage가 false일 경우 null 값)
- */
+import com.dnd.runus.domain.running.RunningRecord;
+
 public record ChallengeAchievementRecord(
-        boolean successStatus, boolean hasPercentage, ChallengePercentageValues percentageValues) {
-    public ChallengeAchievementRecord(boolean successStatus, ChallengePercentageValues percentageValues) {
-        this(successStatus, percentageValues != null, percentageValues);
+        ChallengeAchievement challengeAchievement, boolean hasPercentage, PercentageValues percentageValues) {
+
+    public ChallengeAchievementRecord(ChallengeAchievement challengeAchievement, PercentageValues percentageValues) {
+        this(challengeAchievement, percentageValues != null, percentageValues);
+    }
+
+    public ChallengeAchievementRecord(ChallengeAchievement challengeAchievement) {
+        this(challengeAchievement, false, null);
+    }
+
+    public record ChallengeAchievement(
+            Long ChallengeAchievementId, long challengeId, RunningRecord runningRecord, boolean isSuccess) {
+        public ChallengeAchievement(long challengeId, RunningRecord runningRecord, boolean isSuccess) {
+            this(null, challengeId, runningRecord, isSuccess);
+        }
+    }
+
+    public record PercentageValues(int achievementValue, int startValue, int endValue) {
+        // todo 나중에 조회 기능 생기면 사용
+        private static int calPercentage(int achievementValue, int startValue, int endValue) {
+            int percent = (int) Math.floor(((double) (achievementValue) / (endValue - startValue)) * 100);
+            return Math.min(percent, 100);
+        }
     }
 }

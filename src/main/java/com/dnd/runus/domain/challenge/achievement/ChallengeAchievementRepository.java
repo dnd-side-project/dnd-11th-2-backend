@@ -3,7 +3,8 @@ package com.dnd.runus.domain.challenge.achievement;
 import java.util.Optional;
 
 public interface ChallengeAchievementRepository {
-    ChallengeAchievement save(ChallengeAchievement challengeAchievement);
+    ChallengeAchievementRecord.ChallengeAchievement save(
+            ChallengeAchievementRecord.ChallengeAchievement challengeAchievement);
 
-    Optional<ChallengeAchievement> findByRunningRecordId(long runningId);
+    Optional<ChallengeAchievementRecord.ChallengeAchievement> findByRunningId(Long runningId);
 }

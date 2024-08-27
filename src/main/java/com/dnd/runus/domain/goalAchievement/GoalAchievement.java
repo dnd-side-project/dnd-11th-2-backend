@@ -36,14 +36,14 @@ public record GoalAchievement(
 
     private String formatSecondToKoreanHHMM(int second) {
         int hour = second / 3600;
-        int minute = (second % 3600) * 60;
+        int minute = (second % 3600) / 60;
         StringBuilder sb = new StringBuilder();
 
         if (hour != 0) {
             sb.append(hour).append("시간 ");
         }
         if (minute != 0) {
-            sb.append(hour).append("분");
+            sb.append(minute).append("분");
         }
 
         return sb.toString().trim();
