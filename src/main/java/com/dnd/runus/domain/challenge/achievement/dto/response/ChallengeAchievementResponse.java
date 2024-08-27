@@ -1,7 +1,6 @@
 package com.dnd.runus.domain.challenge.achievement.dto.response;
 
 import com.dnd.runus.domain.challenge.Challenge;
-import com.dnd.runus.domain.challenge.ChallengeWithCondition;
 import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievementRecord;
 import com.dnd.runus.global.constant.RunningResultComment;
 import io.swagger.v3.oas.annotations.media.Schema;

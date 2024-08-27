@@ -4,22 +4,20 @@ import com.dnd.runus.domain.challenge.Challenge;
 import com.dnd.runus.domain.challenge.ChallengeCondition;
 import com.dnd.runus.domain.challenge.ChallengeType;
 import com.dnd.runus.domain.challenge.ChallengeWithCondition;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.dnd.runus.domain.challenge.ComparisonType;
+import com.dnd.runus.domain.challenge.GoalType;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.springframework.stereotype.Repository;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 import static com.dnd.runus.jooq.Tables.CHALLENGE;
 import static com.dnd.runus.jooq.Tables.CHALLENGE_GOAL_CONDITION;
-import static org.jooq.impl.DSL.jsonArrayAgg;
-import static org.jooq.impl.DSL.jsonObject;
-import static org.jooq.impl.DSL.key;
+import static org.jooq.impl.DSL.multiset;
+import static org.jooq.impl.DSL.select;
 
 @Repository
 @RequiredArgsConstructor
@@ -40,24 +38,21 @@ public class JooqChallengeRepository {
     }
 
     public ChallengeWithCondition findChallengeWithConditionsBy(long challengeId) {
-        return dsl.select(
-                        CHALLENGE.ID,
-                        CHALLENGE.NAME,
-                        CHALLENGE.IMAGE_URL,
-                        CHALLENGE.CHALLENGE_TYPE,
-                        jsonArrayAgg(jsonObject(
-                                        key("goalType").value(CHALLENGE_GOAL_CONDITION.GOAL_TYPE),
-                                        key("goalValue").value(CHALLENGE_GOAL_CONDITION.GOAL_VALUE),
-                                        key("comparisonValue").value(CHALLENGE_GOAL_CONDITION.GOAL_VALUE),
-                                        key("comparisonType").value(CHALLENGE_GOAL_CONDITION.COMPARISON_TYPE)))
-                                .as("conditions"))
+        return dsl.select(CHALLENGE.ID, CHALLENGE.NAME, CHALLENGE.IMAGE_URL, CHALLENGE.CHALLENGE_TYPE)
+                .select(multiset(select(
+                                        CHALLENGE_GOAL_CONDITION.GOAL_TYPE,
+                                        CHALLENGE_GOAL_CONDITION.COMPARISON_TYPE,
+                                        CHALLENGE_GOAL_CONDITION.GOAL_VALUE)
+                                .from(CHALLENGE_GOAL_CONDITION)
+                                .where(CHALLENGE_GOAL_CONDITION.CHALLENGE_ID.eq(CHALLENGE.ID)))
+                        .convertFrom(r -> r.map(record -> new ChallengeCondition(
+                                record.get(CHALLENGE_GOAL_CONDITION.GOAL_TYPE, GoalType.class),
+                                record.get(CHALLENGE_GOAL_CONDITION.COMPARISON_TYPE, ComparisonType.class),
+                                record.get(CHALLENGE_GOAL_CONDITION.GOAL_VALUE, Integer.class))))
+                        .as("conditions"))
                 .from(CHALLENGE)
-                .leftOuterJoin(CHALLENGE_GOAL_CONDITION)
-                .on(CHALLENGE.ID.eq(CHALLENGE_GOAL_CONDITION.CHALLENGE_ID))
                 .where(CHALLENGE.ID.eq(challengeId))
-                .groupBy(CHALLENGE.ID)
-                .fetch(new ChallengeDataMapper())
-                .get(0);
+                .fetchOne(new ChallengeWithConditionMapper());
     }
 
     private static class ChallengeMapper implements RecordMapper<Record, Challenge> {
@@ -73,23 +68,24 @@ public class JooqChallengeRepository {
         }
     }
 
-    private static class ChallengeDataMapper implements RecordMapper<Record, ChallengeWithCondition> {
+    private static class ChallengeWithConditionMapper implements RecordMapper<Record, ChallengeWithCondition> {
         @Override
         public ChallengeWithCondition map(Record record) {
+            if (record.get("conditions") == null) {
+                throw new NullPointerException("conditions은 null이 될 수 없습니다.");
+            }
+
+            // "conditions"은 List<ChallengeCondition> 타입으로 반환합니다.
+            @SuppressWarnings("unchecked") // 타입 안전성 경고 무시
+            List<ChallengeCondition> challengeConditions = record.get("conditions", List.class);
+
             return new ChallengeWithCondition(
                     new Challenge(
                             record.get(CHALLENGE.ID, long.class),
                             record.get(CHALLENGE.NAME, String.class),
                             record.get(CHALLENGE.IMAGE_URL, String.class),
                             record.get(CHALLENGE.CHALLENGE_TYPE, ChallengeType.class)),
-                    parseConditions(record.get("conditions", String.class)));
-        }
-
-        private List<ChallengeCondition> parseConditions(String conditionsArrays) {
-            Gson gson = new Gson();
-            Type listType = new TypeToken<List<ChallengeCondition>>() {}.getType();
-
-            return gson.fromJson(conditionsArrays, listType);
+                    challengeConditions);
         }
     }
 }
