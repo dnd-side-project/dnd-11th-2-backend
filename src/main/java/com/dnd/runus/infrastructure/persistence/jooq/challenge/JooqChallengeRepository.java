@@ -1,8 +1,9 @@
 package com.dnd.runus.infrastructure.persistence.jooq.challenge;
 
+import com.dnd.runus.domain.challenge.Challenge;
 import com.dnd.runus.domain.challenge.ChallengeCondition;
-import com.dnd.runus.domain.challenge.ChallengeData;
 import com.dnd.runus.domain.challenge.ChallengeType;
+import com.dnd.runus.domain.challenge.ChallengeWithCondition;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class JooqChallengeRepository {
 
     private final DSLContext dsl;
 
-    public List<ChallengeData.Challenge> findAllIsNotDefeatYesterday() {
+    public List<Challenge> findAllIsNotDefeatYesterday() {
         return dsl.select(
                         CHALLENGE.ID,
                         CHALLENGE.NAME,
@@ -38,7 +39,7 @@ public class JooqChallengeRepository {
                 .fetch(new ChallengeMapper());
     }
 
-    public ChallengeData findChallengeWithConditionsBy(long challengeId) {
+    public ChallengeWithCondition findChallengeWithConditionsBy(long challengeId) {
         return dsl.select(
                         CHALLENGE.ID,
                         CHALLENGE.NAME,
@@ -59,11 +60,11 @@ public class JooqChallengeRepository {
                 .get(0);
     }
 
-    private static class ChallengeMapper implements RecordMapper<Record, ChallengeData.Challenge> {
+    private static class ChallengeMapper implements RecordMapper<Record, Challenge> {
 
         @Override
-        public ChallengeData.Challenge map(Record record) {
-            return new ChallengeData.Challenge(
+        public Challenge map(Record record) {
+            return new Challenge(
                     record.get(CHALLENGE.ID, long.class),
                     record.get(CHALLENGE.NAME, String.class),
                     record.get(CHALLENGE.EXPECTED_TIME, int.class),
@@ -72,11 +73,11 @@ public class JooqChallengeRepository {
         }
     }
 
-    private static class ChallengeDataMapper implements RecordMapper<Record, ChallengeData> {
+    private static class ChallengeDataMapper implements RecordMapper<Record, ChallengeWithCondition> {
         @Override
-        public ChallengeData map(Record record) {
-            return new ChallengeData(
-                    new ChallengeData.Challenge(
+        public ChallengeWithCondition map(Record record) {
+            return new ChallengeWithCondition(
+                    new Challenge(
                             record.get(CHALLENGE.ID, long.class),
                             record.get(CHALLENGE.NAME, String.class),
                             record.get(CHALLENGE.IMAGE_URL, String.class),

@@ -28,15 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @IntegrationTest
-class ChallengeDataTest {
+class ChallengeWithConditionTest {
 
     private final ZoneOffset defaultZoneOffset = ZoneOffset.of("+9");
 
     @DisplayName("챌린지 예상 시간 Format 확인: 1시간 30분")
     @Test
     public void validExpectedTimeFormatToHHMM() {
-        ChallengeData.Challenge challenge =
-                new ChallengeData.Challenge(1, "1시간 30분 달리기", (3600 + 30 * 60), "imageUrl", ChallengeType.TODAY);
+        Challenge challenge = new Challenge(1, "1시간 30분 달리기", (3600 + 30 * 60), "imageUrl", ChallengeType.TODAY);
 
         assertThat(challenge.expectedTime()).isEqualTo("1시간 30분");
     }
@@ -44,8 +43,7 @@ class ChallengeDataTest {
     @DisplayName("챌린지 예상 시간 Format 확인: 1시간")
     @Test
     public void validExpectedTimeFormatToHH() {
-        ChallengeData.Challenge challenge =
-                new ChallengeData.Challenge(1, "1시간 달리기", 3600, "imageUrl", ChallengeType.TODAY);
+        Challenge challenge = new Challenge(1, "1시간 달리기", 3600, "imageUrl", ChallengeType.TODAY);
 
         assertThat(challenge.expectedTime()).isEqualTo("1시간");
     }
@@ -53,8 +51,7 @@ class ChallengeDataTest {
     @DisplayName("챌린지 예상 시간 Format 확인: 30분")
     @Test
     public void validExpectedTimeFormatToMM() {
-        ChallengeData.Challenge challenge =
-                new ChallengeData.Challenge(1, "30분 달리기", (30 * 60), "imageUrl", ChallengeType.TODAY);
+        Challenge challenge = new Challenge(1, "30분 달리기", (30 * 60), "imageUrl", ChallengeType.TODAY);
 
         assertThat(challenge.expectedTime()).isEqualTo("30분");
     }
@@ -62,8 +59,7 @@ class ChallengeDataTest {
     @DisplayName("챌린지 예상 시간 Format 확인: 0분")
     @Test
     public void validExpectedTimeFormatToZero() {
-        ChallengeData.Challenge challenge =
-                new ChallengeData.Challenge(1, "평균페이스 600", 0, "imageUrl", ChallengeType.TODAY);
+        Challenge challenge = new Challenge(1, "평균페이스 600", 0, "imageUrl", ChallengeType.TODAY);
 
         assertThat(challenge.expectedTime()).isEqualTo("0분");
     }
@@ -75,16 +71,16 @@ class ChallengeDataTest {
         int goalChallengeDis = 500;
         int goalChallengeTime = 10 * 60;
         Pace goalChallengePace = new Pace(0, 10);
-        ChallengeData challengeDataForDis = new ChallengeData(
-                new ChallengeData.Challenge(1L, "어제보다 500m더 달리기", "4분", "url", ChallengeType.DEFEAT_YESTERDAY),
+        ChallengeWithCondition challengeDataForDis = new ChallengeWithCondition(
+                new Challenge(1L, "어제보다 500m더 달리기", "4분", "url", ChallengeType.DEFEAT_YESTERDAY),
                 List.of(new ChallengeCondition(
                         GoalType.DISTANCE, ComparisonType.GREATER_THAN_OR_EQUAL_TO, goalChallengeDis)));
-        ChallengeData challengeDataForTime = new ChallengeData(
-                new ChallengeData.Challenge(2L, "어제보다 10분 더 달리기", "10분", "url", ChallengeType.DEFEAT_YESTERDAY),
+        ChallengeWithCondition challengeDataForTime = new ChallengeWithCondition(
+                new Challenge(2L, "어제보다 10분 더 달리기", "10분", "url", ChallengeType.DEFEAT_YESTERDAY),
                 List.of(new ChallengeCondition(
                         GoalType.TIME, ComparisonType.GREATER_THAN_OR_EQUAL_TO, goalChallengeTime)));
-        ChallengeData challengeDataForPace = new ChallengeData(
-                new ChallengeData.Challenge(3L, "어제보다 10초 더빠른 페이스로 달리기", "0분", "url", ChallengeType.DEFEAT_YESTERDAY),
+        ChallengeWithCondition challengeDataForPace = new ChallengeWithCondition(
+                new Challenge(3L, "어제보다 10초 더빠른 페이스로 달리기", "0분", "url", ChallengeType.DEFEAT_YESTERDAY),
                 List.of(new ChallengeCondition(
                         GoalType.PACE, ComparisonType.LESS_THAN_OR_EQUAL_TO, goalChallengePace.toSeconds())));
         RunningRecord yesterdayRecord = new RunningRecord(
@@ -132,12 +128,12 @@ class ChallengeDataTest {
     class GetChallengeRecordWithDistanceTest {
 
         private final int goalDistance = 3000;
-        private ChallengeData challengeDataForDis;
+        private ChallengeWithCondition challengeDataForDis;
 
         @BeforeEach
         void setUp() {
-            challengeDataForDis = new ChallengeData(
-                    new ChallengeData.Challenge(1L, "3km 달리기", "25분", "url", ChallengeType.TODAY),
+            challengeDataForDis = new ChallengeWithCondition(
+                    new Challenge(1L, "3km 달리기", "25분", "url", ChallengeType.TODAY),
                     List.of(new ChallengeCondition(
                             GoalType.DISTANCE, ComparisonType.GREATER_THAN_OR_EQUAL_TO, goalDistance)));
         }
@@ -213,12 +209,12 @@ class ChallengeDataTest {
 
         private final int goalTime = 60 * 60 + 30 * 60; // 1시간 30분, 5,400
         OffsetDateTime startAt = LocalDateTime.of(2021, 1, 1, 13, 10, 0).atOffset(defaultZoneOffset);
-        private ChallengeData challengeDataForTime;
+        private ChallengeWithCondition challengeDataForTime;
 
         @BeforeEach
         void setUp() {
-            challengeDataForTime = new ChallengeData(
-                    new ChallengeData.Challenge(1L, "1시간 30분 달리기", "1시간 30분", "url", ChallengeType.TODAY),
+            challengeDataForTime = new ChallengeWithCondition(
+                    new Challenge(1L, "1시간 30분 달리기", "1시간 30분", "url", ChallengeType.TODAY),
                     List.of(new ChallengeCondition(GoalType.TIME, ComparisonType.GREATER_THAN_OR_EQUAL_TO, goalTime)));
         }
 
@@ -297,12 +293,12 @@ class ChallengeDataTest {
     class GetChallengeRecordWithPaceTest {
 
         private final Pace pace = new Pace(6, 0); // 패이스 목표 600
-        private ChallengeData challengeDataForPace;
+        private ChallengeWithCondition challengeDataForPace;
 
         @BeforeEach
         void setUp() {
-            challengeDataForPace = new ChallengeData(
-                    new ChallengeData.Challenge(1L, "평균페이스 600", "0분", "url", ChallengeType.TODAY),
+            challengeDataForPace = new ChallengeWithCondition(
+                    new Challenge(1L, "평균페이스 600", "0분", "url", ChallengeType.TODAY),
                     List.of(new ChallengeCondition(
                             GoalType.PACE, ComparisonType.LESS_THAN_OR_EQUAL_TO, pace.toSeconds())));
         }
@@ -368,12 +364,12 @@ class ChallengeDataTest {
 
         private final Pace goalPace = new Pace(6, 0); // 패이스 목표 600
         private final int goalDistance = 1000;
-        private ChallengeData challengeDataForPaceAndDis;
+        private ChallengeWithCondition challengeDataForPaceAndDis;
 
         @BeforeEach
         void setUp() {
-            challengeDataForPaceAndDis = new ChallengeData(
-                    new ChallengeData.Challenge(1L, "1시간 30분 달리기", "1시간 30분", "url", ChallengeType.DISTANCE_IN_TIME),
+            challengeDataForPaceAndDis = new ChallengeWithCondition(
+                    new Challenge(1L, "1시간 30분 달리기", "1시간 30분", "url", ChallengeType.DISTANCE_IN_TIME),
                     List.of(
                             new ChallengeCondition(
                                     GoalType.DISTANCE, ComparisonType.GREATER_THAN_OR_EQUAL_TO, goalDistance),
@@ -493,7 +489,7 @@ class ChallengeDataTest {
     }
 
     private ChallengeAchievementRecord getChallengeAchievement(
-            RunningRecord runningRecord, ChallengeData challengeDataWithConditions) {
+            RunningRecord runningRecord, ChallengeWithCondition challengeDataWithConditions) {
         boolean allSuccess = true;
         boolean allHasPercentage = true;
         PercentageValues percentageValues = null;

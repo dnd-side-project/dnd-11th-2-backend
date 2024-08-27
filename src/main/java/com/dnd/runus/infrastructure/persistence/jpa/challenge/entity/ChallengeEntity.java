@@ -1,6 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
 
-import com.dnd.runus.domain.challenge.ChallengeData;
+import com.dnd.runus.domain.challenge.Challenge;
 import com.dnd.runus.domain.challenge.ChallengeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
@@ -41,7 +41,7 @@ public class ChallengeEntity {
     @NotNull
     private String imageUrl;
 
-    public ChallengeData.Challenge toDomain() {
-        return new ChallengeData.Challenge(id, name, expectedTime, imageUrl, challengeType);
+    public Challenge toDomain() {
+        return new Challenge(id, name, expectedTime, imageUrl, challengeType);
     }
 }

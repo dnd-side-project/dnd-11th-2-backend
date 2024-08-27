@@ -1,6 +1,7 @@
 package com.dnd.runus.domain.challenge.achievement.dto.response;
 
-import com.dnd.runus.domain.challenge.ChallengeData;
+import com.dnd.runus.domain.challenge.Challenge;
+import com.dnd.runus.domain.challenge.ChallengeWithCondition;
 import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievementRecord;
 import com.dnd.runus.global.constant.RunningResultComment;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,7 +25,7 @@ public record ChallengeAchievementResponse(
     Boolean isSuccess
 ) {
     public static ChallengeAchievementResponse from(
-        ChallengeAchievementRecord challengeAchievementRecord, ChallengeData.Challenge challenge) {
+        ChallengeAchievementRecord challengeAchievementRecord, Challenge challenge) {
         return new ChallengeAchievementResponse(
             challenge.imageUrl(),
             challenge.name(),

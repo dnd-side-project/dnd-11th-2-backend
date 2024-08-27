@@ -1,8 +1,8 @@
 package com.dnd.runus.application.challenge;
 
 import com.dnd.runus.domain.challenge.ChallengeCondition;
-import com.dnd.runus.domain.challenge.ChallengeData;
 import com.dnd.runus.domain.challenge.ChallengeRepository;
+import com.dnd.runus.domain.challenge.ChallengeWithCondition;
 import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.dto.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.dto.PercentageValues;
@@ -48,7 +48,8 @@ public class ChallengeService {
     // 챌린지 성취 로직(러닝 서비스쪽으로 옮기면 될 것 같아요.
     public void saveTest(RunningRecord runningRecord, Member member) {
         // challenge 조건 까지 select
-        ChallengeData challenge = challengeRepository.findChallengeWithConditionsByChallengeId(member.memberId());
+        ChallengeWithCondition challenge =
+                challengeRepository.findChallengeWithConditionsByChallengeId(member.memberId());
 
         if (challenge.challengeInfo().isDefeatYesterdayChallenge()) {
             // 어제 기록 확인
@@ -71,7 +72,7 @@ public class ChallengeService {
     }
 
     private ChallengeAchievementRecord getChallengeAchievement(
-            RunningRecord runningRecord, ChallengeData challengeDataWithConditions) {
+            RunningRecord runningRecord, ChallengeWithCondition challengeDataWithConditions) {
         boolean allSuccess = true;
         boolean allHasPercentage = true;
         PercentageValues percentageValues = null;

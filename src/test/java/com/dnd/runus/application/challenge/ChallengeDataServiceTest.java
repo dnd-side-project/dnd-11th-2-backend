@@ -54,13 +54,12 @@ class ChallengeDataServiceTest {
 
         given(challengeRepository.findAllChallenges())
                 .willReturn(List.of(
-                        new ChallengeData.Challenge(1L, "어제보다 1km더 뛰기", "imageUrl", ChallengeType.DEFEAT_YESTERDAY),
-                        new ChallengeData.Challenge(2L, "어제보다 5분 더 뛰기", "imageUrl", ChallengeType.DEFEAT_YESTERDAY),
-                        new ChallengeData.Challenge(
-                                3L, "어제보다 평균 페이스 10초 빠르게", "imageUrl", ChallengeType.DEFEAT_YESTERDAY),
-                        new ChallengeData.Challenge(4L, "오늘 5km 뛰기", "imageUrl", ChallengeType.TODAY),
-                        new ChallengeData.Challenge(5L, "오늘 30분 뛰기", "imageUrl", ChallengeType.TODAY),
-                        new ChallengeData.Challenge(6L, "1km 6분안에 뛰기", "imageUrl", ChallengeType.DISTANCE_IN_TIME)));
+                        new Challenge(1L, "어제보다 1km더 뛰기", "imageUrl", ChallengeType.DEFEAT_YESTERDAY),
+                        new Challenge(2L, "어제보다 5분 더 뛰기", "imageUrl", ChallengeType.DEFEAT_YESTERDAY),
+                        new Challenge(3L, "어제보다 평균 페이스 10초 빠르게", "imageUrl", ChallengeType.DEFEAT_YESTERDAY),
+                        new Challenge(4L, "오늘 5km 뛰기", "imageUrl", ChallengeType.TODAY),
+                        new Challenge(5L, "오늘 30분 뛰기", "imageUrl", ChallengeType.TODAY),
+                        new Challenge(6L, "1km 6분안에 뛰기", "imageUrl", ChallengeType.DISTANCE_IN_TIME)));
 
         // when
         List<ChallengesResponse> challenges = challengeService.getChallenges(member.memberId());
@@ -79,9 +78,9 @@ class ChallengeDataServiceTest {
 
         given(challengeRepository.findAllIsNotDefeatYesterday())
                 .willReturn(List.of(
-                        new ChallengeData.Challenge(4L, "오늘 5km 뛰기", "imageUrl", ChallengeType.TODAY),
-                        new ChallengeData.Challenge(5L, "오늘 30분 뛰기", "imageUrl", ChallengeType.TODAY),
-                        new ChallengeData.Challenge(6L, "1km 6분안에 뛰기", "imageUrl", ChallengeType.DISTANCE_IN_TIME)));
+                        new Challenge(4L, "오늘 5km 뛰기", "imageUrl", ChallengeType.TODAY),
+                        new Challenge(5L, "오늘 30분 뛰기", "imageUrl", ChallengeType.TODAY),
+                        new Challenge(6L, "1km 6분안에 뛰기", "imageUrl", ChallengeType.DISTANCE_IN_TIME)));
         // when
         List<ChallengesResponse> challenges = challengeService.getChallenges(member.memberId());
 
