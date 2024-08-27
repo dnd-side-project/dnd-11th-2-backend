@@ -17,6 +17,7 @@ public class ChallengeCondition {
         this.goalType = goalType;
         this.comparisonType = comparisonType;
         this.goalValue = goalValue;
+        this.comparisonValue = goalValue;
     }
 
     public boolean isAchieved(int currentValue) {

@@ -28,16 +28,19 @@ public class ChallengeService {
     private final RunningRecordRepository runningRecordRepository;
 
     public List<ChallengesResponse> getChallenges(long memberId) {
-        // 1. 어제 기록 확인
         OffsetDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID)
                 .atStartOfDay(SERVER_TIMEZONE_ID)
                 .toOffsetDateTime();
         OffsetDateTime yesterday = todayMidnight.minusDays(1);
 
-        boolean hasYesterdayRecords =
-                runningRecordRepository.hasByMemberIdAndStartAtBetween(memberId, yesterday, todayMidnight);
+        // 어제 기록이 없으면
+        if (!runningRecordRepository.hasByMemberIdAndStartAtBetween(memberId, yesterday, todayMidnight)) {
+            return challengeRepository.findAllIsNotDefeatYesterday().stream()
+                    .map(ChallengesResponse::from)
+                    .toList();
+        }
 
-        return challengeRepository.findAllChallenges(hasYesterdayRecords).stream()
+        return challengeRepository.findAllChallenges().stream()
                 .map(ChallengesResponse::from)
                 .toList();
     }

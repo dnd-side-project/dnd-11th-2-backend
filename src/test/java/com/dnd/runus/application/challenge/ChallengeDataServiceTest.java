@@ -1,6 +1,5 @@
 package com.dnd.runus.application.challenge;
 
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
 import com.dnd.runus.domain.challenge.*;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.running.RunningRecordRepository;
@@ -29,9 +28,6 @@ class ChallengeDataServiceTest {
     private RunningRecordRepository runningRecordRepository;
 
     @Mock
-    private ChallengeAchievementRepository challengeAchievementRepository;
-
-    @Mock
     private ChallengeRepository challengeRepository;
 
     @InjectMocks
@@ -56,7 +52,7 @@ class ChallengeDataServiceTest {
                         member.memberId(), todayMidnight.minusDays(1), todayMidnight))
                 .willReturn(true);
 
-        given(challengeRepository.findAllChallenges(true))
+        given(challengeRepository.findAllChallenges())
                 .willReturn(List.of(
                         new ChallengeData.Challenge(1L, "어제보다 1km더 뛰기", "imageUrl", ChallengeType.DEFEAT_YESTERDAY),
                         new ChallengeData.Challenge(2L, "어제보다 5분 더 뛰기", "imageUrl", ChallengeType.DEFEAT_YESTERDAY),
@@ -81,7 +77,7 @@ class ChallengeDataServiceTest {
                         member.memberId(), todayMidnight.minusDays(1), todayMidnight))
                 .willReturn(false);
 
-        given(challengeRepository.findAllChallenges(false))
+        given(challengeRepository.findAllIsNotDefeatYesterday())
                 .willReturn(List.of(
                         new ChallengeData.Challenge(4L, "오늘 5km 뛰기", "imageUrl", ChallengeType.TODAY),
                         new ChallengeData.Challenge(5L, "오늘 30분 뛰기", "imageUrl", ChallengeType.TODAY),

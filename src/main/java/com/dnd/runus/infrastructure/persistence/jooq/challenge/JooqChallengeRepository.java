@@ -6,11 +6,9 @@ import com.dnd.runus.domain.challenge.ChallengeType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.RequiredArgsConstructor;
-import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
-import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.Type;
@@ -28,13 +26,7 @@ public class JooqChallengeRepository {
 
     private final DSLContext dsl;
 
-    public List<ChallengeData.Challenge> findAllBy(boolean hasYesterdayRecord) {
-        Condition condition = CHALLENGE.CHALLENGE_TYPE.ne(ChallengeType.DEFEAT_YESTERDAY.toString());
-
-        if (hasYesterdayRecord) {
-            condition = DSL.noCondition();
-        }
-
+    public List<ChallengeData.Challenge> findAllIsNotDefeatYesterday() {
         return dsl.select(
                         CHALLENGE.ID,
                         CHALLENGE.NAME,
@@ -42,7 +34,7 @@ public class JooqChallengeRepository {
                         CHALLENGE.IMAGE_URL,
                         CHALLENGE.CHALLENGE_TYPE)
                 .from(CHALLENGE)
-                .where(condition)
+                .where(CHALLENGE.CHALLENGE_TYPE.ne(ChallengeType.DEFEAT_YESTERDAY.toString()))
                 .fetch(new ChallengeMapper());
     }
 
