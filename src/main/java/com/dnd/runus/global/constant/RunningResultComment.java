@@ -9,6 +9,7 @@ public enum RunningResultComment {
 
     private final String comment;
 
+    // TODO(subtitle(comment) 리턴, 챌린지 성취, 목표 성취 값 리턴 할 때 사용)
     public static String getComment(boolean successStatus) {
         return successStatus ? SUCCESS_COMMENT.comment : FAILURE_COMMENT.comment;
     }
