@@ -162,7 +162,6 @@ class ChallengeWithConditionTest {
 
             // then
             assertTrue(challengeAchievementRecord.challengeAchievement().isSuccess());
-            assertTrue(challengeAchievementRecord.hasPercentage());
             PercentageValues percentageValues = challengeAchievementRecord.percentageValues();
             assertThat(percentageValues.startValue()).isEqualTo(0);
             assertThat(percentageValues.endValue()).isEqualTo(goalDistance);
@@ -194,7 +193,6 @@ class ChallengeWithConditionTest {
 
             // then
             assertFalse(challengeAchievementRecord.challengeAchievement().isSuccess());
-            assertTrue(challengeAchievementRecord.hasPercentage());
             PercentageValues percentageValues = challengeAchievementRecord.percentageValues();
             assertThat(percentageValues.startValue()).isEqualTo(0);
             assertThat(percentageValues.endValue()).isEqualTo(3000);
@@ -241,7 +239,6 @@ class ChallengeWithConditionTest {
                     getChallengeAchievement(runningRecord, challengeDataForTime);
             // then
             assertTrue(challengeAchievementRecord.challengeAchievement().isSuccess());
-            assertTrue(challengeAchievementRecord.hasPercentage());
             PercentageValues percentageValues = challengeAchievementRecord.percentageValues();
             int expectedStartValue = 0;
             int expectedEndValue = expectedStartValue + goalTime;
@@ -275,7 +272,6 @@ class ChallengeWithConditionTest {
 
             // then
             assertFalse(challengeAchievementRecord.challengeAchievement().isSuccess());
-            assertTrue(challengeAchievementRecord.hasPercentage());
 
             PercentageValues percentageValues = challengeAchievementRecord.percentageValues();
             int expectedStartValue = 0;
@@ -325,7 +321,6 @@ class ChallengeWithConditionTest {
                     getChallengeAchievement(runningRecord, challengeDataForPace);
             // then
             assertTrue(challengeAchievementRecord.challengeAchievement().isSuccess());
-            assertFalse(challengeAchievementRecord.hasPercentage());
             assertNull(challengeAchievementRecord.percentageValues());
         }
 
@@ -352,7 +347,6 @@ class ChallengeWithConditionTest {
                     getChallengeAchievement(runningRecord, challengeDataForPace);
             // then
             assertFalse(challengeAchievementRecord.challengeAchievement().isSuccess());
-            assertFalse(challengeAchievementRecord.hasPercentage());
             assertNull(challengeAchievementRecord.percentageValues());
         }
     }
@@ -401,7 +395,6 @@ class ChallengeWithConditionTest {
 
             // then
             assertTrue(challengeAchievementRecord.challengeAchievement().isSuccess());
-            assertFalse(challengeAchievementRecord.hasPercentage());
             assertNull(challengeAchievementRecord.percentageValues());
         }
 
@@ -429,7 +422,6 @@ class ChallengeWithConditionTest {
 
             // then
             assertFalse(challengeAchievementRecord.challengeAchievement().isSuccess());
-            assertFalse(challengeAchievementRecord.hasPercentage());
             assertNull(challengeAchievementRecord.percentageValues());
         }
 
@@ -456,7 +448,6 @@ class ChallengeWithConditionTest {
                     getChallengeAchievement(runningRecord, challengeDataForPaceAndDis);
             // then
             assertFalse(challengeAchievementRecord.challengeAchievement().isSuccess());
-            assertFalse(challengeAchievementRecord.hasPercentage());
             assertNull(challengeAchievementRecord.percentageValues());
         }
 
@@ -483,7 +474,6 @@ class ChallengeWithConditionTest {
                     getChallengeAchievement(runningRecord, challengeDataForPaceAndDis);
             // then
             assertFalse(challengeAchievementRecord.challengeAchievement().isSuccess());
-            assertFalse(challengeAchievementRecord.hasPercentage());
             assertNull(challengeAchievementRecord.percentageValues());
         }
     }

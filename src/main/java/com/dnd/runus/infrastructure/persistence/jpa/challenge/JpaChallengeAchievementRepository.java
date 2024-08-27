@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface JpaChallengeAchievementRepository extends JpaRepository<ChallengeAchievementEntity, Long> {
-    Optional<ChallengeAchievementEntity> findByRunningRecordId(Long aLong);
+    Optional<ChallengeAchievementEntity> findByRunningRecordId(Long runningId);
 }
