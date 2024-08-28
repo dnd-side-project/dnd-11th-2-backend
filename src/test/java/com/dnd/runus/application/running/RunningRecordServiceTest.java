@@ -1,6 +1,9 @@
 package com.dnd.runus.application.running;
 
-import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentageRepository;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
+import com.dnd.runus.domain.challenge.*;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberLevelRepository;
@@ -12,6 +15,7 @@ import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDto;
+import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,16 +48,31 @@ class RunningRecordServiceTest {
     @Mock
     private MemberLevelRepository memberLevelRepository;
 
+    @Mock
+    private ChallengeRepository challengeRepository;
+
+    @Mock
+    private ChallengeAchievementRepository challengeAchievementRepository;
+
+    @Mock
+    private ChallengeAchievementPercentageRepository percentageValuesRepository;
+
     private final ZoneOffset defaultZoneOffset = ZoneOffset.of("+9");
 
     @BeforeEach
     void setUp() {
         runningRecordService = new RunningRecordService(
-                runningRecordRepository, memberRepository, memberLevelRepository, defaultZoneOffset);
+                runningRecordRepository,
+                memberRepository,
+                memberLevelRepository,
+                challengeRepository,
+                challengeAchievementRepository,
+                percentageValuesRepository,
+                defaultZoneOffset);
     }
 
     @Test
-    @DisplayName("올바른 러닝 기록 추가 요청시, 정상적으로 러닝 기록이 추가된다.")
+    @DisplayName("CHALLENGE 모드의 러닝 기록 추가 요청시, challengeId에 해당하는 챌린지가 있을 경우, 정상적으로 러닝 기록이 추가된다.")
     void addRunningRecord() {
         // given
         RunningRecordRequest request = new RunningRecordRequest(
@@ -63,19 +82,16 @@ class RunningRecordServiceTest {
                 "end location",
                 RunningEmoji.VERY_GOOD,
                 1L,
-                new RunningRecordMetricsDto(
-                        new Pace(5, 30),
-                        Duration.ofSeconds(10_100),
-                        10_000,
-                        500.0,
-                        List.of(new Coordinate(128.0, 37.0), new Coordinate(128.1, 37.1))));
+                null,
+                null,
+                RunningAchievementMode.CHALLENGE,
+                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
 
         Member member = new Member(MemberRole.USER, "nickname1");
         RunningRecord expected = RunningRecord.builder()
                 .member(member)
                 .startAt(request.startAt().atOffset(defaultZoneOffset))
                 .endAt(request.endAt().atOffset(defaultZoneOffset))
-                .route(request.runningData().route())
                 .emoji(request.emoji())
                 .startLocation(request.startLocation())
                 .endLocation(request.endLocation())
@@ -84,8 +100,19 @@ class RunningRecordServiceTest {
                 .calorie(request.runningData().calorie())
                 .averagePace(request.runningData().averagePace())
                 .build();
+
+        ChallengeWithCondition challengeWithCondition = new ChallengeWithCondition(
+                new Challenge(1L, "challenge", "image", ChallengeType.TODAY),
+                List.of(new ChallengeCondition(
+                        GoalMetricType.DISTANCE, ComparisonType.GREATER_THAN_OR_EQUAL_TO, 10_000)));
+        ChallengeAchievement challengeAchievement =
+                new ChallengeAchievement(0L, challengeWithCondition.challenge(), expected, true);
+
         given(memberRepository.findById(1L)).willReturn(Optional.of(member));
         given(runningRecordRepository.save(expected)).willReturn(expected);
+        given(challengeRepository.findChallengeWithConditionsByChallengeId(1L))
+                .willReturn(Optional.of(challengeWithCondition));
+        given(challengeAchievementRepository.save(challengeAchievement)).willReturn(challengeAchievement);
 
         // when
         RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
@@ -106,41 +133,14 @@ class RunningRecordServiceTest {
                 "end location",
                 RunningEmoji.VERY_GOOD,
                 1L,
-                new RunningRecordMetricsDto(
-                        new Pace(5, 30),
-                        Duration.ofSeconds(10_100),
-                        10_000,
-                        500.0,
-                        List.of(new Coordinate(128.0, 37.0), new Coordinate(128.1, 37.1))));
+                null,
+                null,
+                RunningAchievementMode.CHALLENGE,
+                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
         // when
         BusinessException exception =
                 assertThrows(BusinessException.class, () -> runningRecordService.addRunningRecord(1L, request));
         // then
         assertEquals(ErrorType.START_AFTER_END, exception.getType());
-    }
-
-    @Test
-    @DisplayName("경로의 좌표가 2개 미만일 경우, BusinessException이 발생한다.")
-    void addRunningRecord_RouteMustHaveAtLeastTwoCoordinates() {
-        // given
-        RunningRecordRequest request = new RunningRecordRequest(
-                LocalDateTime.of(2021, 1, 1, 12, 10, 30),
-                LocalDateTime.of(2021, 1, 1, 13, 12, 10),
-                "start location",
-                "end location",
-                RunningEmoji.VERY_GOOD,
-                1L,
-                new RunningRecordMetricsDto(
-                        new Pace(5, 30),
-                        Duration.ofSeconds(10_100),
-                        10_000,
-                        500.0,
-                        List.of(new Coordinate(128.0, 37.0))));
-
-        // when
-        BusinessException exception =
-                assertThrows(BusinessException.class, () -> runningRecordService.addRunningRecord(1L, request));
-        // then
-        assertEquals(ErrorType.ROUTE_MUST_HAVE_AT_LEAST_TWO_COORDINATES, exception.getType());
     }
 }

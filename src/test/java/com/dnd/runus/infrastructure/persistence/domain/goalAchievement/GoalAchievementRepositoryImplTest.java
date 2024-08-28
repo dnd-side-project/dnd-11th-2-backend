@@ -1,6 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.domain.goalAchievement;
 
-import com.dnd.runus.domain.challenge.GoalType;
+import com.dnd.runus.domain.challenge.GoalMetricType;
 import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
@@ -63,7 +63,7 @@ public class GoalAchievementRepositoryImplTest {
     @Test
     void saveGoalAchievementDistanceSuccess() {
         // given
-        GoalAchievement goalAchievement = new GoalAchievement(runningRecord, GoalType.DISTANCE, runningDistance);
+        GoalAchievement goalAchievement = new GoalAchievement(runningRecord, GoalMetricType.DISTANCE, runningDistance);
 
         // when
         GoalAchievement saved = goalAchievementRepository.save(goalAchievement);
@@ -76,7 +76,8 @@ public class GoalAchievementRepositoryImplTest {
     @Test
     void saveGoalAchievementDistanceFailed() {
         // given
-        GoalAchievement goalAchievement = new GoalAchievement(runningRecord, GoalType.DISTANCE, runningDistance + 1);
+        GoalAchievement goalAchievement =
+                new GoalAchievement(runningRecord, GoalMetricType.DISTANCE, runningDistance + 1);
 
         // when
         GoalAchievement saved = goalAchievementRepository.save(goalAchievement);
@@ -90,7 +91,7 @@ public class GoalAchievementRepositoryImplTest {
     void saveGoalAchievementTimeSuccess() {
         // given
         int goalTime = (int) runningDuration.toSeconds();
-        GoalAchievement goalAchievement = new GoalAchievement(runningRecord, GoalType.TIME, goalTime);
+        GoalAchievement goalAchievement = new GoalAchievement(runningRecord, GoalMetricType.TIME, goalTime);
 
         // when
         GoalAchievement saved = goalAchievementRepository.save(goalAchievement);
@@ -104,7 +105,7 @@ public class GoalAchievementRepositoryImplTest {
     void saveGoalAchievementTimeFailed() {
         // given
         int goalTime = (int) runningDuration.toSeconds() + 1;
-        GoalAchievement goalAchievement = new GoalAchievement(runningRecord, GoalType.TIME, goalTime);
+        GoalAchievement goalAchievement = new GoalAchievement(runningRecord, GoalMetricType.TIME, goalTime);
 
         // when
         GoalAchievement saved = goalAchievementRepository.save(goalAchievement);
