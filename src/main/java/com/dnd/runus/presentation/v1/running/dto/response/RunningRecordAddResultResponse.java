@@ -1,5 +1,6 @@
 package com.dnd.runus.presentation.v1.running.dto.response;
 
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.presentation.v1.running.dto.ChallengeDto;
@@ -14,8 +15,7 @@ public record RunningRecordAddResultResponse(
         LocalDateTime startAt,
         LocalDateTime endAt,
         RunningEmoji emoji,
-        String nickname,
-        @Schema(description = "챌린지 정보")
+        @Schema(description = "챌린지 정보, 챌린지를 하지 않은 경우 null입니다.")
         ChallengeDto challenge,
         @NotNull
         RunningRecordMetricsDto runningData
@@ -26,14 +26,32 @@ public record RunningRecordAddResultResponse(
                 runningRecord.startAt().toLocalDateTime(),
                 runningRecord.endAt().toLocalDateTime(),
                 runningRecord.emoji(),
-                runningRecord.member().nickname(),
-                new ChallengeDto(-1), // TODO: 챌린지 기능 추가 후 수정
+                null,
                 new RunningRecordMetricsDto(
                         runningRecord.averagePace(),
                         runningRecord.duration(),
                         runningRecord.distanceMeter(),
-                        runningRecord.calorie(),
-                        runningRecord.route()
+                        runningRecord.calorie()
+                ));
+    }
+
+    public static RunningRecordAddResultResponse of(RunningRecord runningRecord, ChallengeAchievement achievement) {
+        return new RunningRecordAddResultResponse(
+                runningRecord.runningId(),
+                runningRecord.startAt().toLocalDateTime(),
+                runningRecord.endAt().toLocalDateTime(),
+                runningRecord.emoji(),
+                new ChallengeDto(
+                        achievement.challenge().challengeId(),
+                        achievement.challenge().name(),
+                        achievement.challenge().formatExpectedTime(),
+                        achievement.challenge().imageUrl()
+                ),
+                new RunningRecordMetricsDto(
+                        runningRecord.averagePace(),
+                        runningRecord.duration(),
+                        runningRecord.distanceMeter(),
+                        runningRecord.calorie()
                 ));
     }
 }

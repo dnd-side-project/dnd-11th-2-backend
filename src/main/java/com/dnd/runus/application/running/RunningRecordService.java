@@ -1,5 +1,12 @@
 package com.dnd.runus.application.running;
 
+import com.dnd.runus.domain.challenge.Challenge;
+import com.dnd.runus.domain.challenge.ChallengeRepository;
+import com.dnd.runus.domain.challenge.ChallengeWithCondition;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentageRepository;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
+import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
@@ -17,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
 
@@ -27,16 +35,25 @@ public class RunningRecordService {
     private final RunningRecordRepository runningRecordRepository;
     private final MemberRepository memberRepository;
     private final MemberLevelRepository memberLevelRepository;
+    private final ChallengeRepository challengeRepository;
+    private final ChallengeAchievementRepository challengeAchievementRepository;
+    private final ChallengeAchievementPercentageRepository percentageValuesRepository;
     private final ZoneOffset defaultZoneOffset;
 
     public RunningRecordService(
             RunningRecordRepository runningRecordRepository,
             MemberRepository memberRepository,
             MemberLevelRepository memberLevelRepository,
+            ChallengeRepository challengeRepository,
+            ChallengeAchievementRepository challengeAchievementRepository,
+            ChallengeAchievementPercentageRepository percentageValuesRepository,
             @Value("${app.default-zone-offset}") ZoneOffset defaultZoneOffset) {
         this.runningRecordRepository = runningRecordRepository;
         this.memberRepository = memberRepository;
         this.memberLevelRepository = memberLevelRepository;
+        this.challengeRepository = challengeRepository;
+        this.challengeAchievementRepository = challengeAchievementRepository;
+        this.percentageValuesRepository = percentageValuesRepository;
         this.defaultZoneOffset = defaultZoneOffset;
     }
 
@@ -68,21 +85,13 @@ public class RunningRecordService {
         if (request.startAt().isAfter(request.endAt())) {
             throw new BusinessException(ErrorType.START_AFTER_END, request.startAt() + ", " + request.endAt());
         }
-        if (request.runningData().route().size() < 2) {
-            throw new BusinessException(
-                    ErrorType.ROUTE_MUST_HAVE_AT_LEAST_TWO_COORDINATES,
-                    request.runningData().route().toString());
-        }
-        // FIXME: badge에 left join해서 같이 조회하기
         Member member =
                 memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
-        // TODO: 챌린지 기능 추가 후 수정
 
         RunningRecord record = runningRecordRepository.save(RunningRecord.builder()
                 .member(member)
                 .startAt(request.startAt().atOffset(defaultZoneOffset))
                 .endAt(request.endAt().atOffset(defaultZoneOffset))
-                .route(request.runningData().route())
                 .emoji(request.emoji())
                 .startLocation(request.startLocation())
                 .endLocation(request.endLocation())
@@ -94,6 +103,49 @@ public class RunningRecordService {
 
         memberLevelRepository.updateMemberLevel(memberId, request.runningData().distanceMeter());
 
+        switch (request.achievementMode()) {
+            case CHALLENGE -> {
+                ChallengeAchievement challengeAchievement =
+                        handleChallengeMode(request.challengeId(), memberId, record);
+                return RunningRecordAddResultResponse.of(record, challengeAchievement);
+            }
+            case GOAL -> {
+                // TODO: 개인 목표 달성 로직 추가
+            }
+        }
         return RunningRecordAddResultResponse.from(record);
+    }
+
+    private ChallengeAchievement handleChallengeMode(Long challengeId, long memberId, RunningRecord runningRecord) {
+        if (challengeId == null) {
+            throw new NotFoundException("Challenge ID is required for CHALLENGE mode");
+        }
+        ChallengeWithCondition challengeWithCondition = challengeRepository
+                .findChallengeWithConditionsByChallengeId(challengeId)
+                .orElseThrow(() -> new NotFoundException(Challenge.class, challengeId));
+
+        if (challengeWithCondition.challenge().isDefeatYesterdayChallenge()) {
+            OffsetDateTime todayMidnight = LocalDate.now(ZoneId.of(SERVER_TIMEZONE))
+                    .atStartOfDay(ZoneId.of(SERVER_TIMEZONE))
+                    .toOffsetDateTime();
+            OffsetDateTime yesterday = todayMidnight.minusDays(1);
+            RunningRecord yesterdayRecord =
+                    runningRecordRepository.findByMemberIdAndStartAtBetween(memberId, yesterday, todayMidnight).stream()
+                            .findFirst()
+                            .orElseThrow(() -> new NotFoundException(RunningRecord.class, memberId));
+
+            challengeWithCondition
+                    .conditions()
+                    .forEach(condition -> condition.registerComparisonValue(
+                            condition.goalMetricType().getActualValue(yesterdayRecord)));
+        }
+
+        ChallengeAchievementRecord achievementRecord = challengeWithCondition.getAchievementRecord(runningRecord);
+        ChallengeAchievement achievement =
+                challengeAchievementRepository.save(achievementRecord.challengeAchievement());
+        if (achievementRecord.percentageValues() != null) {
+            percentageValuesRepository.save(achievementRecord);
+        }
+        return achievement;
     }
 }

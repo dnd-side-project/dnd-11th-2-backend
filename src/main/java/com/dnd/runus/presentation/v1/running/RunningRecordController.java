@@ -47,7 +47,7 @@ public class RunningRecordController {
                     + "러닝 데이터는 route(코스), 위치, 거리, 시간, 칼로리, 평균 페이스로 구성됩니다. <br> "
                     + "route는 최소 2개의 좌표를 가져야 합니다. <br> "
                     + "러닝 기록 추가에 성공하면 러닝 기록 ID, 기록 정보와 사용자 닉네임, 프로필 url을 반환합니다. <br>")
-    @ApiErrorType({ErrorType.START_AFTER_END, ErrorType.ROUTE_MUST_HAVE_AT_LEAST_TWO_COORDINATES})
+    @ApiErrorType({ErrorType.START_AFTER_END})
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public RunningRecordAddResultResponse addRunningRecord(

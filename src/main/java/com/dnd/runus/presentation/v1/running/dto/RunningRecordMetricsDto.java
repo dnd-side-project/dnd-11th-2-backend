@@ -14,9 +14,9 @@ public record RunningRecordMetricsDto(
         Pace averagePace,
         @Schema(description = "멈춘 시간을 제외한 실제로 달린 시간", example = "123:45:56", format = "HH:mm:ss")
         Duration runningTime,
+        @Schema(description = "달린 거리(m)", example = "1000")
         int distanceMeter,
-        double calorie,
-        @Size(min = 2, message = "최소 2개의 좌표가 필요합니다.")
-        List<Coordinate> route
+        @Schema(description = "소모 칼로리(kcal)", example = "100")
+        double calorie
 ) {
 }
