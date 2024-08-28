@@ -7,6 +7,7 @@ import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.presentation.v1.running.dto.ChallengeDto;
 import com.dnd.runus.presentation.v1.running.dto.GoalResultDto;
 import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDto;
+import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
@@ -16,7 +17,10 @@ public record RunningRecordAddResultResponse(
         long runningRecordId,
         LocalDateTime startAt,
         LocalDateTime endAt,
-        RunningEmoji emoji,
+        @NotNull
+        @Schema(description = "감정 표현, very-good: 최고, good: 좋음, soso: 보통, bad: 나쁨, very-bad: 최악")
+        RunningEmoji emotion,
+        RunningAchievementMode achievementMode,
         @Schema(description = "챌린지 정보, achievementMode가 challenge인 경우에만 값이 존재합니다.")
         ChallengeDto challenge,
         @Schema(description = "목표 결과 정보, achievementMode가 goal인 경우에만 값이 존재합니다.")
@@ -25,7 +29,7 @@ public record RunningRecordAddResultResponse(
         RunningRecordMetricsDto runningData
 ) {
     public static RunningRecordAddResultResponse from(RunningRecord runningRecord) {
-        return buildResponse(runningRecord, null, null);
+        return buildResponse(runningRecord, null, null, RunningAchievementMode.NORMAL);
     }
 
     public static RunningRecordAddResultResponse of(RunningRecord runningRecord, ChallengeAchievement achievement) {
@@ -37,7 +41,8 @@ public record RunningRecordAddResultResponse(
                         achievement.challenge().imageUrl(),
                         achievement.isSuccess()
                 ),
-                null
+                null,
+                RunningAchievementMode.CHALLENGE
         );
     }
 
@@ -48,16 +53,18 @@ public record RunningRecordAddResultResponse(
                         achievement.getTitle(),
                         achievement.getDescription(),
                         achievement.isAchieved()
-                )
+                ),
+                RunningAchievementMode.GOAL
         );
     }
 
-    private static RunningRecordAddResultResponse buildResponse(RunningRecord runningRecord, ChallengeDto challenge, GoalResultDto goal) {
+    private static RunningRecordAddResultResponse buildResponse(RunningRecord runningRecord, ChallengeDto challenge, GoalResultDto goal, RunningAchievementMode achievementMode) {
         return new RunningRecordAddResultResponse(
                 runningRecord.runningId(),
                 runningRecord.startAt().toLocalDateTime(),
                 runningRecord.endAt().toLocalDateTime(),
                 runningRecord.emoji(),
+                achievementMode,
                 challenge,
                 goal,
                 new RunningRecordMetricsDto(

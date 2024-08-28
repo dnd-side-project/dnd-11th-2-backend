@@ -96,7 +96,7 @@ public class RunningRecordService {
                 .member(member)
                 .startAt(request.startAt().atOffset(defaultZoneOffset))
                 .endAt(request.endAt().atOffset(defaultZoneOffset))
-                .emoji(request.emoji())
+                .emoji(request.emotion())
                 .startLocation(request.startLocation())
                 .endLocation(request.endLocation())
                 .distanceMeter(request.runningData().distanceMeter())

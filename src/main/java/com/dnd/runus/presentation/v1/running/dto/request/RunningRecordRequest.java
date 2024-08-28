@@ -20,7 +20,8 @@ public record RunningRecordRequest(
         @Schema(description = "종료 위치", example = "서울시 송파구")
         String endLocation,
         @NotNull
-        RunningEmoji emoji,
+        @Schema(description = "감정 표현, very-good: 최고, good: 좋음, soso: 보통, bad: 나쁨, very-bad: 최악")
+        RunningEmoji emotion,
         @Schema(description = "챌린지 ID, 챌린지를 하지 않은 경우 null이나 필드 없이 보내주세요", example = "1")
         Long challengeId,
         @Schema(description = "개인 목표 거리 (미터), 개인 목표가 아닌 경우, null이나 필드 없이 보내주세요", example = "5000")
@@ -28,7 +29,7 @@ public record RunningRecordRequest(
         @Schema(description = "개인 목표 시간 (초), 개인 목표가 아닌 경우, null이나 필드 없이 보내주세요", example = "1800")
         Integer goalTime,
         @NotNull
-        @Schema(description = "목표 달성 모드, NORMAL: 목표 설정X, CHALLENGE: 챌린지, GOAL: 개인 목표")
+        @Schema(description = "목표 달성 모드, normal: 목표 설정X, challenge: 챌린지, goal: 개인 목표")
         RunningAchievementMode achievementMode,
         @NotNull
         RunningRecordMetricsDto runningData
