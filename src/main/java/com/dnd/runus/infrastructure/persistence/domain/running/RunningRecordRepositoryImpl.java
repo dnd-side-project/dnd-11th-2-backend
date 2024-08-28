@@ -2,6 +2,7 @@ package com.dnd.runus.infrastructure.persistence.domain.running;
 
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
+import com.dnd.runus.infrastructure.persistence.jooq.running.JooqRunningRecordRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.running.JpaRunningRecordRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class RunningRecordRepositoryImpl implements RunningRecordRepository {
 
     private final JpaRunningRecordRepository jpaRunningRecordRepository;
+    private final JooqRunningRecordRepository jooqRunningRecordRepository;
 
     @Override
     public Optional<RunningRecord> findById(long runningRecordId) {
@@ -46,5 +48,12 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     @Override
     public boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime) {
         return jpaRunningRecordRepository.existsByMemberIdAndStartAtBetween(memberId, startTime, endTime);
+    }
+
+    @Override
+    public int findMonthlyTotalDistanceByMemberId(
+            long memberId, OffsetDateTime startDateOfMonth, OffsetDateTime startDateOfNextMonth) {
+        return jooqRunningRecordRepository.findMonthlyTotalDistanceByMemberId(
+                memberId, startDateOfMonth, startDateOfNextMonth);
     }
 }

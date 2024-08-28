@@ -15,4 +15,7 @@ public interface RunningRecordRepository {
             long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
 
     boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
+
+    int findMonthlyTotalDistanceByMemberId(
+            long memberId, OffsetDateTime startDateOfMonth, OffsetDateTime startDateOfNextMonth);
 }

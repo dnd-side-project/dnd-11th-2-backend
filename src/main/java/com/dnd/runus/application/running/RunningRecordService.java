@@ -7,7 +7,9 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentageRepository;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
+import com.dnd.runus.domain.level.Level;
 import com.dnd.runus.domain.member.Member;
+import com.dnd.runus.domain.member.MemberLevel;
 import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.RunningRecord;
@@ -17,6 +19,7 @@ import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordSummaryResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
@@ -114,6 +118,30 @@ public class RunningRecordService {
             }
         }
         return RunningRecordAddResultResponse.from(record);
+    }
+
+    @Transactional(readOnly = true)
+    public RunningRecordMonthlySummaryResponse getMonthlyRunningSummery(long memberId) {
+
+        OffsetDateTime startDateOfMonth =
+                OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE)).withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS);
+        OffsetDateTime startDateOfNextMonth = startDateOfMonth.plusMonths(1);
+
+        int monthValue = startDateOfMonth.getMonthValue();
+
+        int monthlyTotalDistance = runningRecordRepository.findMonthlyTotalDistanceByMemberId(
+                memberId, startDateOfMonth, startDateOfNextMonth);
+
+        MemberLevel.Current currentMemberLevel = memberLevelRepository.findByMemberIdWithLevel(memberId);
+
+        long nextLevel = currentMemberLevel.level().levelId() + 1;
+        int remainingKmToNextLevel = currentMemberLevel.level().expRangeEnd() - currentMemberLevel.currentExp();
+
+        return new RunningRecordMonthlySummaryResponse(
+                monthValue,
+                monthlyTotalDistance,
+                Level.formatLevelName(nextLevel),
+                Level.formatExp(remainingKmToNextLevel));
     }
 
     private ChallengeAchievement handleChallengeMode(Long challengeId, long memberId, RunningRecord runningRecord) {

@@ -7,6 +7,7 @@ import com.dnd.runus.presentation.annotation.MemberId;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlyDatesResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordSummaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,5 +54,18 @@ public class RunningRecordController {
     public RunningRecordAddResultResponse addRunningRecord(
             @MemberId long memberId, @Valid @RequestBody RunningRecordRequest request) {
         return runningRecordService.addRunningRecord(memberId, request);
+    }
+
+    @Operation(
+            summary = "이번 달 러닝 기록 조회(홈화면)",
+            description =
+                    """
+            홈화면의 이번 달 러닝 기록을 조회 합니다.<br>
+            이번 달, 이번 달 달린 키로수, 다음 레벨, 다음 레벨까지 남은 키로 수를 반환합니다.
+            """)
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("monthly-summary")
+    public RunningRecordMonthlySummaryResponse getMonthlyRunningSummary(@MemberId long memberId) {
+        return runningRecordService.getMonthlyRunningSummery(memberId);
     }
 }
