@@ -5,7 +5,9 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentage
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
 import com.dnd.runus.domain.challenge.*;
 import com.dnd.runus.domain.common.Pace;
+import com.dnd.runus.domain.level.Level;
 import com.dnd.runus.domain.member.Member;
+import com.dnd.runus.domain.member.MemberLevel;
 import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.RunningRecord;
@@ -18,22 +20,33 @@ import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
 class RunningRecordServiceTest {
@@ -142,5 +155,36 @@ class RunningRecordServiceTest {
                 assertThrows(BusinessException.class, () -> runningRecordService.addRunningRecord(1L, request));
         // then
         assertEquals(ErrorType.START_AFTER_END, exception.getType());
+    }
+
+    @Test
+    @DisplayName("이번 달, 달린 키로 수, 러닝 레벨을 조회한다.")
+    void getMonthlyRunningSummery() {
+        // given
+        long memberId = 1;
+        OffsetDateTime fixedDate = ZonedDateTime.of(2021, 1, 15, 9, 0, 0, 0, ZoneId.of(SERVER_TIMEZONE))
+                .toOffsetDateTime();
+        try (MockedStatic<OffsetDateTime> mockedStatic = mockStatic(OffsetDateTime.class)) {
+            mockedStatic
+                    .when(() -> OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE)))
+                    .thenReturn(fixedDate);
+
+            given(runningRecordRepository.findMonthlyTotalDistanceByMemberId(eq(memberId), any(), any()))
+                    .willReturn(45_780);
+
+            given(memberLevelRepository.findByMemberIdWithLevel(memberId))
+                    .willReturn(new MemberLevel.Current(new Level(1, 0, 50_000, "image"), 45_780));
+
+            // when
+            RunningRecordMonthlySummaryResponse monthlyRunningSummery =
+                    runningRecordService.getMonthlyRunningSummery(memberId);
+
+            // then
+            assertNotNull(monthlyRunningSummery);
+            assertThat(monthlyRunningSummery.month()).isEqualTo("1월");
+            assertThat(monthlyRunningSummery.monthlyKm()).isEqualTo("45.78KM");
+            assertThat(monthlyRunningSummery.nextLevelName()).isEqualTo("Level 2");
+            assertThat(monthlyRunningSummery.nextLevelKm()).isEqualTo("4.22km");
+        }
     }
 }
