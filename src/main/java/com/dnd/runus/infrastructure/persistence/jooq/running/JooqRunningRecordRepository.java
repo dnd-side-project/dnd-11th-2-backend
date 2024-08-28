@@ -15,13 +15,13 @@ import static org.jooq.impl.DSL.sum;
 public class JooqRunningRecordRepository {
     private final DSLContext dsl;
 
-    public int findMonthlyTotalDistanceByMemberId(
-            long memberId, OffsetDateTime startDateOfMonth, OffsetDateTime startDateOfNextMonth) {
+    public int findMonthlyTotalDistanceMeterByMemberId(
+            long memberId, OffsetDateTime startDate, OffsetDateTime endDate) {
         Record1<Integer> result = dsl.select(sum(RUNNING_RECORD.DISTANCE_METER).cast(Integer.class))
                 .from(RUNNING_RECORD)
                 .where(RUNNING_RECORD.MEMBER_ID.eq(memberId))
-                .and(RUNNING_RECORD.START_AT.ge(startDateOfMonth))
-                .and(RUNNING_RECORD.START_AT.lessThan(startDateOfNextMonth))
+                .and(RUNNING_RECORD.START_AT.ge(startDate))
+                .and(RUNNING_RECORD.START_AT.lessThan(endDate))
                 .fetchOne();
         return result != null ? result.value1() : 0;
     }

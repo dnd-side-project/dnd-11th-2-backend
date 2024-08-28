@@ -129,7 +129,7 @@ public class RunningRecordService {
 
         int monthValue = startDateOfMonth.getMonthValue();
 
-        int monthlyTotalDistance = runningRecordRepository.findMonthlyTotalDistanceByMemberId(
+        int monthlyTotalDistance = runningRecordRepository.findMonthlyTotalDistanceMeterByMemberId(
                 memberId, startDateOfMonth, startDateOfNextMonth);
 
         MemberLevel.Current currentMemberLevel = memberLevelRepository.findByMemberIdWithLevel(memberId);

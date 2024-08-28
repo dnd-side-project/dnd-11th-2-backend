@@ -169,7 +169,7 @@ class RunningRecordServiceTest {
                     .when(() -> OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE)))
                     .thenReturn(fixedDate);
 
-            given(runningRecordRepository.findMonthlyTotalDistanceByMemberId(eq(memberId), any(), any()))
+            given(runningRecordRepository.findMonthlyTotalDistanceMeterByMemberId(eq(memberId), any(), any()))
                     .willReturn(45_780);
 
             given(memberLevelRepository.findByMemberIdWithLevel(memberId))

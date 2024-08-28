@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record RunningRecordMonthlySummaryResponse(
     @Schema(description = "이번 달", example = "8월")
     String month,
-    @Schema(description = "이번 달에 달린 키로 수", example = "2.55KM")
+    @Schema(description = "이번 달에 달린 키로 수", example = "2.55km")
     String monthlyKm,
     @Schema(description = "다음 레벨", example = "Leve 2")
     String nextLevelName,
@@ -14,11 +14,7 @@ public record RunningRecordMonthlySummaryResponse(
     String nextLevelKm
 ) {
     public RunningRecordMonthlySummaryResponse(int monthValue, int monthlyTotalMeter, String nextLevelName, String nextLevelKm) {
-        this(formatToMonth(monthValue), formatMeterToKm(monthlyTotalMeter), nextLevelName, nextLevelKm);
-    }
-
-    private static String formatToMonth(int monthValue) {
-        return monthValue + "월";
+        this(monthValue+"월", formatMeterToKm(monthlyTotalMeter), nextLevelName, nextLevelKm);
     }
 
     private static String formatMeterToKm(int meter) {
@@ -32,6 +28,6 @@ public record RunningRecordMonthlySummaryResponse(
             formatted = formatted.substring(0, formatted.length() - 1);
         }
 
-        return formatted + "KM";
+        return formatted + "km";
     }
 }
