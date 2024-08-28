@@ -182,7 +182,7 @@ class RunningRecordServiceTest {
             // then
             assertNotNull(monthlyRunningSummery);
             assertThat(monthlyRunningSummery.month()).isEqualTo("1월");
-            assertThat(monthlyRunningSummery.monthlyKm()).isEqualTo("45.78KM");
+            assertThat(monthlyRunningSummery.monthlyKm()).isEqualTo("45.78km");
             assertThat(monthlyRunningSummery.nextLevelName()).isEqualTo("Level 2");
             assertThat(monthlyRunningSummery.nextLevelKm()).isEqualTo("4.22km");
         }
