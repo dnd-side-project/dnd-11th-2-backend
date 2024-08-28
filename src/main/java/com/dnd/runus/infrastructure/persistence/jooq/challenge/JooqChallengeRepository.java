@@ -5,7 +5,7 @@ import com.dnd.runus.domain.challenge.ChallengeCondition;
 import com.dnd.runus.domain.challenge.ChallengeType;
 import com.dnd.runus.domain.challenge.ChallengeWithCondition;
 import com.dnd.runus.domain.challenge.ComparisonType;
-import com.dnd.runus.domain.challenge.GoalType;
+import com.dnd.runus.domain.challenge.GoalMetricType;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -38,18 +38,22 @@ public class JooqChallengeRepository {
     }
 
     public ChallengeWithCondition findChallengeWithConditionsBy(long challengeId) {
-        return dsl.select(CHALLENGE.ID, CHALLENGE.NAME, CHALLENGE.IMAGE_URL, CHALLENGE.CHALLENGE_TYPE)
-                .select(multiset(select(
-                                        CHALLENGE_GOAL_CONDITION.GOAL_TYPE,
-                                        CHALLENGE_GOAL_CONDITION.COMPARISON_TYPE,
-                                        CHALLENGE_GOAL_CONDITION.GOAL_VALUE)
-                                .from(CHALLENGE_GOAL_CONDITION)
-                                .where(CHALLENGE_GOAL_CONDITION.CHALLENGE_ID.eq(CHALLENGE.ID)))
-                        .convertFrom(r -> r.map(record -> new ChallengeCondition(
-                                record.get(CHALLENGE_GOAL_CONDITION.GOAL_TYPE, GoalType.class),
-                                record.get(CHALLENGE_GOAL_CONDITION.COMPARISON_TYPE, ComparisonType.class),
-                                record.get(CHALLENGE_GOAL_CONDITION.GOAL_VALUE, Integer.class))))
-                        .as("conditions"))
+        return dsl.select(
+                        CHALLENGE.ID,
+                        CHALLENGE.NAME,
+                        CHALLENGE.IMAGE_URL,
+                        CHALLENGE.CHALLENGE_TYPE,
+                        multiset(select(
+                                                CHALLENGE_GOAL_CONDITION.GOAL_TYPE,
+                                                CHALLENGE_GOAL_CONDITION.COMPARISON_TYPE,
+                                                CHALLENGE_GOAL_CONDITION.GOAL_VALUE)
+                                        .from(CHALLENGE_GOAL_CONDITION)
+                                        .where(CHALLENGE_GOAL_CONDITION.CHALLENGE_ID.eq(CHALLENGE.ID)))
+                                .convertFrom(r -> r.map(record -> new ChallengeCondition(
+                                        record.get(CHALLENGE_GOAL_CONDITION.GOAL_TYPE, GoalMetricType.class),
+                                        record.get(CHALLENGE_GOAL_CONDITION.COMPARISON_TYPE, ComparisonType.class),
+                                        record.get(CHALLENGE_GOAL_CONDITION.GOAL_VALUE, Integer.class))))
+                                .as("conditions"))
                 .from(CHALLENGE)
                 .where(CHALLENGE.ID.eq(challengeId))
                 .fetchOne(new ChallengeWithConditionMapper());
