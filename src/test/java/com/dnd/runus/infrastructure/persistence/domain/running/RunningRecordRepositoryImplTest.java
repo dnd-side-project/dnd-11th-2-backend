@@ -17,8 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -132,5 +135,57 @@ class RunningRecordRepositoryImplTest {
         // when & then
         assertTrue(runningRecordRepository.hasByMemberIdAndStartAtBetween(
                 savedMember.memberId(), yesterday, todayMidnight));
+    }
+
+    @DisplayName("이번달 달린 기록 조회: 러닝 기록이 없을 시 0을 리턴")
+    @Test
+    void getTotalDistanceNoRunningRecord() {
+        // given
+        OffsetDateTime startDateOfMonth =
+                OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE)).withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS);
+        OffsetDateTime startDateOfNextMonth = startDateOfMonth.plusMonths(1);
+
+        // when
+        int totalDistanceMeterByMemberId = runningRecordRepository.findTotalDistanceMeterByMemberId(
+                savedMember.memberId(), startDateOfMonth, startDateOfNextMonth);
+
+        // than
+        assertThat(totalDistanceMeterByMemberId).isEqualTo(0);
+    }
+
+    @DisplayName("이번달 달린 기록 조회: 러닝 기록이 존재하면 sum한 값을 리턴")
+    @Test
+    void getTotalDistanceWithRunningRecords() {
+        // given
+        OffsetDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID)
+                .atStartOfDay(SERVER_TIMEZONE_ID)
+                .toOffsetDateTime();
+        // 러닝 기록 저장
+        for (int i = 0; i < 3; i++) {
+            RunningRecord runningRecord = new RunningRecord(
+                    0,
+                    savedMember,
+                    1000,
+                    Duration.ofHours(12).plusMinutes(23).plusSeconds(56),
+                    1,
+                    new Pace(5, 11),
+                    todayMidnight,
+                    todayMidnight,
+                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    "start location",
+                    "end location",
+                    RunningEmoji.SOSO);
+            runningRecordRepository.save(runningRecord);
+        }
+        OffsetDateTime startDateOfMonth =
+                OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE)).withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS);
+        OffsetDateTime startDateOfNextMonth = startDateOfMonth.plusMonths(1);
+
+        // when
+        int totalDistanceMeterByMemberId = runningRecordRepository.findTotalDistanceMeterByMemberId(
+                savedMember.memberId(), startDateOfMonth, startDateOfNextMonth);
+
+        // than
+        assertThat(totalDistanceMeterByMemberId).isEqualTo(3000);
     }
 }

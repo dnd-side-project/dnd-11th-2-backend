@@ -22,6 +22,9 @@ public class JooqRunningRecordRepository {
                 .and(RUNNING_RECORD.START_AT.ge(startDate))
                 .and(RUNNING_RECORD.START_AT.lessThan(endDate))
                 .fetchOne();
-        return result != null ? result.value1() : 0;
+        if (result != null && result.value1() != null) {
+            return result.value1();
+        }
+        return 0;
     }
 }
