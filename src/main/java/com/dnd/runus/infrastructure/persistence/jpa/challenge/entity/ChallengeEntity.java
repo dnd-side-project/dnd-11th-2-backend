@@ -2,11 +2,7 @@ package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
 
 import com.dnd.runus.domain.challenge.Challenge;
 import com.dnd.runus.domain.challenge.ChallengeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +36,16 @@ public class ChallengeEntity {
 
     @NotNull
     private String imageUrl;
+
+    public static ChallengeEntity from(Challenge challenge) {
+        return ChallengeEntity.builder()
+                .id(challenge.challengeId())
+                .name(challenge.name())
+                .expectedTime(challenge.expectedTime())
+                .challengeType(challenge.challengeType())
+                .imageUrl(challenge.imageUrl())
+                .build();
+    }
 
     public Challenge toDomain() {
         return new Challenge(id, name, expectedTime, imageUrl, challengeType);

@@ -1,10 +1,11 @@
 package com.dnd.runus.domain.challenge.achievement;
 
+import com.dnd.runus.domain.challenge.Challenge;
 import com.dnd.runus.domain.running.RunningRecord;
 
 public record ChallengeAchievement(
-        Long ChallengeAchievementId, long challengeId, RunningRecord runningRecord, boolean isSuccess) {
-    public ChallengeAchievement(long challengeId, RunningRecord runningRecord, boolean isSuccess) {
-        this(null, challengeId, runningRecord, isSuccess);
+        long ChallengeAchievementId, Challenge challenge, RunningRecord runningRecord, boolean isSuccess) {
+    public ChallengeAchievement(Challenge challenge, RunningRecord runningRecord, boolean isSuccess) {
+        this(0, challenge, runningRecord, isSuccess);
     }
 }

@@ -1,6 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.jpa.goalAchievement.entity;
 
-import com.dnd.runus.domain.challenge.GoalType;
+import com.dnd.runus.domain.challenge.GoalMetricType;
 import com.dnd.runus.domain.common.BaseTimeEntity;
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
 import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
@@ -37,7 +37,7 @@ public class GoalAchievementEntity extends BaseTimeEntity {
 
     @NotNull
     @Enumerated(STRING)
-    private GoalType goalType;
+    private GoalMetricType goalType;
 
     @NotNull
     private Integer achievementValue;
@@ -48,7 +48,7 @@ public class GoalAchievementEntity extends BaseTimeEntity {
     public static GoalAchievementEntity from(GoalAchievement goalAchievement) {
         return GoalAchievementEntity.builder()
                 .runningRecord(RunningRecordEntity.from(goalAchievement.runningRecord()))
-                .goalType(goalAchievement.goalType())
+                .goalType(goalAchievement.goalMetricType())
                 .achievementValue(goalAchievement.achievementValue())
                 .isAchieved(goalAchievement.isAchieved())
                 .build();

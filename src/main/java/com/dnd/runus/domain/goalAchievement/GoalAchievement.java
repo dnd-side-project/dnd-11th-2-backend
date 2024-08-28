@@ -1,18 +1,22 @@
 package com.dnd.runus.domain.goalAchievement;
 
-import com.dnd.runus.domain.challenge.GoalType;
+import com.dnd.runus.domain.challenge.GoalMetricType;
 import com.dnd.runus.domain.running.RunningRecord;
 
-import static com.dnd.runus.domain.challenge.GoalType.DISTANCE;
+import static com.dnd.runus.domain.challenge.GoalMetricType.DISTANCE;
 
 public record GoalAchievement(
-        RunningRecord runningRecord, GoalType goalType, Integer achievementValue, Boolean isAchieved) {
-    public GoalAchievement(RunningRecord runningRecord, GoalType goalType, Integer achievementValue) {
-        this(runningRecord, goalType, achievementValue, goalType.getActualValue(runningRecord) >= achievementValue);
+        RunningRecord runningRecord, GoalMetricType goalMetricType, int achievementValue, boolean isAchieved) {
+    public GoalAchievement(RunningRecord runningRecord, GoalMetricType goalMetricType, Integer achievementValue) {
+        this(
+                runningRecord,
+                goalMetricType,
+                achievementValue,
+                goalMetricType.getActualValue(runningRecord) >= achievementValue);
     }
 
     public String getTitle() {
-        if (goalType == DISTANCE) {
+        if (goalMetricType == DISTANCE) {
             String km = formatMeterToKm(achievementValue);
             return km + " 달성";
         }

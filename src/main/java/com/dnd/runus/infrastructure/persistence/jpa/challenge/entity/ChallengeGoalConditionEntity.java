@@ -1,7 +1,7 @@
 package com.dnd.runus.infrastructure.persistence.jpa.challenge.entity;
 
 import com.dnd.runus.domain.challenge.ComparisonType;
-import com.dnd.runus.domain.challenge.GoalType;
+import com.dnd.runus.domain.challenge.GoalMetricType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -36,7 +36,7 @@ public class ChallengeGoalConditionEntity {
 
     @NotNull
     @Enumerated(STRING)
-    private GoalType goalType;
+    private GoalMetricType goalType;
 
     @NotNull
     private Integer goalValue;
