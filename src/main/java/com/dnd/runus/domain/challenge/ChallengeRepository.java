@@ -9,6 +9,4 @@ public interface ChallengeRepository {
     List<Challenge> findAllIsNotDefeatYesterday();
 
     Optional<ChallengeWithCondition> findChallengeWithConditionsByChallengeId(long challengeId);
-
-    Challenge save(Challenge challenge);
 }

@@ -1,7 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.domain.challenge;
 
 import com.dnd.runus.domain.challenge.Challenge;
-import com.dnd.runus.domain.challenge.ChallengeRepository;
 import com.dnd.runus.domain.challenge.ChallengeType;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
@@ -38,9 +37,6 @@ public class ChallengeAchievementRepositoryImplTest {
     @Autowired
     private RunningRecordRepository runningRecordRepository;
 
-    @Autowired
-    private ChallengeRepository challengeRepository;
-
     private RunningRecord runningRecord;
     private Challenge challenge;
 
@@ -60,7 +56,7 @@ public class ChallengeAchievementRepositoryImplTest {
                 "start location",
                 "end location",
                 RunningEmoji.SOSO));
-        challenge = challengeRepository.save(new Challenge(0, "name", 60, "imageUrl", ChallengeType.DEFEAT_YESTERDAY));
+        challenge = new Challenge(1, "name", 60, "imageUrl", ChallengeType.DEFEAT_YESTERDAY);
     }
 
     @DisplayName("ChallengeAchievement 저장시, 성공여부가 true인지 확인")

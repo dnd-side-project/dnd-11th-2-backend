@@ -35,9 +35,4 @@ public class ChallengeRepositoryImpl implements ChallengeRepository {
     public Optional<ChallengeWithCondition> findChallengeWithConditionsByChallengeId(long challengeId) {
         return Optional.ofNullable(jooqChallengeRepository.findChallengeWithConditionsBy(challengeId));
     }
-
-    @Override
-    public Challenge save(Challenge challenge) {
-        return jpaChallengeRepository.save(ChallengeEntity.from(challenge)).toDomain();
-    }
 }
