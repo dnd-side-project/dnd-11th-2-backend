@@ -44,8 +44,9 @@ public record RunningRecordAddResultResponse(
                 new ChallengeDto(
                         achievement.challenge().challengeId(),
                         achievement.challenge().name(),
-                        achievement.challenge().formatExpectedTime(),
-                        achievement.challenge().imageUrl()
+                        achievement.description(),
+                        achievement.challenge().imageUrl(),
+                        achievement.isSuccess()
                 ),
                 new RunningRecordMetricsDto(
                         runningRecord.averagePace(),
