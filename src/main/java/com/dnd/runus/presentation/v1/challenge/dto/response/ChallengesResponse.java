@@ -25,7 +25,7 @@ public record ChallengesResponse(
         return new ChallengesResponse(
             challenge.challengeId(),
             challenge.name(),
-            challenge.expectedTime(),
+            challenge.formatExpectedTime(),
             challenge.imageUrl()
         );
     }
