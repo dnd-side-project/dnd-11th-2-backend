@@ -30,3 +30,8 @@ oauth:
     client_id: client_id
     key_id: key-id
     team_id: team-id
+
+weather:
+  openweathermap:
+    url: https://api.openweathermap.org
+    api-key: test-openweathermap-api-key
