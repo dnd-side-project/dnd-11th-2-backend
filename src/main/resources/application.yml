@@ -36,6 +36,11 @@ oauth:
     key_id: ${APPLE_KEY_ID}
     team_id: ${APPLE_TEAM_ID}
 
+weather:
+  openweathermap:
+    url: https://api.openweathermap.org
+    api-key: ${OPENWEATHER_API_KEY}
+
 ---
 spring.config.activate.on-profile: local
 

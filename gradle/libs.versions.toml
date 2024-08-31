@@ -39,6 +39,7 @@ testcontainers-junit-jupiter = { group = "org.testcontainers", name = "junit-jup
 testcontainers-jdbc = { group = "org.testcontainers", name = "jdbc", version.ref = "testcontainers" }
 testcontainers-postgresql = { group = "org.testcontainers", name = "postgresql", version.ref = "testcontainers" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+spring-cloud-starter-contract-stub-runner = { group = "org.springframework.cloud", name = "spring-cloud-starter-contract-stub-runner", version = "4.1.4" }
 
 [bundles]
 spring-boot = [
@@ -53,6 +54,7 @@ spring-boot = [
 spring-boot-test = [
     "spring-boot-devtools",
     "spring-boot-starter-test",
+    "spring-cloud-starter-contract-stub-runner",
 ]
 
 testcontainers = [

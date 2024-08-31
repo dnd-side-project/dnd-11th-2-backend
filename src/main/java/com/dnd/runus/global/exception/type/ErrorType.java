@@ -40,6 +40,9 @@ public enum ErrorType {
 
     // RunningErrorType
     ROUTE_MUST_HAVE_AT_LEAST_TWO_COORDINATES(BAD_REQUEST, "RUNNING_001", "경로는 최소 2개의 좌표를 가져야 합니다"),
+
+    // WeatherErrorType
+    WEATHER_API_ERROR(INTERNAL_SERVER_ERROR, "WEATHER_001", "날씨 API 호출 중 오류가 발생했습니다"),
     ;
     private final HttpStatus httpStatus;
     private final String code;
