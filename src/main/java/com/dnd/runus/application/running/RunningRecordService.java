@@ -77,7 +77,7 @@ public class RunningRecordService {
     }
 
     public RunningRecordSummaryResponse getRunningRecordSummaries(long memberId, LocalDate date) {
-        OffsetDateTime from = date.atStartOfDay().atOffset(ZoneOffset.of(SERVER_TIMEZONE));
+        OffsetDateTime from = date.atStartOfDay().atOffset(defaultZoneOffset);
         OffsetDateTime to = from.plusDays(1);
 
         List<RunningRecord> records = runningRecordRepository.findByMemberIdAndStartAtBetween(memberId, from, to);
