@@ -5,6 +5,7 @@ import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.infrastructure.weather.WeatherClient;
 import com.dnd.runus.infrastructure.weather.WeatherInfo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import static com.dnd.runus.global.exception.type.ErrorType.WEATHER_API_ERROR;
@@ -14,9 +15,12 @@ import static com.dnd.runus.global.exception.type.ErrorType.WEATHER_API_ERROR;
 public class OpenweathermapWeatherClient implements WeatherClient {
     private final OpenweathermapWeatherHttpClient openweathermapWeatherHttpClient;
 
+    @Value("${weather.openweathermap.api-key}")
+    private String apiKey;
+
     @Override
     public WeatherInfo getWeatherInfo(double longitude, double latitude) {
-        OpenweathermapWeatherInfo info = openweathermapWeatherHttpClient.getWeatherInfo(longitude, latitude);
+        OpenweathermapWeatherInfo info = openweathermapWeatherHttpClient.getWeatherInfo(longitude, latitude, apiKey);
 
         if (info == null || info.weather() == null || info.weather().length == 0) {
             throw new BusinessException(WEATHER_API_ERROR, "날씨 정보를 가져올 수 없습니다.");

@@ -81,13 +81,14 @@ class OpenweathermapWeatherHttpClientTest {
                 + "  \"name\": \"Seoul\","
                 + "  \"cod\": 200"
                 + "}");
-        stubFor(get(urlEqualTo("/data/2.5/weather?lon=126.978&lat=37.5665"))
+        stubFor(get(urlEqualTo("/data/2.5/weather?lon=126.978&lat=37.5665&appid=test"))
                 .willReturn(aResponse()
                         .withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
                         .withResponseBody(body)));
 
         // when
-        OpenweathermapWeatherInfo weatherInfo = openweathermapWeatherHttpClient.getWeatherInfo(longitude, latitude);
+        OpenweathermapWeatherInfo weatherInfo =
+                openweathermapWeatherHttpClient.getWeatherInfo(longitude, latitude, "test");
 
         // then
         assertNotNull(weatherInfo);

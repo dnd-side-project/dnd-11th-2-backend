@@ -2,13 +2,13 @@ package com.dnd.runus.presentation.v1.weather;
 
 import com.dnd.runus.application.weather.WeatherService;
 import com.dnd.runus.presentation.v1.weather.dto.WeatherResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "날씨")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/weathers")
@@ -17,7 +17,8 @@ public class WeatherController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public WeatherResponse getWeather(double longitude, double latitude) {
+    @Operation(summary = "날씨 정보 조회", description = "경도와 위도를 입력받아 날씨 정보를 조회합니다.")
+    public WeatherResponse getWeather(@RequestParam double longitude, @RequestParam double latitude) {
         return weatherService.getWeather(longitude, latitude);
     }
 }
