@@ -76,6 +76,7 @@ public class RunningRecordService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public RunningRecordSummaryResponse getRunningRecordSummaries(long memberId, LocalDate date) {
         OffsetDateTime from = date.atStartOfDay().atOffset(defaultZoneOffset);
         OffsetDateTime to = from.plusDays(1);
