@@ -1,5 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.jpa.scale.entity;
 
+import com.dnd.runus.infrastructure.persistence.domain.scale.Scale;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,4 +24,11 @@ public class ScaleEntity {
 
     @NotNull
     private Integer sizeMeter;
+
+    @NotNull
+    private Integer index;
+
+    public Scale toDomain() {
+        return new Scale(id, name, sizeMeter, index);
+    }
 }
