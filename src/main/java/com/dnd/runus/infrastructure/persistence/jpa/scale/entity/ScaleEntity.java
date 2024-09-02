@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,7 +29,15 @@ public class ScaleEntity {
     @NotNull
     private Integer index;
 
+    @NotNull
+    @Size(max = 40)
+    private String startName;
+
+    @NotNull
+    @Size(max = 40)
+    private String endName;
+
     public Scale toDomain() {
-        return new Scale(id, name, sizeMeter, index);
+        return new Scale(id, name, sizeMeter, index, startName, endName);
     }
 }
