@@ -63,7 +63,7 @@ public class RunningRecordService {
 
     @Transactional(readOnly = true)
     public List<LocalDate> getRunningRecordDates(long memberId, int year, int month) {
-        OffsetDateTime from = LocalDate.of(year, month, 1).atStartOfDay().atOffset((ZoneOffset.of(SERVER_TIMEZONE)));
+        OffsetDateTime from = LocalDate.of(year, month, 1).atStartOfDay().atOffset(defaultZoneOffset);
         OffsetDateTime to = from.plusMonths(1);
 
         List<RunningRecord> records = runningRecordRepository.findByMemberIdAndStartAtBetween(memberId, from, to);
