@@ -20,7 +20,9 @@ public class OpenweathermapWeatherClient implements WeatherClient {
 
     @Override
     public WeatherInfo getWeatherInfo(double longitude, double latitude) {
-        OpenweathermapWeatherInfo info = openweathermapWeatherHttpClient.getWeatherInfo(longitude, latitude, apiKey);
+        String unit = "metric";
+        OpenweathermapWeatherInfo info =
+                openweathermapWeatherHttpClient.getWeatherInfo(longitude, latitude, unit, apiKey);
 
         if (info == null || info.weather() == null || info.weather().length == 0) {
             throw new BusinessException(WEATHER_API_ERROR, "날씨 정보를 가져올 수 없습니다.");

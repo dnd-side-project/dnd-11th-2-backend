@@ -45,7 +45,7 @@ class OpenweathermapWeatherHttpClientTest {
         double longitude = 126.9780;
         double latitude = 37.5665;
 
-        Body body = new Body("{" + "  \"weather\": ["
+        Body body = new Body("{\"weather\": ["
                 + "    {"
                 + "      \"id\": 800,"
                 + "      \"main\": \"Clear\","
@@ -81,14 +81,14 @@ class OpenweathermapWeatherHttpClientTest {
                 + "  \"name\": \"Seoul\","
                 + "  \"cod\": 200"
                 + "}");
-        stubFor(get(urlEqualTo("/data/2.5/weather?lon=126.978&lat=37.5665&appid=test"))
+        stubFor(get(urlEqualTo("/data/2.5/weather?lon=126.978&lat=37.5665&unit=metric&appid=test"))
                 .willReturn(aResponse()
                         .withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
                         .withResponseBody(body)));
 
         // when
         OpenweathermapWeatherInfo weatherInfo =
-                openweathermapWeatherHttpClient.getWeatherInfo(longitude, latitude, "test");
+                openweathermapWeatherHttpClient.getWeatherInfo(longitude, latitude, "metric", "test");
 
         // then
         assertNotNull(weatherInfo);
