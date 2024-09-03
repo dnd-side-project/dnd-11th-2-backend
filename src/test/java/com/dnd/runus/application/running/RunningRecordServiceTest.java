@@ -5,6 +5,7 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentage
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
 import com.dnd.runus.domain.challenge.*;
 import com.dnd.runus.domain.common.Pace;
+import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
 import com.dnd.runus.domain.level.Level;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberLevel;
@@ -29,20 +30,13 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.List;
 import java.util.Optional;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -70,6 +64,9 @@ class RunningRecordServiceTest {
     @Mock
     private ChallengeAchievementPercentageRepository percentageValuesRepository;
 
+    @Mock
+    private GoalAchievementRepository goalAchievementRepository;
+
     private final ZoneOffset defaultZoneOffset = ZoneOffset.of("+9");
 
     @BeforeEach
@@ -81,6 +78,7 @@ class RunningRecordServiceTest {
                 challengeRepository,
                 challengeAchievementRepository,
                 percentageValuesRepository,
+                goalAchievementRepository,
                 defaultZoneOffset);
     }
 

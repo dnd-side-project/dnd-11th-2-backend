@@ -3,10 +3,13 @@ package com.dnd.runus.application.running;
 import com.dnd.runus.domain.challenge.Challenge;
 import com.dnd.runus.domain.challenge.ChallengeRepository;
 import com.dnd.runus.domain.challenge.ChallengeWithCondition;
+import com.dnd.runus.domain.challenge.GoalMetricType;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentageRepository;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
+import com.dnd.runus.domain.goalAchievement.GoalAchievement;
+import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
 import com.dnd.runus.domain.level.Level;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberLevel;
@@ -42,6 +45,8 @@ public class RunningRecordService {
     private final ChallengeRepository challengeRepository;
     private final ChallengeAchievementRepository challengeAchievementRepository;
     private final ChallengeAchievementPercentageRepository percentageValuesRepository;
+    private final GoalAchievementRepository goalAchievementRepository;
+
     private final ZoneOffset defaultZoneOffset;
 
     public RunningRecordService(
@@ -51,6 +56,7 @@ public class RunningRecordService {
             ChallengeRepository challengeRepository,
             ChallengeAchievementRepository challengeAchievementRepository,
             ChallengeAchievementPercentageRepository percentageValuesRepository,
+            GoalAchievementRepository goalAchievementRepository,
             @Value("${app.default-zone-offset}") ZoneOffset defaultZoneOffset) {
         this.runningRecordRepository = runningRecordRepository;
         this.memberRepository = memberRepository;
@@ -58,6 +64,7 @@ public class RunningRecordService {
         this.challengeRepository = challengeRepository;
         this.challengeAchievementRepository = challengeAchievementRepository;
         this.percentageValuesRepository = percentageValuesRepository;
+        this.goalAchievementRepository = goalAchievementRepository;
         this.defaultZoneOffset = defaultZoneOffset;
     }
 
@@ -115,7 +122,8 @@ public class RunningRecordService {
                 return RunningRecordAddResultResponse.of(record, challengeAchievement);
             }
             case GOAL -> {
-                // TODO: 개인 목표 달성 로직 추가
+                GoalAchievement goalAchievement = handleGoalMode(record, request.goalDistance(), request.goalTime());
+                return RunningRecordAddResultResponse.of(record, goalAchievement);
             }
         }
         return RunningRecordAddResultResponse.from(record);
@@ -176,5 +184,15 @@ public class RunningRecordService {
             percentageValuesRepository.save(achievementRecord);
         }
         return achievement;
+    }
+
+    private GoalAchievement handleGoalMode(RunningRecord runningRecord, Integer goalDistance, Integer goalTime) {
+        int goalValue = (goalDistance != null) ? goalDistance : goalTime;
+        GoalMetricType goalMetricType = (goalDistance != null) ? GoalMetricType.DISTANCE : GoalMetricType.TIME;
+
+        boolean isAchieved = goalMetricType.getActualValue(runningRecord) >= goalValue;
+
+        GoalAchievement goalAchievement = new GoalAchievement(runningRecord, goalMetricType, goalValue, isAchieved);
+        return goalAchievementRepository.save(goalAchievement);
     }
 }
