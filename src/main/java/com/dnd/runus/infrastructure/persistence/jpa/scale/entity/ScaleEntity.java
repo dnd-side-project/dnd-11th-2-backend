@@ -7,14 +7,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @Entity(name = "scale")
 @NoArgsConstructor(access = PROTECTED)
+@Builder(access = PRIVATE)
+@AllArgsConstructor(access = PRIVATE)
 public class ScaleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,5 +44,15 @@ public class ScaleEntity {
 
     public Scale toDomain() {
         return new Scale(id, name, sizeMeter, index, startName, endName);
+    }
+
+    public static ScaleEntity from(Scale scale) {
+        return ScaleEntity.builder()
+                .name(scale.name())
+                .sizeMeter(scale.sizeMeter())
+                .index(scale.index())
+                .startName(scale.startName())
+                .endName(scale.endName())
+                .build();
     }
 }

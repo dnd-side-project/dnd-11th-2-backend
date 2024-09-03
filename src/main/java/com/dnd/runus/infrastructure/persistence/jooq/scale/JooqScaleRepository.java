@@ -26,10 +26,8 @@ public class JooqScaleRepository {
     }
 
     private static class ScaleSummaryMapper implements RecordMapper<Record, ScaleSummary> {
-
         @Override
         public ScaleSummary map(Record record) {
-
             return new ScaleSummary(record.get("count", int.class), record.get("total_meter", int.class));
         }
     }
