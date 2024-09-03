@@ -1,22 +1,23 @@
 package com.dnd.runus.infrastructure.persistence.domain.scale;
 
+import com.dnd.runus.domain.scale.Scale;
 import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.domain.scale.ScaleSummary;
 import com.dnd.runus.infrastructure.persistence.annotation.RepositoryTest;
+import com.dnd.runus.infrastructure.persistence.jpa.scale.entity.ScaleEntity;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.dnd.runus.global.constant.ScaleConstant.DISTANCE_KM_AROUND_THE_EARTH;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RepositoryTest
 public class ScaleRepositoryImplTest {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private EntityManager em;
 
     @Autowired
     private ScaleRepository scaleRepository;
@@ -27,37 +28,21 @@ public class ScaleRepositoryImplTest {
     void getSummary() {
         // given
         // test data insert
-        String insertSql =
-                """
-            insert into scale (name, size_meter, start_name, end_name, index)
-            values (?, ?, ?, ?, ?),
-            (?, ?, ?, ?, ?),
-            (?, ?, ?, ?, ?)
-            """;
-        jdbcTemplate.update(
-                insertSql,
-                "scale1",
-                1_000_000,
-                "서울(한국)",
-                "도쿄(일본)",
-                1,
-                "scale2",
-                2_100_000,
-                "도쿄(일본)",
-                "베이징(중국)",
-                2,
-                "scale3",
-                1_000_000,
-                "베이징(중국)",
-                "타이베이(대만)",
-                3);
+        Scale scale1 = new Scale(1, "scale1", 1_000_000, 1, "서울(한국)", "도쿄(일본)");
+        Scale scale2 = new Scale(2, "scale2", 2_100_000, 2, "도쿄(일본)", "베이징(중국)");
+
+        Scale scale3 = new Scale(3, "scale3", 1_000_000, 3, "베이징(중국)", "타이베이(대만)");
+
+        em.persist(ScaleEntity.from(scale1));
+        em.persist(ScaleEntity.from(scale2));
+        em.persist(ScaleEntity.from(scale3));
+        em.flush();
 
         // when
         ScaleSummary summary = scaleRepository.getSummary();
 
         // then
-        assertThat(summary.totalCourseCnt()).isEqualTo("3코스");
-        assertThat(summary.earthDistanceKm()).isEqualTo(DISTANCE_KM_AROUND_THE_EARTH);
-        assertThat(summary.totalCourseDistanceKm()).isEqualTo("4,100km");
+        assertThat(summary.totalCourseCnt()).isEqualTo(3);
+        assertThat(summary.totalCourseDistanceKm()).isEqualTo((4_100 * 1000));
     }
 }
