@@ -1,6 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.jpa.scale.entity;
 
-import com.dnd.runus.infrastructure.persistence.domain.scale.Scale;
+import com.dnd.runus.domain.scale.Scale;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
