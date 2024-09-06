@@ -1,0 +1,2 @@
+ALTER TABLE scale_achievement DROP CONSTRAINT uk_member_id_scale_achievement;
+ALTER TABLE scale_achievement DROP CONSTRAINT uk_scale_id_scale_achievement;
