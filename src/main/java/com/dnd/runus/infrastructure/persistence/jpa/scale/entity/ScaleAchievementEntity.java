@@ -7,7 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,11 +26,11 @@ public class ScaleAchievementEntity extends BaseTimeEntity {
     private Long id;
 
     @NotNull
-    @OneToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY)
     private MemberEntity member;
 
     @NotNull
-    @OneToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY)
     private ScaleEntity scale;
 
     @NotNull
