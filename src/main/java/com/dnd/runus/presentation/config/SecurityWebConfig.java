@@ -42,6 +42,7 @@ public class SecurityWebConfig {
 
     private static final String[] READ_ONLY_ENDPOINTS = {
         "/api/v1/examples/**", // TODO: Remove test endpoints
+        "/api/v1/servers/versions",
     };
 
     @Bean
