@@ -6,6 +6,8 @@ import com.dnd.runus.infrastructure.persistence.jooq.scale.JooqScaleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class ScaleRepositoryImpl implements ScaleRepository {
@@ -15,5 +17,10 @@ public class ScaleRepositoryImpl implements ScaleRepository {
     @Override
     public ScaleSummary getSummary() {
         return jooqScaleRepository.getSummary();
+    }
+
+    @Override
+    public List<Long> findAchievableScaleIds(long memberId) {
+        return jooqScaleRepository.findAchievableScaleIds(memberId);
     }
 }
