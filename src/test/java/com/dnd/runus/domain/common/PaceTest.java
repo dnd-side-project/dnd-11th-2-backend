@@ -24,12 +24,13 @@ class PaceTest {
     @DisplayName("올바른 형태의 문자열을 입력받아 Pace 객체를 생성한다.")
     void from() {
         assertEquals(Pace.from("5'30''"), pace);
+        assertEquals(Pace.from("5’30”"), pace);
     }
 
     @Test
     @DisplayName("Pace 객체를 올바른 형태의 문자열로 변환한다.")
     void getPace() {
-        assertEquals("5'30''", pace.getPace());
+        assertEquals("5’30”", pace.getPace());
     }
 
     @Test

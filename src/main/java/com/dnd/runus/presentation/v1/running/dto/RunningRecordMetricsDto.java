@@ -1,13 +1,9 @@
 package com.dnd.runus.presentation.v1.running.dto;
 
-import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 import java.time.Duration;
-import java.util.List;
 
 public record RunningRecordMetricsDto(
         @Schema(description = "평균 페이스", example = "5'30''")
