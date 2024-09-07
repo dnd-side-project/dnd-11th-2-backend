@@ -38,7 +38,6 @@ public class ScaleAchievementEntity extends BaseTimeEntity {
 
     public static ScaleAchievementEntity from(ScaleAchievement scaleAchievement) {
         ScaleAchievementEntity scaleAchievementEntity = new ScaleAchievementEntity();
-        scaleAchievementEntity.id = scaleAchievement.id() == 0 ? null : scaleAchievement.id();
         scaleAchievementEntity.member = MemberEntity.from(scaleAchievement.member());
         scaleAchievementEntity.scale = ScaleEntity.from(scaleAchievement.scale());
         scaleAchievementEntity.achievedDate = scaleAchievement.achievedDate();
@@ -46,6 +45,6 @@ public class ScaleAchievementEntity extends BaseTimeEntity {
     }
 
     public ScaleAchievement toDomain() {
-        return new ScaleAchievement(id, member.toDomain(), scale.toDomain(), achievedDate);
+        return new ScaleAchievement(member.toDomain(), scale.toDomain(), achievedDate);
     }
 }

@@ -4,4 +4,4 @@ import com.dnd.runus.domain.member.Member;
 
 import java.time.OffsetDateTime;
 
-public record ScaleAchievement(long id, Member member, Scale scale, OffsetDateTime achievedDate) {}
+public record ScaleAchievement(Member member, Scale scale, OffsetDateTime achievedDate) {}

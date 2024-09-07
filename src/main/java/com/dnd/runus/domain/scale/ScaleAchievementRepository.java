@@ -4,4 +4,6 @@ import java.util.List;
 
 public interface ScaleAchievementRepository {
     List<ScaleAchievementLog> findScaleAchievementLogs(long memberId);
+
+    List<ScaleAchievement> saveAll(List<ScaleAchievement> scaleAchievements);
 }
