@@ -11,7 +11,6 @@ import org.jooq.RecordMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.dnd.runus.jooq.Tables.RUNNING_RECORD;
 import static com.dnd.runus.jooq.Tables.SCALE_ACHIEVEMENT;
@@ -58,7 +57,7 @@ public class JooqScaleRepository {
                 .select(cumulativeScale.field("id", Long.class))
                 .from(cumulativeScale)
                 .join(totalDistance)
-                .on(Objects.requireNonNull(cumulativeScale.field("cumulative_sum", Integer.class))
+                .on(coalesce(cumulativeScale.field("cumulative_sum", Integer.class), 0)
                         .le(totalDistance.field("total_distance_meter", Integer.class)))
                 .fetchInto(Long.class);
     }

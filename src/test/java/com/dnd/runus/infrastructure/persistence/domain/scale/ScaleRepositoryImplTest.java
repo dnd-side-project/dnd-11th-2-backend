@@ -67,7 +67,6 @@ public class ScaleRepositoryImplTest {
         assertThat(summary.totalCourseDistanceKm()).isEqualTo((4_100 * 1000));
     }
 
-    @Transactional
     @DisplayName("성취 가능한 scale_id를 반환한다.")
     @Test
     void findAchievableScaleIds() {
