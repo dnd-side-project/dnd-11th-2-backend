@@ -8,7 +8,6 @@ import com.dnd.runus.domain.scale.ScaleAchievementRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.infrastructure.persistence.annotation.RepositoryTest;
 import com.dnd.runus.infrastructure.persistence.jpa.member.entity.MemberEntity;
-import com.dnd.runus.infrastructure.persistence.jpa.scale.entity.ScaleAchievementEntity;
 import com.dnd.runus.infrastructure.persistence.jpa.scale.entity.ScaleEntity;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +29,7 @@ public class ScaleAchievementRepositoryTest {
     @Autowired
     private EntityManager em;
 
-    private long memberId;
+    private Member member;
     private Scale scale1;
     private Scale scale2;
 
@@ -43,19 +42,17 @@ public class ScaleAchievementRepositoryTest {
         em.persist(scaleEntity1);
         em.persist(scaleEntity2);
         em.flush();
-        Member member = memberEntity.toDomain();
-        memberId = member.memberId();
+        member = memberEntity.toDomain();
         scale1 = scaleEntity1.toDomain();
         scale2 = scaleEntity2.toDomain();
-        ScaleAchievement scaleAchievement = new ScaleAchievement(0, member, scale1, OffsetDateTime.now());
-        em.persist(ScaleAchievementEntity.from(scaleAchievement));
-        em.flush();
     }
 
     @Test
     @DisplayName("해당 코스를 달성했다면, achievedDate는 null이 아니다.")
     void findScaleAchievementLogs() {
-        List<ScaleAchievementLog> scaleAchievementLogs = scaleAchievementRepository.findScaleAchievementLogs(memberId);
+        scaleAchievementRepository.saveAll(List.of(new ScaleAchievement(member, scale1, OffsetDateTime.now())));
+        List<ScaleAchievementLog> scaleAchievementLogs =
+                scaleAchievementRepository.findScaleAchievementLogs(member.memberId());
 
         assertEquals(2, scaleAchievementLogs.size());
 
@@ -64,5 +61,16 @@ public class ScaleAchievementRepositoryTest {
 
         assertEquals(scale2, scaleAchievementLogs.get(1).scale());
         assertNull(scaleAchievementLogs.get(1).achievedDate());
+    }
+
+    @Test
+    @DisplayName("코스 성취 기록을 저장한다.")
+    void saveTest() {
+        List<ScaleAchievement> saved = scaleAchievementRepository.saveAll(List.of(
+                new ScaleAchievement(member, new Scale(scale1.scaleId()), OffsetDateTime.now()),
+                new ScaleAchievement(member, new Scale(scale2.scaleId()), OffsetDateTime.now())));
+
+        assertNotNull(saved);
+        assertNotNull(saved.get(0));
     }
 }
