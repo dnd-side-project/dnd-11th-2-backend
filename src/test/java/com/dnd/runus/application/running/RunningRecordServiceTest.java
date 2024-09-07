@@ -4,6 +4,7 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentageRepository;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
 import com.dnd.runus.domain.challenge.*;
+import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
 import com.dnd.runus.domain.level.Level;
@@ -110,6 +111,7 @@ class RunningRecordServiceTest {
                 .duration(request.runningData().runningTime())
                 .calorie(request.runningData().calorie())
                 .averagePace(request.runningData().averagePace())
+                .route(List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)))
                 .build();
 
         ChallengeWithCondition challengeWithCondition = new ChallengeWithCondition(

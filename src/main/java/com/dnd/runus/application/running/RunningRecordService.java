@@ -8,6 +8,7 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentageRepository;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
+import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
 import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
 import com.dnd.runus.domain.level.Level;
@@ -100,6 +101,9 @@ public class RunningRecordService {
         Member member =
                 memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
 
+        Coordinate emptyCoordinate = new Coordinate(0, 0, 0);
+        List<Coordinate> route = List.of(emptyCoordinate, emptyCoordinate);
+
         RunningRecord record = runningRecordRepository.save(RunningRecord.builder()
                 .member(member)
                 .startAt(request.startAt().atOffset(defaultZoneOffset))
@@ -111,6 +115,7 @@ public class RunningRecordService {
                 .duration(request.runningData().runningTime())
                 .calorie(request.runningData().calorie())
                 .averagePace(request.runningData().averagePace())
+                .route(route)
                 .build());
 
         memberLevelRepository.updateMemberLevel(memberId, request.runningData().distanceMeter());
