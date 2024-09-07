@@ -48,6 +48,7 @@ public class ScaleEntity {
 
     public static ScaleEntity from(Scale scale) {
         return ScaleEntity.builder()
+                .id(scale.scaleId() == 0 ? null : scale.scaleId())
                 .name(scale.name())
                 .sizeMeter(scale.sizeMeter())
                 .index(scale.index())

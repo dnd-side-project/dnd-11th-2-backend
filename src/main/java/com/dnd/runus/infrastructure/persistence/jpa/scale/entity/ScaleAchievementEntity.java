@@ -36,6 +36,15 @@ public class ScaleAchievementEntity extends BaseTimeEntity {
     @NotNull
     private OffsetDateTime achievedDate;
 
+    public static ScaleAchievementEntity from(ScaleAchievement scaleAchievement) {
+        ScaleAchievementEntity scaleAchievementEntity = new ScaleAchievementEntity();
+        scaleAchievementEntity.id = scaleAchievement.id() == 0 ? null : scaleAchievement.id();
+        scaleAchievementEntity.member = MemberEntity.from(scaleAchievement.member());
+        scaleAchievementEntity.scale = ScaleEntity.from(scaleAchievement.scale());
+        scaleAchievementEntity.achievedDate = scaleAchievement.achievedDate();
+        return scaleAchievementEntity;
+    }
+
     public ScaleAchievement toDomain() {
         return new ScaleAchievement(id, member.toDomain(), scale.toDomain(), achievedDate);
     }

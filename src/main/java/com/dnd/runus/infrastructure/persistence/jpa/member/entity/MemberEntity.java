@@ -30,7 +30,7 @@ public class MemberEntity extends BaseTimeEntity {
 
     public static MemberEntity from(Member member) {
         MemberEntity memberEntity = new MemberEntity();
-        memberEntity.id = member.memberId();
+        memberEntity.id = member.memberId() == 0 ? null : member.memberId();
         memberEntity.role = member.role();
         memberEntity.nickname = member.nickname();
         return memberEntity;

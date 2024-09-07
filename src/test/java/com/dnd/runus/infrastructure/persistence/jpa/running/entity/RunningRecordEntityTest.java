@@ -23,8 +23,8 @@ class RunningRecordEntityTest {
     void setUp() {
         runningRecord = RunningRecord.builder()
                 .runningId(1L)
-                .member(new Member(MemberRole.USER, "nickname-1"))
                 .distanceMeter(500)
+                .member(new Member(1L, MemberRole.USER, "nickname", OffsetDateTime.now(), OffsetDateTime.now()))
                 .duration(Duration.ofSeconds(100))
                 .calorie(1.0)
                 .averagePace(Pace.ofSeconds(100))

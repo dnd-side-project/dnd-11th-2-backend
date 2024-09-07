@@ -74,7 +74,7 @@ public class RunningRecordEntity extends BaseTimeEntity {
 
     public static RunningRecordEntity from(RunningRecord runningRecord) {
         return RunningRecordEntity.builder()
-                .id(runningRecord.runningId())
+                .id(runningRecord.runningId() == 0 ? null : runningRecord.runningId())
                 .member(MemberEntity.from(runningRecord.member()))
                 .distanceMeter(runningRecord.distanceMeter())
                 .durationSeconds((int) runningRecord.duration().toSeconds())
