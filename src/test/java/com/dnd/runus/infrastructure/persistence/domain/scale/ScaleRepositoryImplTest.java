@@ -28,10 +28,10 @@ public class ScaleRepositoryImplTest {
     void getSummary() {
         // given
         // test data insert
-        Scale scale1 = new Scale(1, "scale1", 1_000_000, 1, 1_000_000, "서울(한국)", "도쿄(일본)");
-        Scale scale2 = new Scale(2, "scale2", 2_100_000, 2, 3_100_000, "도쿄(일본)", "베이징(중국)");
+        Scale scale1 = new Scale(1, "scale1", 1_000_000, 1, "서울(한국)", "도쿄(일본)");
+        Scale scale2 = new Scale(2, "scale2", 2_100_000, 2, "도쿄(일본)", "베이징(중국)");
 
-        Scale scale3 = new Scale(3, "scale3", 1_000_000, 3, 4_100_000, "베이징(중국)", "타이베이(대만)");
+        Scale scale3 = new Scale(3, "scale3", 1_000_000, 3, "베이징(중국)", "타이베이(대만)");
 
         em.persist(ScaleEntity.from(scale1));
         em.persist(ScaleEntity.from(scale2));

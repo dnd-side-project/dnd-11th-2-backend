@@ -32,9 +32,6 @@ public class ScaleEntity {
     private Integer sizeMeter;
 
     @NotNull
-    private Integer achievementValueMeter;
-
-    @NotNull
     private Integer index;
 
     @NotNull
@@ -46,7 +43,7 @@ public class ScaleEntity {
     private String endName;
 
     public Scale toDomain() {
-        return new Scale(id, name, sizeMeter, index, achievementValueMeter, startName, endName);
+        return new Scale(id, name, sizeMeter, index, startName, endName);
     }
 
     public static ScaleEntity from(Scale scale) {
@@ -56,7 +53,6 @@ public class ScaleEntity {
                 .index(scale.index())
                 .startName(scale.startName())
                 .endName(scale.endName())
-                .achievementValueMeter(scale.achievementValueMeter())
                 .build();
     }
 }
