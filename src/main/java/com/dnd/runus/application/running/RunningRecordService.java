@@ -186,7 +186,8 @@ public class RunningRecordService {
         ChallengeAchievement achievement =
                 challengeAchievementRepository.save(achievementRecord.challengeAchievement());
         if (achievementRecord.percentageValues() != null) {
-            percentageValuesRepository.save(achievementRecord);
+            percentageValuesRepository.save(
+                    new ChallengeAchievementRecord(achievement, achievementRecord.percentageValues()));
         }
         return achievement;
     }

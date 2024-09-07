@@ -15,13 +15,13 @@ public record ChallengeWithCondition(Challenge challenge, List<ChallengeConditio
                         !condition.isAchieved(condition.goalMetricType().getActualValue(runningRecord)))
                 .findFirst();
 
-        boolean hasNoRangeCondition = conditions.stream()
-                .noneMatch(condition -> condition.goalMetricType().hasPercentage());
+        boolean hasRangeCondition = conditions.stream()
+                .allMatch(condition -> condition.goalMetricType().hasPercentage());
 
         ChallengeAchievement achievement =
                 new ChallengeAchievement(challenge, runningRecord, failedCondition.isEmpty());
 
-        if (hasNoRangeCondition) {
+        if (!hasRangeCondition) {
             return new ChallengeAchievementRecord(achievement);
         }
 
