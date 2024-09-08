@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @RepositoryTest
@@ -71,6 +72,10 @@ public class ScaleAchievementRepositoryTest {
                 new ScaleAchievement(member, new Scale(scale2.scaleId()), OffsetDateTime.now())));
 
         assertNotNull(saved);
+        assertThat(saved.size()).isEqualTo(2);
         assertNotNull(saved.get(0));
+        assertNotNull(saved.get(1));
+        assertNotNull(saved.get(0).achievedDate());
+        assertNotNull(saved.get(1).achievedDate());
     }
 }
