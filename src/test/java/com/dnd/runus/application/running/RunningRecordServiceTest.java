@@ -14,6 +14,8 @@ import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
+import com.dnd.runus.domain.scale.ScaleAchievementRepository;
+import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.global.exception.BusinessException;
@@ -68,6 +70,12 @@ class RunningRecordServiceTest {
     @Mock
     private GoalAchievementRepository goalAchievementRepository;
 
+    @Mock
+    private ScaleRepository scaleRepository;
+
+    @Mock
+    private ScaleAchievementRepository scaleAchievementRepository;
+
     private final ZoneOffset defaultZoneOffset = ZoneOffset.of("+9");
 
     @BeforeEach
@@ -80,6 +88,8 @@ class RunningRecordServiceTest {
                 challengeAchievementRepository,
                 percentageValuesRepository,
                 goalAchievementRepository,
+                scaleRepository,
+                scaleAchievementRepository,
                 defaultZoneOffset);
     }
 

@@ -18,6 +18,10 @@ import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
+import com.dnd.runus.domain.scale.Scale;
+import com.dnd.runus.domain.scale.ScaleAchievement;
+import com.dnd.runus.domain.scale.ScaleAchievementRepository;
+import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.global.exception.type.ErrorType;
@@ -47,6 +51,8 @@ public class RunningRecordService {
     private final ChallengeAchievementRepository challengeAchievementRepository;
     private final ChallengeAchievementPercentageRepository percentageValuesRepository;
     private final GoalAchievementRepository goalAchievementRepository;
+    private final ScaleRepository scaleRepository;
+    private final ScaleAchievementRepository scaleAchievementRepository;
 
     private final ZoneOffset defaultZoneOffset;
 
@@ -58,6 +64,8 @@ public class RunningRecordService {
             ChallengeAchievementRepository challengeAchievementRepository,
             ChallengeAchievementPercentageRepository percentageValuesRepository,
             GoalAchievementRepository goalAchievementRepository,
+            ScaleRepository scaleRepository,
+            ScaleAchievementRepository scaleAchievementRepository,
             @Value("${app.default-zone-offset}") ZoneOffset defaultZoneOffset) {
         this.runningRecordRepository = runningRecordRepository;
         this.memberRepository = memberRepository;
@@ -66,6 +74,8 @@ public class RunningRecordService {
         this.challengeAchievementRepository = challengeAchievementRepository;
         this.percentageValuesRepository = percentageValuesRepository;
         this.goalAchievementRepository = goalAchievementRepository;
+        this.scaleRepository = scaleRepository;
+        this.scaleAchievementRepository = scaleAchievementRepository;
         this.defaultZoneOffset = defaultZoneOffset;
     }
 
@@ -120,6 +130,12 @@ public class RunningRecordService {
 
         memberLevelRepository.updateMemberLevel(memberId, request.runningData().distanceMeter());
 
+        // 사용자가 달성할 수 있는 지구 한바퀴 코스 확인 후 저장
+        List<Long> achievableScaleIds = scaleRepository.findAchievableScaleIds(member.memberId());
+        if (achievableScaleIds != null && !achievableScaleIds.isEmpty() && achievableScaleIds.get(0) != null) {
+            saveScaleAchievements(achievableScaleIds, member);
+        }
+
         switch (request.achievementMode()) {
             case CHALLENGE -> {
                 ChallengeAchievement challengeAchievement =
@@ -156,6 +172,14 @@ public class RunningRecordService {
                 monthlyTotalDistance,
                 Level.formatLevelName(nextLevel),
                 Level.formatExp(remainingKmToNextLevel));
+    }
+
+    private void saveScaleAchievements(List<Long> achievableScaleIds, Member member) {
+        OffsetDateTime now = OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE));
+        List<ScaleAchievement> scaleAchievements = achievableScaleIds.stream()
+                .map(id -> new ScaleAchievement(member, new Scale(id), now))
+                .toList();
+        scaleAchievementRepository.saveAll(scaleAchievements);
     }
 
     private ChallengeAchievement handleChallengeMode(Long challengeId, long memberId, RunningRecord runningRecord) {
