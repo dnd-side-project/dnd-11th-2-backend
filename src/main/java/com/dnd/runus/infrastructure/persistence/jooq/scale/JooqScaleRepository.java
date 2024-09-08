@@ -47,10 +47,7 @@ public class JooqScaleRepository {
                 .as(select(
                                 SCALE.ID,
                                 sum(SCALE.SIZE_METER).over().orderBy(SCALE.ID).cast(int.class))
-                        .from(SCALE)
-                        .where(SCALE.ID.notIn(select(SCALE_ACHIEVEMENT.SCALE_ID)
-                                .from(SCALE_ACHIEVEMENT)
-                                .where(SCALE_ACHIEVEMENT.MEMBER_ID.eq(memberId)))));
+                        .from(SCALE));
 
         return dsl.with(totalDistance)
                 .with(cumulativeScale)
@@ -59,6 +56,10 @@ public class JooqScaleRepository {
                 .join(totalDistance)
                 .on(coalesce(cumulativeScale.field("cumulative_sum", Integer.class), 0)
                         .le(totalDistance.field("total_distance_meter", Integer.class)))
+                .where(coalesce(cumulativeScale.field("id", Long.class), -1)
+                        .notIn(select(SCALE_ACHIEVEMENT.SCALE_ID)
+                                .from(SCALE_ACHIEVEMENT)
+                                .where(SCALE_ACHIEVEMENT.MEMBER_ID.eq(memberId))))
                 .fetchInto(Long.class);
     }
 
