@@ -5,9 +5,8 @@ import com.dnd.runus.auth.oidc.provider.OidcProvider;
 import com.dnd.runus.auth.oidc.provider.OidcProviderRegistry;
 import com.dnd.runus.auth.token.TokenProviderModule;
 import com.dnd.runus.auth.token.dto.AuthTokenDto;
-import com.dnd.runus.domain.badge.BadgeAchievementRepository;
 import com.dnd.runus.domain.member.*;
-import com.dnd.runus.domain.running.RunningRecordRepository;
+import com.dnd.runus.domain.oauth.OauthRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.SocialType;
 import com.dnd.runus.global.exception.BusinessException;
@@ -34,9 +33,10 @@ public class OauthService {
 
     private final MemberRepository memberRepository;
     private final SocialProfileRepository socialProfileRepository;
-    private final BadgeAchievementRepository badgeAchievementRepository;
-    private final RunningRecordRepository runningRecordRepository;
     private final MemberLevelRepository memberLevelRepository;
+
+    // FIXME soft delete 완료 후 삭제
+    private final OauthRepository oauthRepository;
 
     @Transactional
     public SignResponse signIn(SignInRequest request) {
@@ -122,7 +122,8 @@ public class OauthService {
         String accessToken = oidcProvider.getAccessToken(request.authorizationCode());
         oidcProvider.revoke(accessToken);
 
-        deleteMember(memberId);
+        // 멤버 삭제
+        oauthRepository.deleteAllDataAboutMember(memberId);
     }
 
     private SocialProfile createMember(String oauthId, String email, SocialType socialType, String nickname) {
@@ -137,14 +138,5 @@ public class OauthService {
                 .oauthId(oauthId)
                 .oauthEmail(email)
                 .build());
-    }
-
-    private void deleteMember(long memberId) {
-        badgeAchievementRepository.deleteByMemberId(memberId);
-        // todo 챌린지 삭제(챌린지 기능 구현 완료 후)
-        runningRecordRepository.deleteByMemberId(memberId);
-        memberLevelRepository.deleteByMemberId(memberId);
-        socialProfileRepository.deleteByMemberId(memberId);
-        memberRepository.deleteById(memberId);
     }
 }
