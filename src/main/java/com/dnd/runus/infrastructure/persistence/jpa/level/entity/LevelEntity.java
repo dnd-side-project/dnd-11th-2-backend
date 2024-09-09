@@ -30,7 +30,6 @@ public class LevelEntity {
 
     public static LevelEntity from(Level level) {
         LevelEntity levelEntity = new LevelEntity();
-        levelEntity.id = level.levelId();
         levelEntity.expRangeStart = level.expRangeStart();
         levelEntity.expRangeEnd = level.expRangeEnd();
         levelEntity.imageUrl = level.imageUrl();
