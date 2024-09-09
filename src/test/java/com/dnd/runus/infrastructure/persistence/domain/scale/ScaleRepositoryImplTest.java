@@ -10,7 +10,6 @@ import com.dnd.runus.domain.scale.Scale;
 import com.dnd.runus.domain.scale.ScaleAchievement;
 import com.dnd.runus.domain.scale.ScaleAchievementRepository;
 import com.dnd.runus.domain.scale.ScaleRepository;
-import com.dnd.runus.domain.scale.ScaleSummary;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.infrastructure.persistence.annotation.RepositoryTest;
@@ -76,17 +75,6 @@ public class ScaleRepositoryImplTest {
         scale1Id = idList.get(0);
         scale2Id = idList.get(1);
         scale3Id = idList.get(2);
-    }
-
-    @DisplayName("지구 한바퀴 코스 조회:코스 수, 전체 코스 거리를 반환한다.")
-    @Test
-    void getSummary() {
-        // when
-        ScaleSummary summary = scaleRepository.getSummary();
-
-        // then
-        assertThat(summary.totalCourseCnt()).isEqualTo(4);
-        assertThat(summary.totalCourseDistanceKm()).isEqualTo(5_100_000);
     }
 
     @DisplayName("scale_achievement에 기록이 없는 경우 성취 가능한 scale_id를 반환한다.")

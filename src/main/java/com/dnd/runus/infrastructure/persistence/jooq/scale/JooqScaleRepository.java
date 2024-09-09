@@ -1,13 +1,10 @@
 package com.dnd.runus.infrastructure.persistence.jooq.scale;
 
-import com.dnd.runus.domain.scale.ScaleSummary;
 import lombok.RequiredArgsConstructor;
 import org.jooq.CommonTableExpression;
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record2;
-import org.jooq.RecordMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,7 +13,6 @@ import static com.dnd.runus.jooq.Tables.RUNNING_RECORD;
 import static com.dnd.runus.jooq.Tables.SCALE_ACHIEVEMENT;
 import static com.dnd.runus.jooq.tables.Scale.SCALE;
 import static org.jooq.impl.DSL.coalesce;
-import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.select;
 import static org.jooq.impl.DSL.sum;
@@ -26,13 +22,6 @@ import static org.jooq.impl.DSL.sum;
 public class JooqScaleRepository {
 
     private final DSLContext dsl;
-
-    public ScaleSummary getSummary() {
-        return dsl.select(
-                        count().as("count"), coalesce(sum(SCALE.SIZE_METER), 0).as("total_meter"))
-                .from(SCALE)
-                .fetchOne(new ScaleSummaryMapper());
-    }
 
     public List<Long> findAchievableScaleIds(long memberId) {
 
@@ -61,12 +50,5 @@ public class JooqScaleRepository {
                                 .from(SCALE_ACHIEVEMENT)
                                 .where(SCALE_ACHIEVEMENT.MEMBER_ID.eq(memberId))))
                 .fetchInto(Long.class);
-    }
-
-    private static class ScaleSummaryMapper implements RecordMapper<Record, ScaleSummary> {
-        @Override
-        public ScaleSummary map(Record record) {
-            return new ScaleSummary(record.get("count", int.class), record.get("total_meter", int.class));
-        }
     }
 }
