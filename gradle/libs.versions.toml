@@ -21,8 +21,7 @@ spring-boot-testcontainers = { group = "org.springframework.boot", name = "sprin
 
 bcpkix = {group= "org.bouncycastle", name = "bcpkix-jdk18on", version = "1.78.1" }
 
-findbugs = {group = "com.google.code.findbugs", name = "jsr305", version = "3.0.2"}
-
+spotbugs = {group = "com.github.spotbugs", name = "spotbugs-annotations", version = "4.8.6"}
 lombok = { group = "org.projectlombok", name = "lombok", version = "1.18.34" }
 dotenv = { group = "me.paulschwarz", name = "spring-dotenv", version = "4.0.0" }
 jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version = "24.1.0" }

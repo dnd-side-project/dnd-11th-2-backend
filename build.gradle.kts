@@ -36,7 +36,7 @@ dependencies {
     implementation(libs.bcpkix)
 
     //defect detection tool for Java that uses static analysis to look for more than 200 bug patterns
-    implementation(libs.findbugs)
+    implementation(libs.spotbugs)
 
     // JWT
     implementation(libs.jjwt.api)
