@@ -22,6 +22,7 @@ public class MemberService {
 
         return new MyProfileResponse(
                 memberCurrentLevel.level().imageUrl(),
+                Level.formatLevelName(currentLevel),
                 Level.formatExp(memberCurrentLevel.currentExp()),
                 Level.formatLevelName(nextLevel),
                 Level.formatExp(memberCurrentLevel.level().expRangeEnd() - memberCurrentLevel.currentExp()));
