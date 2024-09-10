@@ -8,8 +8,11 @@ import com.dnd.runus.domain.scale.ScaleAchievementRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.infrastructure.persistence.annotation.RepositoryTest;
 import com.dnd.runus.infrastructure.persistence.jpa.member.entity.MemberEntity;
+import com.dnd.runus.infrastructure.persistence.jpa.scale.entity.ScaleAchievementEntity;
 import com.dnd.runus.infrastructure.persistence.jpa.scale.entity.ScaleEntity;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @RepositoryTest
-public class ScaleAchievementRepositoryTest {
+public class ScaleAchievementRepositoryImplTest {
 
     @Autowired
     private ScaleAchievementRepository scaleAchievementRepository;
@@ -77,5 +80,26 @@ public class ScaleAchievementRepositoryTest {
         assertNotNull(saved.get(1));
         assertNotNull(saved.get(0).achievedDate());
         assertNotNull(saved.get(1).achievedDate());
+    }
+
+    @Test
+    @DisplayName("코스 성취 기록을 삭제 한다. : memberId로 삭제한다.")
+    void deleteByMemberId() {
+        // given
+        List<ScaleAchievement> saved = scaleAchievementRepository.saveAll(List.of(
+                new ScaleAchievement(member, new Scale(scale1.scaleId()), OffsetDateTime.now()),
+                new ScaleAchievement(member, new Scale(scale2.scaleId()), OffsetDateTime.now())));
+
+        // when
+        scaleAchievementRepository.deleteByMemberId(member.memberId());
+
+        // then
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+
+        CriteriaQuery<ScaleAchievementEntity> query = criteriaBuilder.createQuery(ScaleAchievementEntity.class);
+        List<ScaleAchievementEntity> result = em.createQuery(query.select(query.from(ScaleAchievementEntity.class)))
+                .getResultList();
+
+        assertThat(result.size()).isEqualTo(0);
     }
 }
