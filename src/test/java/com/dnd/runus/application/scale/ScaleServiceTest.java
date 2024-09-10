@@ -65,7 +65,8 @@ class ScaleServiceTest {
         // then
         assertNotNull(response);
         assertTrue(response.achievedCourses().isEmpty());
-        assertEquals(runningMeterSum, response.currentCourse().achievedMeter());
+        assertEquals(scale1.name(), response.currentCourse().name());
+        assertEquals(runningMeterSum + "m", response.currentCourse().achievedDistance());
     }
 
     @DisplayName("달성한 코스가 있는 경우, 달성한 코스, 현재 진행중인 코스 정보를 반환한다.")
@@ -88,9 +89,9 @@ class ScaleServiceTest {
         assertEquals(1, response.achievedCourses().size());
 
         assertEquals(scale1.name(), response.achievedCourses().get(0).name());
-        assertEquals(200, response.achievedCourses().get(0).meter());
+        assertEquals("0.2km", response.achievedCourses().get(0).totalDistance());
 
         assertEquals(scale2.name(), response.currentCourse().name());
-        assertEquals(800, response.currentCourse().achievedMeter());
+        assertEquals("800m", response.currentCourse().achievedDistance());
     }
 }
