@@ -1,19 +1,12 @@
 package com.dnd.runus.domain.level;
 
+import java.text.DecimalFormat;
+
 public record Level(long levelId, int expRangeStart, int expRangeEnd, String imageUrl) {
+    private static final DecimalFormat KILO_METER_FORMATTER = new DecimalFormat("0.##km");
+
     public static String formatExp(int exp) {
-        double km = exp / 1000.0;
-        String formatted = String.format("%.2f", km);
-
-        if (formatted.contains(".")) {
-            formatted = formatted.replaceAll("0*$", "");
-        }
-
-        if (formatted.endsWith(".")) {
-            formatted = formatted.substring(0, formatted.length() - 1);
-        }
-
-        return formatted + "km";
+        return KILO_METER_FORMATTER.format(exp / 1000.0);
     }
 
     public static String formatLevelName(long level) {
