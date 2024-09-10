@@ -2,11 +2,13 @@ package com.dnd.runus.infrastructure.persistence.domain.goalAchievement;
 
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
 import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
+import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.infrastructure.persistence.jpa.goalAchievement.JpaGoalAchievementRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.goalAchievement.entity.GoalAchievementEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,5 +29,11 @@ public class GoalAchievementRepositoryImpl implements GoalAchievementRepository 
         return jpaGoalAchievementRepository
                 .findByRunningRecordId(runningRecordId)
                 .map(GoalAchievementEntity::toDomain);
+    }
+
+    @Override
+    public void deleteByRunningRecords(List<RunningRecord> runningRecords) {
+        jpaGoalAchievementRepository.deleteAllByRunningRecordIdIn(
+                runningRecords.stream().map(RunningRecord::runningId).toList());
     }
 }
