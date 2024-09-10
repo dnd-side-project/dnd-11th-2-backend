@@ -8,6 +8,8 @@ import com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeAc
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class ChallengeAchievementPercentageRepositoryImpl implements ChallengeAchievementPercentageRepository {
@@ -20,5 +22,10 @@ public class ChallengeAchievementPercentageRepositoryImpl implements ChallengeAc
                 .save(ChallengeAchievementPercentageEntity.from(
                         record.percentageValues(), record.challengeAchievement()))
                 .toDomain();
+    }
+
+    @Override
+    public void deleteByChallengeAchievementIds(List<Long> challengeAchievementIds) {
+        jpaPercentageRepository.deleteAllByChallengeAchievementIdIn(challengeAchievementIds);
     }
 }
