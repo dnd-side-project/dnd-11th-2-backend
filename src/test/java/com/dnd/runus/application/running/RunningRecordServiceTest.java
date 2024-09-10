@@ -6,6 +6,7 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository
 import com.dnd.runus.domain.challenge.*;
 import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
+import com.dnd.runus.domain.goalAchievement.GoalAchievement;
 import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
 import com.dnd.runus.domain.level.Level;
 import com.dnd.runus.domain.member.Member;
@@ -95,7 +96,7 @@ class RunningRecordServiceTest {
 
     @Test
     @DisplayName("CHALLENGE 모드의 러닝 기록 추가 요청시, challengeId에 해당하는 챌린지가 있을 경우, 정상적으로 러닝 기록이 추가된다.")
-    void addRunningRecord() {
+    void addRunningRecord_challenge() {
         // given
         RunningRecordRequest request = new RunningRecordRequest(
                 LocalDateTime.of(2021, 1, 1, 12, 10, 30),
@@ -110,19 +111,7 @@ class RunningRecordServiceTest {
                 new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
 
         Member member = new Member(MemberRole.USER, "nickname1");
-        RunningRecord expected = RunningRecord.builder()
-                .member(member)
-                .startAt(request.startAt().atOffset(defaultZoneOffset))
-                .endAt(request.endAt().atOffset(defaultZoneOffset))
-                .emoji(request.emotion())
-                .startLocation(request.startLocation())
-                .endLocation(request.endLocation())
-                .distanceMeter(request.runningData().distanceMeter())
-                .duration(request.runningData().runningTime())
-                .calorie(request.runningData().calorie())
-                .averagePace(request.runningData().averagePace())
-                .route(List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)))
-                .build();
+        RunningRecord expected = createRunningRecord(request, member);
 
         ChallengeWithCondition challengeWithCondition = new ChallengeWithCondition(
                 new Challenge(1L, "challenge", "image", ChallengeType.TODAY),
@@ -143,6 +132,161 @@ class RunningRecordServiceTest {
         // then
         assertEquals(request.startAt(), response.startAt());
         assertEquals(request.endAt(), response.endAt());
+    }
+
+    @Test
+    @DisplayName("GOAL 모드의 러닝 기록 추가 시,goalTime이 null이 아니고 목표값보다 실제값이 더 크다면, 성공한 goalAchievement와 함께 정상적으로 러닝 기록이 추가된다.")
+    void addRunningRecord_goal_time_success() {
+        // given
+        RunningRecordRequest request = new RunningRecordRequest(
+                LocalDateTime.of(2021, 1, 1, 12, 10, 30),
+                LocalDateTime.of(2021, 1, 1, 13, 12, 10),
+                "start location",
+                "end location",
+                RunningEmoji.VERY_GOOD,
+                null,
+                null,
+                1200,
+                RunningAchievementMode.GOAL,
+                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+
+        Member member = new Member(MemberRole.USER, "nickname1");
+        RunningRecord expected = createRunningRecord(request, member);
+
+        GoalAchievement goalAchievement = new GoalAchievement(expected, GoalMetricType.TIME, 1200, true);
+
+        given(memberRepository.findById(1L)).willReturn(Optional.of(member));
+        given(runningRecordRepository.save(expected)).willReturn(expected);
+        given(goalAchievementRepository.save(goalAchievement)).willReturn(goalAchievement);
+
+        // when
+        RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
+
+        // then
+        assertEquals(request.startAt(), response.startAt());
+        assertEquals(request.endAt(), response.endAt());
+
+        assertTrue(response.goal().title().contains("분"));
+        assertFalse(response.goal().title().contains("km"));
+
+        assertTrue(response.goal().isSuccess());
+    }
+
+    @Test
+    @DisplayName(
+            "GOAL 모드의 러닝 기록 추가 시, goalTime이 null이 아니고 목표값보다 실제값이 더 낮다면, 실패한 goalAchievement와 함께 정상적으로 러닝 기록이 추가된다.")
+    void addRunningRecord_goal_time_fail() {
+        // given
+        RunningRecordRequest request = new RunningRecordRequest(
+                LocalDateTime.of(2021, 1, 1, 12, 10, 30),
+                LocalDateTime.of(2021, 1, 1, 13, 12, 10),
+                "start location",
+                "end location",
+                RunningEmoji.VERY_GOOD,
+                null,
+                null,
+                20_000,
+                RunningAchievementMode.GOAL,
+                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+
+        Member member = new Member(MemberRole.USER, "nickname1");
+        RunningRecord expected = createRunningRecord(request, member);
+
+        GoalAchievement goalAchievement = new GoalAchievement(expected, GoalMetricType.TIME, 20_000, false);
+
+        given(memberRepository.findById(1L)).willReturn(Optional.of(member));
+        given(runningRecordRepository.save(expected)).willReturn(expected);
+        given(goalAchievementRepository.save(goalAchievement)).willReturn(goalAchievement);
+
+        // when
+        RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
+
+        // then
+        assertEquals(request.startAt(), response.startAt());
+        assertEquals(request.endAt(), response.endAt());
+
+        assertTrue(response.goal().title().contains("분"));
+        assertFalse(response.goal().title().contains("km"));
+
+        assertFalse(response.goal().isSuccess());
+    }
+
+    @Test
+    @DisplayName(
+            "GOAL 모드의 러닝 기록 추가 요청시, goalDistance가 null이 아니고 목표값보다 실제값이 더 높다면 성공한 goalAchievement와 함께 정상적으로 러닝 기록이 추가된다.")
+    void addRunningRecord_goal_distance() {
+        // given
+        RunningRecordRequest request = new RunningRecordRequest(
+                LocalDateTime.of(2021, 1, 1, 12, 10, 30),
+                LocalDateTime.of(2021, 1, 1, 13, 12, 10),
+                "start location",
+                "end location",
+                RunningEmoji.VERY_GOOD,
+                null,
+                5_000,
+                null,
+                RunningAchievementMode.GOAL,
+                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+
+        Member member = new Member(MemberRole.USER, "nickname1");
+        RunningRecord expected = createRunningRecord(request, member);
+
+        GoalAchievement goalAchievement = new GoalAchievement(expected, GoalMetricType.DISTANCE, 5_000, true);
+
+        given(memberRepository.findById(1L)).willReturn(Optional.of(member));
+        given(runningRecordRepository.save(expected)).willReturn(expected);
+        given(goalAchievementRepository.save(goalAchievement)).willReturn(goalAchievement);
+
+        // when
+        RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
+
+        // then
+        assertEquals(request.startAt(), response.startAt());
+        assertEquals(request.endAt(), response.endAt());
+
+        assertTrue(response.goal().title().contains("km"));
+        assertFalse(response.goal().title().contains("분"));
+
+        assertTrue(response.goal().isSuccess());
+    }
+
+    @Test
+    @DisplayName(
+            "GOAL 모드의 러닝 기록 추가 요청시, goalDistance가 null이 아니고 목표값보다 실제값과 같다면 성공한 goalAchievement와 함께 정상적으로 러닝 기록이 추가된다.")
+    void addRunningRecord_goal_distance_same_value() {
+        // given
+        RunningRecordRequest request = new RunningRecordRequest(
+                LocalDateTime.of(2021, 1, 1, 12, 10, 30),
+                LocalDateTime.of(2021, 1, 1, 13, 12, 10),
+                "start location",
+                "end location",
+                RunningEmoji.VERY_GOOD,
+                null,
+                10_000,
+                null,
+                RunningAchievementMode.GOAL,
+                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+
+        Member member = new Member(MemberRole.USER, "nickname1");
+        RunningRecord expected = createRunningRecord(request, member);
+
+        GoalAchievement goalAchievement = new GoalAchievement(expected, GoalMetricType.DISTANCE, 10_000, true);
+
+        given(memberRepository.findById(1L)).willReturn(Optional.of(member));
+        given(runningRecordRepository.save(expected)).willReturn(expected);
+        given(goalAchievementRepository.save(goalAchievement)).willReturn(goalAchievement);
+
+        // when
+        RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
+
+        // then
+        assertEquals(request.startAt(), response.startAt());
+        assertEquals(request.endAt(), response.endAt());
+
+        assertTrue(response.goal().title().contains("km"));
+        assertFalse(response.goal().title().contains("분"));
+
+        assertTrue(response.goal().isSuccess());
     }
 
     @Test
@@ -196,5 +340,21 @@ class RunningRecordServiceTest {
             assertThat(monthlyRunningSummery.nextLevelName()).isEqualTo("Level 2");
             assertThat(monthlyRunningSummery.nextLevelKm()).isEqualTo("4.22km");
         }
+    }
+
+    private RunningRecord createRunningRecord(RunningRecordRequest request, Member member) {
+        return RunningRecord.builder()
+                .member(member)
+                .startAt(request.startAt().atOffset(defaultZoneOffset))
+                .endAt(request.endAt().atOffset(defaultZoneOffset))
+                .emoji(request.emotion())
+                .startLocation(request.startLocation())
+                .endLocation(request.endLocation())
+                .distanceMeter(request.runningData().distanceMeter())
+                .duration(request.runningData().runningTime())
+                .calorie(request.runningData().calorie())
+                .averagePace(request.runningData().averagePace())
+                .route(List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)))
+                .build();
     }
 }
