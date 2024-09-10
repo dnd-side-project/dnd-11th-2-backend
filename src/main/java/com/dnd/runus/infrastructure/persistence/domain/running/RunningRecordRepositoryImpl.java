@@ -1,5 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.domain.running;
 
+import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.infrastructure.persistence.jooq.running.JooqRunningRecordRepository;
@@ -53,5 +54,12 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     @Override
     public int findTotalDistanceMeterByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime endtDate) {
         return jooqRunningRecordRepository.findTotalDistanceMeterByMemberId(memberId, startDate, endtDate);
+    }
+
+    @Override
+    public List<RunningRecord> findByMember(Member member) {
+        return jpaRunningRecordRepository.findByMemberId(member.memberId()).stream()
+                .map(RunningRecordEntity::toDomain)
+                .toList();
     }
 }
