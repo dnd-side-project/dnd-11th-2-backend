@@ -37,15 +37,16 @@ public class GoalAchievementRepositoryImplTest {
     private MemberRepository memberRepository;
 
     private RunningRecord runningRecord;
+    private Member savedMember;
 
     private final int runningDistance = 5000;
     private final Duration runningDuration = Duration.ofHours(1);
 
     @BeforeEach
     void setUp() {
-        Member savedMember = memberRepository.save(new Member(MemberRole.USER, "nickname"));
+        savedMember = memberRepository.save(new Member(MemberRole.USER, "nickname"));
         runningRecord = runningRecordRepository.save(new RunningRecord(
-                1,
+                0,
                 savedMember,
                 runningDistance,
                 runningDuration,
@@ -112,5 +113,61 @@ public class GoalAchievementRepositoryImplTest {
 
         // then
         assertFalse(saved.isAchieved());
+    }
+
+    @DisplayName("runningRecords로 삭제합니다.")
+    @Test
+    void deleteAllByRunningRecordIdsSuccess() {
+        // given
+        RunningRecord runningRecord2 = runningRecordRepository.save(new RunningRecord(
+                0,
+                savedMember,
+                runningDistance,
+                runningDuration,
+                1,
+                new Pace(5, 11),
+                OffsetDateTime.now(),
+                OffsetDateTime.now(),
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                "start location",
+                "end location",
+                RunningEmoji.SOSO));
+        RunningRecord runningRecord3 = runningRecordRepository.save(new RunningRecord(
+                0,
+                savedMember,
+                runningDistance,
+                runningDuration,
+                1,
+                new Pace(5, 11),
+                OffsetDateTime.now(),
+                OffsetDateTime.now(),
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                "start location",
+                "end location",
+                RunningEmoji.SOSO));
+
+        int goalTime = (int) runningDuration.toSeconds() + 1;
+        GoalAchievement saved1 =
+                goalAchievementRepository.save(new GoalAchievement(runningRecord, GoalMetricType.TIME, goalTime));
+        GoalAchievement saved2 =
+                goalAchievementRepository.save(new GoalAchievement(runningRecord2, GoalMetricType.TIME, goalTime));
+        GoalAchievement saved3 =
+                goalAchievementRepository.save(new GoalAchievement(runningRecord3, GoalMetricType.TIME, goalTime));
+        List<RunningRecord> runningRecords =
+                List.of(saved1.runningRecord(), saved2.runningRecord(), saved3.runningRecord());
+
+        // when
+        goalAchievementRepository.deleteByRunningRecords(runningRecords);
+
+        // then
+        assertFalse(goalAchievementRepository
+                .findByRunningRecordId(saved1.runningRecord().runningId())
+                .isPresent());
+        assertFalse(goalAchievementRepository
+                .findByRunningRecordId(saved2.runningRecord().runningId())
+                .isPresent());
+        assertFalse(goalAchievementRepository
+                .findByRunningRecordId(saved3.runningRecord().runningId())
+                .isPresent());
     }
 }
