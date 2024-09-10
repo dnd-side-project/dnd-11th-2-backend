@@ -33,4 +33,9 @@ public class ScaleAchievementRepositoryImpl implements ScaleAchievementRepositor
                 .map(ScaleAchievementEntity::toDomain)
                 .toList();
     }
+
+    @Override
+    public void deleteByMemberId(long memberId) {
+        jpaScaleAchievementRepository.deleteByMemberId(memberId);
+    }
 }
