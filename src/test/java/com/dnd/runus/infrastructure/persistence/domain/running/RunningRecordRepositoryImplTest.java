@@ -25,6 +25,7 @@ import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RepositoryTest
@@ -187,5 +188,33 @@ class RunningRecordRepositoryImplTest {
 
         // than
         assertThat(totalDistanceMeterByMemberId).isEqualTo(3000);
+    }
+
+    @DisplayName("러닝 기록 조회 : memberId의 러닝 기록을 조회")
+    @Test
+    void getAllRunningRecordsByMemberId() {
+        // given
+        for (int i = 0; i < 2; i++) {
+            runningRecordRepository.save(new RunningRecord(
+                    0,
+                    savedMember,
+                    5000,
+                    Duration.ofHours(1),
+                    1,
+                    new Pace(5, 11),
+                    OffsetDateTime.now(),
+                    OffsetDateTime.now(),
+                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    "start location",
+                    "end location",
+                    RunningEmoji.SOSO));
+        }
+
+        // when
+        List<RunningRecord> results = runningRecordRepository.findByMember(savedMember);
+
+        // then
+        assertNotNull(results);
+        assertThat(results.size()).isEqualTo(2);
     }
 }
