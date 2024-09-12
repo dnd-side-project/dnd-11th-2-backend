@@ -2,9 +2,7 @@ package com.dnd.runus.auth.oidc.provider;
 
 import com.dnd.runus.global.constant.SocialType;
 import io.jsonwebtoken.Claims;
-import org.springframework.stereotype.Component;
 
-@Component
 public interface OidcProvider {
 
     SocialType getSocialType();
