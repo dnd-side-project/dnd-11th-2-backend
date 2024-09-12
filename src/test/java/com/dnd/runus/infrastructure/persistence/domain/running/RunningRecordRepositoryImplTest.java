@@ -6,6 +6,7 @@ import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
+import com.dnd.runus.domain.running.RunningRecordWeeklySummary;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.infrastructure.persistence.annotation.RepositoryTest;
@@ -26,6 +27,7 @@ import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RepositoryTest
@@ -216,5 +218,60 @@ class RunningRecordRepositoryImplTest {
         // then
         assertNotNull(results);
         assertThat(results.size()).isEqualTo(2);
+    }
+
+    @DisplayName("러닝 주간 서머리 조회(거리) : 러닝 데이터가 없을 경우, sumDistanceMeter는 null를 반환한다.")
+    @Test
+    void getWeeklyDistanceSummary_WithOutRunningRecords() {
+        // given
+        OffsetDateTime today = OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE));
+
+        // when
+        List<RunningRecordWeeklySummary> result =
+                runningRecordRepository.findWeeklyDistanceSummaryMeter(savedMember.memberId(), today);
+
+        // then
+        assertThat(result.size()).isEqualTo(7);
+        result.forEach(v -> assertNull(v.sumDistanceMeter()));
+    }
+
+    @DisplayName("러닝 주간 서머리 조회(거리) : 러닝 데이터 있을 경우, 해당 요일에 러닝 데이터는 sum한 값이 리턴된다.")
+    @Test
+    void getWeeklyDistanceSummary_WithRunningRecords() {
+        // given
+        OffsetDateTime today = OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE));
+
+        int distance = 5000;
+        for (int i = 0; i < 2; i++) {
+            runningRecordRepository.save(new RunningRecord(
+                    0,
+                    savedMember,
+                    distance,
+                    Duration.ofHours(1),
+                    1,
+                    new Pace(5, 11),
+                    OffsetDateTime.now(),
+                    OffsetDateTime.now(),
+                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    "start location",
+                    "end location",
+                    RunningEmoji.SOSO));
+        }
+
+        int expectedDistance = distance * 2;
+
+        // when
+        List<RunningRecordWeeklySummary> result =
+                runningRecordRepository.findWeeklyDistanceSummaryMeter(savedMember.memberId(), today);
+
+        // then
+        assertThat(result.size()).isEqualTo(7);
+        result.forEach(v -> {
+            if (v.date().equals(today.toLocalDate())) {
+                assertThat(v.sumDistanceMeter()).isEqualTo(expectedDistance);
+            } else {
+                assertNull(v.sumDistanceMeter());
+            }
+        });
     }
 }
