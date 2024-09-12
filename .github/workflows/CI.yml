@@ -33,7 +33,7 @@ jobs:
         run: ./gradlew projectTest --stacktrace --parallel
 
       - name: Upload Test Report
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-report
