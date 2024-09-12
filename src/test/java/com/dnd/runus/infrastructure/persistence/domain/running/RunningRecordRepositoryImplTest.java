@@ -226,7 +226,6 @@ class RunningRecordRepositoryImplTest {
     @Test
     void getWeeklyDistanceSummary_WithOutRunningRecords() {
         // given
-        // given
         ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
         OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
 
