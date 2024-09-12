@@ -30,8 +30,8 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RepositoryTest
 class ChallengeAchievementPercentageRepositoryImplTest {
@@ -120,6 +120,6 @@ class ChallengeAchievementPercentageRepositoryImplTest {
                         query.select(query.from(ChallengeAchievementPercentageEntity.class)))
                 .getResultList();
 
-        assertThat(selectAll.isEmpty());
+        assertTrue(selectAll.isEmpty());
     }
 }

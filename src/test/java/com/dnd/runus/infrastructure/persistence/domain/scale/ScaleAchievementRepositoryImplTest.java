@@ -86,7 +86,7 @@ public class ScaleAchievementRepositoryImplTest {
     @DisplayName("코스 성취 기록을 삭제 한다. : memberId로 삭제한다.")
     void deleteByMemberId() {
         // given
-        List<ScaleAchievement> saved = scaleAchievementRepository.saveAll(List.of(
+        scaleAchievementRepository.saveAll(List.of(
                 new ScaleAchievement(member, new Scale(scale1.scaleId()), OffsetDateTime.now()),
                 new ScaleAchievement(member, new Scale(scale2.scaleId()), OffsetDateTime.now())));
 
@@ -100,6 +100,6 @@ public class ScaleAchievementRepositoryImplTest {
         List<ScaleAchievementEntity> result = em.createQuery(query.select(query.from(ScaleAchievementEntity.class)))
                 .getResultList();
 
-        assertThat(result.isEmpty());
+        assertTrue(result.isEmpty());
     }
 }
