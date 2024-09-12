@@ -65,7 +65,8 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     }
 
     @Override
-    public List<RunningRecordWeeklySummary> findWeeklyDistanceSummaryMeter(long memberId, OffsetDateTime today) {
-        return jooqRunningRecordRepository.findWeeklyDistanceSummaryMeter(memberId, today);
+    public List<RunningRecordWeeklySummary> findWeeklyDistanceSummaryMeter(
+            long memberId, OffsetDateTime startWeekDate) {
+        return jooqRunningRecordRepository.findWeeklyDistanceSummaryMeter(memberId, startWeekDate);
     }
 }

@@ -16,7 +16,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.dnd.runus.jooq.Tables.RUNNING_RECORD;
-import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 import static org.jooq.impl.DSL.cast;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
@@ -41,37 +40,38 @@ public class JooqRunningRecordRepository {
         return 0;
     }
 
-    public List<RunningRecordWeeklySummary> findWeeklyDistanceSummaryMeter(long memberId, OffsetDateTime today) {
-
-        int day = today.get(DAY_OF_WEEK) - 1;
-        LocalDate startDate = today.minusDays(day).toLocalDate();
+    public List<RunningRecordWeeklySummary> findWeeklyDistanceSummaryMeter(
+            long memberId, OffsetDateTime startWeekDate) {
 
         CommonTableExpression<Record1<Date>> dateRange = name("date_range")
-                .fields("start_date")
+                .fields("date")
                 .as(select(field(
                         "generate_series(?, ?, interval '1 day')",
                         SQLDataType.DATE,
-                        startDate,
-                        startDate.plusDays(6))));
+                        startWeekDate.toLocalDate(),
+                        startWeekDate.plusDays(6).toLocalDate())));
 
         return dsl.with(dateRange)
                 .select(
-                        dateRange.field("start_date", SQLDataType.DATE),
+                        dateRange.field("date", SQLDataType.DATE),
                         sum(RUNNING_RECORD.DISTANCE_METER).cast(Integer.class).as("sum_distance"))
                 .from(dateRange)
                 .leftJoin(RUNNING_RECORD)
-                .on(cast(RUNNING_RECORD.START_AT, SQLDataType.DATE).eq(dateRange.field("start_date", SQLDataType.DATE)))
+                .on(cast(RUNNING_RECORD.START_AT, SQLDataType.DATE).eq(dateRange.field("date", SQLDataType.DATE)))
                 .and(RUNNING_RECORD.MEMBER_ID.eq(memberId))
-                .groupBy(dateRange.field("start_date"))
-                .orderBy(dateRange.field("start_date"))
+                .and(RUNNING_RECORD.START_AT.ge(startWeekDate))
+                .and(RUNNING_RECORD.START_AT.lt(startWeekDate.plusDays(7)))
+                .groupBy(dateRange.field("date", SQLDataType.DATE))
+                .orderBy(dateRange.field("date", SQLDataType.DATE))
                 .fetch(new RunningWeeklyDistanceSummary());
     }
 
     private static class RunningWeeklyDistanceSummary implements RecordMapper<Record, RunningRecordWeeklySummary> {
+
         @Override
         public RunningRecordWeeklySummary map(Record record) {
             return new RunningRecordWeeklySummary(
-                    record.get("start_date", LocalDate.class), record.get("sum_distance", Integer.class));
+                    record.get("date", LocalDate.class), record.get("sum_distance", Integer.class));
         }
     }
 }

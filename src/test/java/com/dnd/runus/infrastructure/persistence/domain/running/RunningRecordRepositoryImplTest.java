@@ -19,11 +19,13 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
+import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -224,11 +226,16 @@ class RunningRecordRepositoryImplTest {
     @Test
     void getWeeklyDistanceSummary_WithOutRunningRecords() {
         // given
-        OffsetDateTime today = OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE));
+        // given
+        ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int day = today.get(DAY_OF_WEEK) - 1;
+        OffsetDateTime startDate = today.minusDays(day);
 
         // when
         List<RunningRecordWeeklySummary> result =
-                runningRecordRepository.findWeeklyDistanceSummaryMeter(savedMember.memberId(), today);
+                runningRecordRepository.findWeeklyDistanceSummaryMeter(savedMember.memberId(), startDate);
 
         // then
         assertThat(result.size()).isEqualTo(7);
@@ -239,7 +246,11 @@ class RunningRecordRepositoryImplTest {
     @Test
     void getWeeklyDistanceSummary_WithRunningRecords() {
         // given
-        OffsetDateTime today = OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE));
+        ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int day = today.get(DAY_OF_WEEK) - 1;
+        OffsetDateTime startDate = today.minusDays(day);
 
         for (int i = 0; i < 2; i++) {
             runningRecordRepository.save(new RunningRecord(
@@ -259,7 +270,7 @@ class RunningRecordRepositoryImplTest {
 
         // when
         List<RunningRecordWeeklySummary> result =
-                runningRecordRepository.findWeeklyDistanceSummaryMeter(savedMember.memberId(), today);
+                runningRecordRepository.findWeeklyDistanceSummaryMeter(savedMember.memberId(), startDate);
 
         // then
         assertThat(result.size()).isEqualTo(7);
