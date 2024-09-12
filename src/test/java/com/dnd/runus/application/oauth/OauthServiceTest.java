@@ -123,9 +123,7 @@ class OauthServiceTest {
             given(memberRepository.findById(member.memberId())).willReturn(Optional.empty());
 
             // when, then
-            assertThrows(NotFoundException.class, () -> {
-                oauthService.revokeOauth(member.memberId(), request);
-            });
+            assertThrows(NotFoundException.class, () -> oauthService.revokeOauth(member.memberId(), request));
         }
 
         @DisplayName("소셜 로그인 연동 해제: oauthId와 socialType에 해당하는 socialProfile 없을 경우 NotFoundException을 발생한다.")
@@ -141,9 +139,7 @@ class OauthServiceTest {
                     .willReturn(Optional.empty());
 
             // when, then
-            assertThrows(NotFoundException.class, () -> {
-                oauthService.revokeOauth(member.memberId(), request);
-            });
+            assertThrows(NotFoundException.class, () -> oauthService.revokeOauth(member.memberId(), request));
         }
 
         @DisplayName("소셜 로그인 연동 해제: socialProfile의 memberId와 member의 id가 다를 경우 NotFoundException을 발생한다.")
@@ -166,9 +162,7 @@ class OauthServiceTest {
                     .willReturn(Optional.of(socialProfileMock));
 
             // when, then
-            assertThrows(NotFoundException.class, () -> {
-                oauthService.revokeOauth(member.memberId(), request);
-            });
+            assertThrows(NotFoundException.class, () -> oauthService.revokeOauth(member.memberId(), request));
         }
     }
 
@@ -211,9 +205,7 @@ class OauthServiceTest {
         public void testDeleteAllDataAboutMember_MemberNotFound() {
             given(memberRepository.findById(member.memberId())).willReturn(Optional.empty());
 
-            assertThrows(NotFoundException.class, () -> {
-                oauthService.deleteAllDataAboutMember(member.memberId());
-            });
+            assertThrows(NotFoundException.class, () -> oauthService.deleteAllDataAboutMember(member.memberId()));
         }
 
         @DisplayName("회원 삭제 : running_record 존재 X")
