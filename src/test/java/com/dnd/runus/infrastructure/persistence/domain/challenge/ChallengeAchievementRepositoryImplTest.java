@@ -131,6 +131,6 @@ public class ChallengeAchievementRepositoryImplTest {
                         query.select(query.from(ChallengeAchievementEntity.class)))
                 .getResultList();
 
-        assertThat(selectAll.size()).isEqualTo(0);
+        assertThat(selectAll.isEmpty());
     }
 }

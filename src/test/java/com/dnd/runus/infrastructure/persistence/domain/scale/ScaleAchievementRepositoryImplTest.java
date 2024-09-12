@@ -100,6 +100,6 @@ public class ScaleAchievementRepositoryImplTest {
         List<ScaleAchievementEntity> result = em.createQuery(query.select(query.from(ScaleAchievementEntity.class)))
                 .getResultList();
 
-        assertThat(result.size()).isEqualTo(0);
+        assertThat(result.isEmpty());
     }
 }

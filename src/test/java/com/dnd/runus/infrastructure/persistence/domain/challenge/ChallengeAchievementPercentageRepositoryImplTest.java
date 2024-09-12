@@ -120,6 +120,6 @@ class ChallengeAchievementPercentageRepositoryImplTest {
                         query.select(query.from(ChallengeAchievementPercentageEntity.class)))
                 .getResultList();
 
-        assertThat(selectAll.size()).isEqualTo(0);
+        assertThat(selectAll.isEmpty());
     }
 }
