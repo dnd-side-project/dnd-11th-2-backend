@@ -73,13 +73,11 @@ public class OauthController {
             발급 받은 토큰으로 사용자의 서비스 해제 요청을 합니다.<br>
             사용자의 모든 데이터를 삭제합니다.
             """)
-    @ApiErrorType({
-        ErrorType.UNSUPPORTED_SOCIAL_TYPE,
-        ErrorType.FAILED_AUTHENTICATION,
-    })
+    @ApiErrorType({ErrorType.UNSUPPORTED_SOCIAL_TYPE, ErrorType.FAILED_AUTHENTICATION})
     @PostMapping("/withdraw")
     @ResponseStatus(HttpStatus.OK)
     public void withdraw(@MemberId long memberId, @Valid @RequestBody WithdrawRequest request) {
-        oauthService.withdraw(memberId, request);
+        oauthService.revokeOauth(memberId, request);
+        oauthService.deleteAllDataAboutMember(memberId);
     }
 }
