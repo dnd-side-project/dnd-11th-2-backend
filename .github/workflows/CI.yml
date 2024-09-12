@@ -31,3 +31,9 @@ jobs:
 
       - name: Test with Gradle
         run: ./gradlew projectTest --stacktrace --parallel
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: build/reports/tests/test/index.html
