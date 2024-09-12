@@ -3,6 +3,7 @@ package com.dnd.runus.infrastructure.persistence.domain.running;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
+import com.dnd.runus.domain.running.RunningRecordWeeklySummary;
 import com.dnd.runus.infrastructure.persistence.jooq.running.JooqRunningRecordRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.running.JpaRunningRecordRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
@@ -61,5 +62,10 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
         return jpaRunningRecordRepository.findByMemberId(member.memberId()).stream()
                 .map(RunningRecordEntity::toDomain)
                 .toList();
+    }
+
+    @Override
+    public List<RunningRecordWeeklySummary> findWeeklyDistanceSummaryMeter(long memberId, OffsetDateTime today) {
+        return jooqRunningRecordRepository.findWeeklyDistanceSummaryMeter(memberId, today);
     }
 }
