@@ -13,6 +13,8 @@ public record GoalAchievement(
         RunningRecord runningRecord, GoalMetricType goalMetricType, int achievementValue, boolean isAchieved) {
 
     private static final DecimalFormat KILO_METER_FORMATTER = new DecimalFormat("0.##km");
+    private static final String SUCCESS_ICON_URL = "https://d27big3ufowabi.cloudfront.net/goal/goal-success.png";
+    private static final String FAILURE_ICON_URL = "https://d27big3ufowabi.cloudfront.net/goal/goal-failure.png";
 
     public GoalAchievement(RunningRecord runningRecord, GoalMetricType goalMetricType, int achievementValue) {
         this(
@@ -32,6 +34,10 @@ public record GoalAchievement(
 
     public String getDescription() {
         return isAchieved ? SUCCESS.getComment() : FAILURE.getComment();
+    }
+
+    public String getIconUrl() {
+        return isAchieved ? SUCCESS_ICON_URL : FAILURE_ICON_URL;
     }
 
     private String formatSecondToKoreanHHMM(int second) {

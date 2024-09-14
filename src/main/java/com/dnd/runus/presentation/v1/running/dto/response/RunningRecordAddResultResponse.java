@@ -56,6 +56,7 @@ public record RunningRecordAddResultResponse(
                 new GoalResultDto(
                         achievement.getTitle(),
                         achievement.getDescription(),
+                        achievement.getIconUrl(),
                         achievement.isAchieved()
                 ),
                 RunningAchievementMode.GOAL
