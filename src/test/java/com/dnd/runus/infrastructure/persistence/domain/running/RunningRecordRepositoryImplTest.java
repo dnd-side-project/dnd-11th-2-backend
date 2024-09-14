@@ -4,6 +4,7 @@ import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberRepository;
+import com.dnd.runus.domain.running.DailyRunningRecordSummary;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.constant.MemberRole;
@@ -18,11 +19,13 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
+import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -216,5 +219,61 @@ class RunningRecordRepositoryImplTest {
         // then
         assertNotNull(results);
         assertThat(results.size()).isEqualTo(2);
+    }
+
+    @DisplayName("러닝 주간 서머리 조회(거리) : 러닝 데이터가 없을 경우")
+    @Test
+    void getWeeklyDistanceSummary_WithOutRunningRecords() {
+        // given
+        ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int day = today.get(DAY_OF_WEEK) - 1;
+        OffsetDateTime startDate = today.minusDays(day);
+        OffsetDateTime nextOfDndDate = startDate.plusDays(7);
+
+        // when
+        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDistancesMeterByDateRange(
+                savedMember.memberId(), startDate, nextOfDndDate);
+
+        // then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @DisplayName("러닝 주간 서머리 조회(거리) : 러닝 데이터 있을 경우, 해당 요일에 러닝 데이터는 sum한 값이 리턴된다.")
+    @Test
+    void getWeeklyDistanceSummary_WithRunningRecords() {
+        // given
+        ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int day = today.get(DAY_OF_WEEK) - 1;
+        OffsetDateTime startDate = today.minusDays(day);
+        OffsetDateTime nextOfDndDate = startDate.plusDays(7);
+
+        for (int i = 0; i < 2; i++) {
+            runningRecordRepository.save(new RunningRecord(
+                    0,
+                    savedMember,
+                    5000,
+                    Duration.ofHours(1),
+                    1,
+                    new Pace(5, 11),
+                    OffsetDateTime.now(),
+                    OffsetDateTime.now(),
+                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    "start location",
+                    "end location",
+                    RunningEmoji.SOSO));
+        }
+
+        // when
+        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDistancesMeterByDateRange(
+                savedMember.memberId(), startDate, nextOfDndDate);
+
+        // then
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0).sumValue()).isEqualTo(10_000);
     }
 }

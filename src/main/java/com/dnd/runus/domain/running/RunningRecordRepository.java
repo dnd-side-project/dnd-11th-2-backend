@@ -21,4 +21,7 @@ public interface RunningRecordRepository {
     int findTotalDistanceMeterByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime endDate);
 
     List<RunningRecord> findByMember(Member member);
+
+    List<DailyRunningRecordSummary> findDailyDistancesMeterByDateRange(
+            long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 }
