@@ -332,4 +332,196 @@ class RunningRecordRepositoryImplTest {
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.get(0).sumValue()).isEqualTo(Duration.ofHours(2).toSeconds());
     }
+
+    @DisplayName("러닝 기간별 평균 거리 조회: 기간내 러닝 데이터가 없으면 0을 리턴한다.")
+    @Test
+    void getAvgDistance_WithOutRunningRecords() {
+        // given
+        ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int day = today.get(DAY_OF_WEEK) - 1;
+        OffsetDateTime startDate = today.minusDays(day);
+        OffsetDateTime nextOfDndDate = startDate.plusDays(7);
+
+        // when
+        int avgResult = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+                savedMember.memberId(), startDate, nextOfDndDate);
+
+        // then
+        assertThat(avgResult).isEqualTo(0);
+    }
+
+    @DisplayName("러닝 기간별 평균 거리 조회: 기간의 경계값 위주의 러닝데이터를 확인한다.")
+    @Test
+    void getAvgDistance_WithRunningRecords() {
+        // given
+        ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int day = today.get(DAY_OF_WEEK) - 1;
+        OffsetDateTime startDate = today.minusDays(day);
+        OffsetDateTime nextOfDndDate = startDate.plusDays(7);
+
+        // 러닝 기록 경계 값 위주로 저장(시작일 전날 1개, 시작일 1개, 종료일자로 1개, nextOfDndDate로 1개)
+        // 시작일 전날 - 1km
+        runningRecordRepository.save(new RunningRecord(
+                0,
+                savedMember,
+                1000,
+                Duration.ofHours(1),
+                1,
+                new Pace(5, 11),
+                startDate.minusDays(1),
+                startDate.minusDays(1).plusHours(1),
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                "start location",
+                "end location",
+                RunningEmoji.SOSO));
+        // 시작일 - 2km
+        runningRecordRepository.save(new RunningRecord(
+                0,
+                savedMember,
+                2000,
+                Duration.ofHours(2),
+                1,
+                new Pace(5, 11),
+                startDate,
+                startDate.plusHours(1),
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                "start location",
+                "end location",
+                RunningEmoji.SOSO));
+        // 종료일 - 2km
+        runningRecordRepository.save(new RunningRecord(
+                0,
+                savedMember,
+                2000,
+                Duration.ofHours(2),
+                1,
+                new Pace(5, 11),
+                nextOfDndDate.minusDays(1),
+                nextOfDndDate.minusDays(1).plusHours(1),
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                "start location",
+                "end location",
+                RunningEmoji.SOSO));
+        // 종료일 - 1km
+        runningRecordRepository.save(new RunningRecord(
+                0,
+                savedMember,
+                1000,
+                Duration.ofHours(1),
+                1,
+                new Pace(5, 11),
+                nextOfDndDate,
+                nextOfDndDate.plusHours(1),
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                "start location",
+                "end location",
+                RunningEmoji.SOSO));
+
+        // when
+        int avgResult = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+                savedMember.memberId(), startDate, nextOfDndDate);
+
+        // then
+        assertThat(avgResult).isEqualTo(2000);
+    }
+
+    @DisplayName("러닝 기간별 평균 시간 조회: 기간 내 러닝 데이터가 없는 경우 0을 리턴한다.")
+    @Test
+    void getAvgDuration_WithOutRunningRecords() {
+        // given
+        ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int day = today.get(DAY_OF_WEEK) - 1;
+        OffsetDateTime startDate = today.minusDays(day);
+        OffsetDateTime nextOfDndDate = startDate.plusDays(7);
+
+        // when
+        int avgResult = runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+                savedMember.memberId(), startDate, nextOfDndDate);
+
+        // then
+        assertThat(avgResult).isEqualTo(0);
+    }
+
+    @DisplayName("러닝 기간별 평균 시간 조회: 기간의 경계값 위주의 러닝데이터를 확인한다.")
+    @Test
+    void getAvgDuration_WithRunningRecords() {
+        // given
+        ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int day = today.get(DAY_OF_WEEK) - 1;
+        OffsetDateTime startDate = today.minusDays(day);
+        OffsetDateTime nextOfDndDate = startDate.plusDays(7);
+
+        // 러닝 기록 경계 값 위주로 저장(시작일 전날 1개, 시작일 1개, 종료일자로 1개, nextOfDndDate로 1개)
+        // 시작일 전날 - 1시간
+        runningRecordRepository.save(new RunningRecord(
+                0,
+                savedMember,
+                5000,
+                Duration.ofHours(1),
+                1,
+                new Pace(5, 11),
+                startDate.minusDays(1),
+                startDate.minusDays(1).plusHours(1),
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                "start location",
+                "end location",
+                RunningEmoji.SOSO));
+        // 시작일 - 2시간
+        runningRecordRepository.save(new RunningRecord(
+                0,
+                savedMember,
+                5000,
+                Duration.ofHours(2),
+                1,
+                new Pace(5, 11),
+                startDate,
+                startDate.plusHours(1),
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                "start location",
+                "end location",
+                RunningEmoji.SOSO));
+        // 종료일 - 2시간
+        runningRecordRepository.save(new RunningRecord(
+                0,
+                savedMember,
+                5000,
+                Duration.ofHours(2),
+                1,
+                new Pace(5, 11),
+                nextOfDndDate.minusDays(1),
+                nextOfDndDate.minusDays(1).plusHours(1),
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                "start location",
+                "end location",
+                RunningEmoji.SOSO));
+        // 종료일 - 1시간
+        runningRecordRepository.save(new RunningRecord(
+                0,
+                savedMember,
+                5000,
+                Duration.ofHours(1),
+                1,
+                new Pace(5, 11),
+                nextOfDndDate,
+                nextOfDndDate.plusHours(1),
+                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                "start location",
+                "end location",
+                RunningEmoji.SOSO));
+
+        // when
+        int avgResult = runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+                savedMember.memberId(), startDate, nextOfDndDate);
+
+        // then
+        assertThat(avgResult).isEqualTo(Duration.ofHours(2).toSeconds());
+    }
 }
