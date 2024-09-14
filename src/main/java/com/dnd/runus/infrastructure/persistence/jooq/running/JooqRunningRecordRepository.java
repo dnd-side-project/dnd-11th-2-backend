@@ -52,7 +52,7 @@ public class JooqRunningRecordRepository {
                 .from(RUNNING_RECORD)
                 .where(RUNNING_RECORD.MEMBER_ID.eq(memberId))
                 .and(RUNNING_RECORD.START_AT.ge(startDate))
-                .and(RUNNING_RECORD.START_AT.le(nextDateOfEndDate))
+                .and(RUNNING_RECORD.START_AT.lt(nextDateOfEndDate))
                 .groupBy(cast(RUNNING_RECORD.START_AT, SQLDataType.DATE))
                 .orderBy(cast(RUNNING_RECORD.START_AT, SQLDataType.DATE))
                 .fetch(new DailyRunningSummary());
@@ -75,7 +75,7 @@ public class JooqRunningRecordRepository {
                 .from(RUNNING_RECORD)
                 .where(RUNNING_RECORD.MEMBER_ID.eq(memberId))
                 .and(RUNNING_RECORD.START_AT.ge(startDate))
-                .and(RUNNING_RECORD.START_AT.le(nextDateOfEndDate))
+                .and(RUNNING_RECORD.START_AT.lt(nextDateOfEndDate))
                 .groupBy(cast(RUNNING_RECORD.START_AT, SQLDataType.DATE))
                 .orderBy(cast(RUNNING_RECORD.START_AT, SQLDataType.DATE))
                 .fetch(new DailyRunningSummary());
