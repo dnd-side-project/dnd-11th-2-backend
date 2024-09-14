@@ -22,5 +22,6 @@ public interface RunningRecordRepository {
 
     List<RunningRecord> findByMember(Member member);
 
-    List<RunningRecordWeeklySummary> findWeeklyDistanceSummaryMeter(long memberId, OffsetDateTime startWeekDate);
+    List<DailyRunningRecordSummary> findDailyDistancesMeterByDateRange(
+            long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 }

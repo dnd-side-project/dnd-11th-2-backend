@@ -1,9 +1,9 @@
 package com.dnd.runus.infrastructure.persistence.domain.running;
 
 import com.dnd.runus.domain.member.Member;
+import com.dnd.runus.domain.running.DailyRunningRecordSummary;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
-import com.dnd.runus.domain.running.RunningRecordWeeklySummary;
 import com.dnd.runus.infrastructure.persistence.jooq.running.JooqRunningRecordRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.running.JpaRunningRecordRepository;
 import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecordEntity;
@@ -65,8 +65,8 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     }
 
     @Override
-    public List<RunningRecordWeeklySummary> findWeeklyDistanceSummaryMeter(
-            long memberId, OffsetDateTime startWeekDate) {
-        return jooqRunningRecordRepository.findWeeklyDistanceSummaryMeter(memberId, startWeekDate);
+    public List<DailyRunningRecordSummary> findDailyDistancesMeterByDateRange(
+            long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
+        return jooqRunningRecordRepository.findDailyDistancesMeterByDateRange(memberId, startDate, nextDateOfEndDate);
     }
 }
