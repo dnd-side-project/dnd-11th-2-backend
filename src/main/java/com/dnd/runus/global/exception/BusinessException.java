@@ -6,4 +6,8 @@ public class BusinessException extends BaseException {
     public BusinessException(ErrorType type, String message) {
         super(type, message);
     }
+
+    public BusinessException(ErrorType type) {
+        super(type, "No message");
+    }
 }

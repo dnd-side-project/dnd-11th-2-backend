@@ -50,7 +50,12 @@ public class RunningRecordController {
                     러닝 데이터는 위치, 거리, 시간, 칼로리, 평균 페이스로 구성됩니다. <br>
                     러닝 기록 추가에 성공하면 러닝 기록 ID, 기록 정보를 반환합니다. <br>
                     """)
-    @ApiErrorType({ErrorType.START_AFTER_END})
+    @ApiErrorType({
+        ErrorType.START_AFTER_END,
+        ErrorType.CHALLENGE_MODE_WITH_PERSONAL_GOAL,
+        ErrorType.GOAL_MODE_WITH_CHALLENGE_ID,
+        ErrorType.GOAL_TIME_AND_DISTANCE_BOTH_EXIST
+    })
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public RunningRecordAddResultResponse addRunningRecord(

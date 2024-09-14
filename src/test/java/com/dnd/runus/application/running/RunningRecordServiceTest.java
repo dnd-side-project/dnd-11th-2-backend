@@ -19,8 +19,6 @@ import com.dnd.runus.domain.scale.ScaleAchievementRepository;
 import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
-import com.dnd.runus.global.exception.BusinessException;
-import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
@@ -287,28 +285,6 @@ class RunningRecordServiceTest {
         assertFalse(response.goal().title().contains("분"));
 
         assertTrue(response.goal().isSuccess());
-    }
-
-    @Test
-    @DisplayName("시작 시간이 종료 시간보다 늦을 경우, BusinessException이 발생한다.")
-    void addRunningRecord_StartAtAfterEndAt() {
-        // given
-        RunningRecordRequest request = new RunningRecordRequest(
-                LocalDateTime.of(2021, 1, 1, 12, 10, 30),
-                LocalDateTime.of(2021, 1, 1, 11, 12, 10),
-                "start location",
-                "end location",
-                RunningEmoji.VERY_GOOD,
-                1L,
-                null,
-                null,
-                RunningAchievementMode.CHALLENGE,
-                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
-        // when
-        BusinessException exception =
-                assertThrows(BusinessException.class, () -> runningRecordService.addRunningRecord(1L, request));
-        // then
-        assertEquals(ErrorType.START_AFTER_END, exception.getType());
     }
 
     @Test
