@@ -40,6 +40,9 @@ public enum ErrorType {
 
     // RunningErrorType
     ROUTE_MUST_HAVE_AT_LEAST_TWO_COORDINATES(BAD_REQUEST, "RUNNING_001", "경로는 최소 2개의 좌표를 가져야 합니다"),
+    CHALLENGE_MODE_WITH_PERSONAL_GOAL(BAD_REQUEST, "RUNNING_002", "챌린지 모드에서는 개인 목표를 설정할 수 없습니다."),
+    GOAL_MODE_WITH_CHALLENGE_ID(BAD_REQUEST, "RUNNING_003", "개인 목표 모드에서는 챌린지 ID를 설정할 수 없습니다."),
+    GOAL_TIME_AND_DISTANCE_BOTH_EXIST(BAD_REQUEST, "RUNNING_004", "개인 목표 시간과 거리 중 하나만 설정해야 합니다."),
 
     // WeatherErrorType
     WEATHER_API_ERROR(INTERNAL_SERVER_ERROR, "WEATHER_001", "날씨 API 호출 중 오류가 발생했습니다"),

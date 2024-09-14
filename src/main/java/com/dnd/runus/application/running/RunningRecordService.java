@@ -22,9 +22,7 @@ import com.dnd.runus.domain.scale.Scale;
 import com.dnd.runus.domain.scale.ScaleAchievement;
 import com.dnd.runus.domain.scale.ScaleAchievementRepository;
 import com.dnd.runus.domain.scale.ScaleRepository;
-import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.NotFoundException;
-import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
@@ -105,9 +103,6 @@ public class RunningRecordService {
 
     @Transactional
     public RunningRecordAddResultResponse addRunningRecord(long memberId, RunningRecordRequest request) {
-        if (request.startAt().isAfter(request.endAt())) {
-            throw new BusinessException(ErrorType.START_AFTER_END, request.startAt() + ", " + request.endAt());
-        }
         Member member =
                 memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
 

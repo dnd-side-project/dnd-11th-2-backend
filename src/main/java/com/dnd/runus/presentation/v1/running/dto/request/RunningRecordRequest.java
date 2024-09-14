@@ -1,6 +1,8 @@
 package com.dnd.runus.presentation.v1.running.dto.request;
 
 import com.dnd.runus.global.constant.RunningEmoji;
+import com.dnd.runus.global.exception.BusinessException;
+import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -34,4 +36,22 @@ public record RunningRecordRequest(
         @NotNull
         RunningRecordMetricsDto runningData
 ) {
+    public RunningRecordRequest {
+        if (startAt.isAfter(endAt)) {
+            throw new BusinessException(ErrorType.START_AFTER_END, startAt + " ~ " + endAt);
+        }
+
+        if (achievementMode == RunningAchievementMode.CHALLENGE && (goalDistance != null || goalTime != null)) {
+            throw new BusinessException(ErrorType.CHALLENGE_MODE_WITH_PERSONAL_GOAL);
+        }
+
+        if (achievementMode == RunningAchievementMode.GOAL) {
+            if (challengeId != null) {
+                throw new BusinessException(ErrorType.GOAL_MODE_WITH_CHALLENGE_ID);
+            }
+            if (goalDistance == null && goalTime == null) {
+                throw new BusinessException(ErrorType.GOAL_TIME_AND_DISTANCE_BOTH_EXIST);
+            }
+        }
+    }
 }
