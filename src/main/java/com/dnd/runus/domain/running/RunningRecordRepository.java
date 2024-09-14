@@ -27,4 +27,10 @@ public interface RunningRecordRepository {
 
     List<DailyRunningRecordSummary> findDailyDurationsSecByDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
+
+    int findAvgDistanceMeterByMemberIdAndDateRange(
+            long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
+
+    int findAvgDurationSecByMemberIdAndDateRange(
+            long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 }
