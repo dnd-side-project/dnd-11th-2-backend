@@ -52,7 +52,30 @@ public class JooqRunningRecordRepository {
                 .from(RUNNING_RECORD)
                 .where(RUNNING_RECORD.MEMBER_ID.eq(memberId))
                 .and(RUNNING_RECORD.START_AT.ge(startDate))
-                .and(RUNNING_RECORD.START_AT.le(nextDateOfEndDate))
+                .and(RUNNING_RECORD.START_AT.lt(nextDateOfEndDate))
+                .groupBy(cast(RUNNING_RECORD.START_AT, SQLDataType.DATE))
+                .orderBy(cast(RUNNING_RECORD.START_AT, SQLDataType.DATE))
+                .fetch(new DailyRunningSummary());
+    }
+
+    /**
+     * 기간 안의 일별 달린 시간을 리턴합니다.
+     *
+     * @param startDate 시작 날짜 (정각)
+     * @param nextDateOfEndDate 종료 날짜의 다음 날 (정각)
+     * @return 기간 내 각 날짜별 달린 시간 합계를 포함한 리스트.
+     *          각 요소는 날짜와 해당 날짜의 달린 시간 합계를 나타내는 {@link DailyRunningRecordSummary} 객체입니다.
+     */
+    public List<DailyRunningRecordSummary> findDailyDurationsSecMeterByDateRange(
+            long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
+
+        return dsl.select(
+                        cast(RUNNING_RECORD.START_AT, SQLDataType.DATE).as("date"),
+                        sum(RUNNING_RECORD.DURATION_SECONDS).cast(Integer.class).as("sum_value"))
+                .from(RUNNING_RECORD)
+                .where(RUNNING_RECORD.MEMBER_ID.eq(memberId))
+                .and(RUNNING_RECORD.START_AT.ge(startDate))
+                .and(RUNNING_RECORD.START_AT.lt(nextDateOfEndDate))
                 .groupBy(cast(RUNNING_RECORD.START_AT, SQLDataType.DATE))
                 .orderBy(cast(RUNNING_RECORD.START_AT, SQLDataType.DATE))
                 .fetch(new DailyRunningSummary());

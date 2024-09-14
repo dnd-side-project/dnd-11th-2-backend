@@ -24,4 +24,7 @@ public interface RunningRecordRepository {
 
     List<DailyRunningRecordSummary> findDailyDistancesMeterByDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
+
+    List<DailyRunningRecordSummary> findDailyDurationsSecByDateRange(
+            long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 }

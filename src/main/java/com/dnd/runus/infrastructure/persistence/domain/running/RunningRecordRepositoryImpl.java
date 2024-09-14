@@ -69,4 +69,11 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
         return jooqRunningRecordRepository.findDailyDistancesMeterByDateRange(memberId, startDate, nextDateOfEndDate);
     }
+
+    @Override
+    public List<DailyRunningRecordSummary> findDailyDurationsSecByDateRange(
+            long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
+        return jooqRunningRecordRepository.findDailyDurationsSecMeterByDateRange(
+                memberId, startDate, nextDateOfEndDate);
+    }
 }
