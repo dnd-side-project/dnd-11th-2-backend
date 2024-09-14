@@ -14,6 +14,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.dnd.runus.jooq.Tables.RUNNING_RECORD;
+import static org.jooq.impl.DSL.avg;
 import static org.jooq.impl.DSL.cast;
 import static org.jooq.impl.DSL.sum;
 
@@ -28,6 +29,35 @@ public class JooqRunningRecordRepository {
                 .where(RUNNING_RECORD.MEMBER_ID.eq(memberId))
                 .and(RUNNING_RECORD.START_AT.ge(startDate))
                 .and(RUNNING_RECORD.START_AT.lessThan(endDate))
+                .fetchOne();
+        if (result != null && result.value1() != null) {
+            return result.value1();
+        }
+        return 0;
+    }
+
+    public int findAvgDistanceMeterByMemberIdAndDateRange(
+            long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
+        Record1<Integer> result = dsl.select(avg(RUNNING_RECORD.DISTANCE_METER).cast(Integer.class))
+                .from(RUNNING_RECORD)
+                .where(RUNNING_RECORD.MEMBER_ID.eq(memberId))
+                .and(RUNNING_RECORD.START_AT.ge(startDate))
+                .and(RUNNING_RECORD.START_AT.lt(nextDateOfEndDate))
+                .fetchOne();
+        if (result != null && result.value1() != null) {
+            return result.value1();
+        }
+        return 0;
+    }
+
+    public int findAvgDurationSecByMemberIdAndDateRange(
+            long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
+        Record1<Integer> result = dsl.select(
+                        avg(RUNNING_RECORD.DURATION_SECONDS).cast(Integer.class))
+                .from(RUNNING_RECORD)
+                .where(RUNNING_RECORD.MEMBER_ID.eq(memberId))
+                .and(RUNNING_RECORD.START_AT.ge(startDate))
+                .and(RUNNING_RECORD.START_AT.lt(nextDateOfEndDate))
                 .fetchOne();
         if (result != null && result.value1() != null) {
             return result.value1();
