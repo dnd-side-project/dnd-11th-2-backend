@@ -276,4 +276,60 @@ class RunningRecordRepositoryImplTest {
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.get(0).sumValue()).isEqualTo(10_000);
     }
+
+    @DisplayName("러닝 주간 서머리 조회(시간) : 러닝 데이터가 없을 경우")
+    @Test
+    void getWeeklyDurationSummary_WithOutRunningRecords() {
+        // given
+        ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int day = today.get(DAY_OF_WEEK) - 1;
+        OffsetDateTime startDate = today.minusDays(day);
+        OffsetDateTime nextOfDndDate = startDate.plusDays(7);
+
+        // when
+        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDurationsSecByDateRange(
+                savedMember.memberId(), startDate, nextOfDndDate);
+
+        // then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @DisplayName("러닝 주간 서머리 조회(시간) : 러닝 데이터 있을 경우, 해당 요일에 러닝 데이터는 sum한 값이 리턴된다.")
+    @Test
+    void getWeeklyDurationSummary_WithRunningRecords() {
+        // given
+        ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int day = today.get(DAY_OF_WEEK) - 1;
+        OffsetDateTime startDate = today.minusDays(day);
+        OffsetDateTime nextOfDndDate = startDate.plusDays(7);
+
+        for (int i = 0; i < 2; i++) {
+            runningRecordRepository.save(new RunningRecord(
+                    0,
+                    savedMember,
+                    5000,
+                    Duration.ofHours(1),
+                    1,
+                    new Pace(5, 11),
+                    OffsetDateTime.now(),
+                    OffsetDateTime.now(),
+                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    "start location",
+                    "end location",
+                    RunningEmoji.SOSO));
+        }
+
+        // when
+        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDurationsSecByDateRange(
+                savedMember.memberId(), startDate, nextOfDndDate);
+
+        // then
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0).sumValue()).isEqualTo(Duration.ofHours(2).toSeconds());
+    }
 }
