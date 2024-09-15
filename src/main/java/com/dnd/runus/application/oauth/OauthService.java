@@ -54,28 +54,17 @@ public class OauthService {
         OidcProvider oidcProvider = oidcProviderRegistry.getOidcProviderBy(request.socialType());
         Claims claim = oidcProvider.getClaimsBy(request.idToken());
         String oauthId = claim.getSubject();
-        String email = (String) claim.get("email");
-        if (StringUtils.isBlank(email)) {
-            log.warn("Failed to get email from idToken! type: {}, claim: {}", request.socialType(), claim);
-            throw new AuthException(ErrorType.FAILED_AUTHENTICATION, "Failed to get email from idToken");
-        }
+        String email = extractAndValidateEmail(claim, request.socialType());
 
         SocialProfile socialProfile = socialProfileRepository
                 .findBySocialTypeAndOauthId(request.socialType(), oauthId)
                 .orElseThrow(
                         () -> new BusinessException(ErrorType.USER_NOT_FOUND, "socialType: " + request.socialType()));
 
-        // 이메일 변경 되었을 경우 update
-        if (!email.equals(socialProfile.oauthEmail())) {
-            socialProfileRepository.updateOauthEmail(socialProfile.socialProfileId(), email);
-        }
-
-        Member member =
-                memberRepository.findById(socialProfile.member().memberId()).orElseThrow(RuntimeException::new);
-
-        AuthTokenDto tokenDto = tokenProviderModule.generate(String.valueOf(member.memberId()));
-
-        return SignResponse.from(member.nickname(), email, tokenDto);
+        updateEmailIfChanged(socialProfile, email);
+        AuthTokenDto tokenDto = tokenProviderModule.generate(
+                String.valueOf(socialProfile.member().memberId()));
+        return SignResponse.from(socialProfile.member().nickname(), socialProfile.oauthEmail(), tokenDto);
     }
 
     @Transactional
@@ -83,29 +72,17 @@ public class OauthService {
         OidcProvider oidcProvider = oidcProviderRegistry.getOidcProviderBy(request.socialType());
         Claims claim = oidcProvider.getClaimsBy(request.idToken());
         String oauthId = claim.getSubject();
-        String email = (String) claim.get("email");
-        if (StringUtils.isBlank(email)) {
-            log.warn("Failed to get email from idToken! type: {}, claim: {}", request.socialType(), claim);
-            throw new AuthException(ErrorType.FAILED_AUTHENTICATION, "Failed to get email from idToken");
-        }
+        String email = extractAndValidateEmail(claim, request.socialType());
 
         // 기존 사용자 없을 경우 insert
         SocialProfile socialProfile = socialProfileRepository
                 .findBySocialTypeAndOauthId(request.socialType(), oauthId)
                 .orElseGet(() -> createMember(oauthId, email, request.socialType(), request.nickname()));
 
-        // 이메일 변경 되었을 경우 update
-        if (!email.equals(socialProfile.oauthEmail())) {
-            socialProfileRepository.updateOauthEmail(socialProfile.socialProfileId(), email);
-        }
-
-        Member member = memberRepository
-                .findById(socialProfile.member().memberId())
-                .orElseThrow(() -> new BusinessException(
-                        ErrorType.UNHANDLED_EXCEPTION, "잘못된 데이터: member 데이터가 존재하지 않으면 socialProfile이 존재할 수 없음"));
-
-        AuthTokenDto tokenDto = tokenProviderModule.generate(String.valueOf(member.memberId()));
-        return SignResponse.from(member.nickname(), email, tokenDto);
+        updateEmailIfChanged(socialProfile, email);
+        AuthTokenDto tokenDto = tokenProviderModule.generate(
+                String.valueOf(socialProfile.member().memberId()));
+        return SignResponse.from(socialProfile.member().nickname(), socialProfile.oauthEmail(), tokenDto);
     }
 
     @Transactional(readOnly = true)
@@ -188,5 +165,20 @@ public class OauthService {
                 .oauthId(oauthId)
                 .oauthEmail(email)
                 .build());
+    }
+
+    private String extractAndValidateEmail(Claims claim, SocialType socialType) {
+        String email = (String) claim.get("email");
+        if (StringUtils.isBlank(email)) {
+            log.warn("Failed to get email from idToken! type: {}, claim: {}", socialType, claim);
+            throw new AuthException(ErrorType.FAILED_AUTHENTICATION, "Failed to get email from idToken");
+        }
+        return email;
+    }
+
+    private void updateEmailIfChanged(SocialProfile socialProfile, String email) {
+        if (!email.equals(socialProfile.oauthEmail())) {
+            socialProfileRepository.updateOauthEmail(socialProfile.socialProfileId(), email);
+        }
     }
 }
