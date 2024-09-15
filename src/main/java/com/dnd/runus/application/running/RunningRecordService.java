@@ -16,6 +16,7 @@ import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberLevel;
 import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
+import com.dnd.runus.domain.running.DailyRunningRecordSummary;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.domain.scale.Scale;
@@ -24,13 +25,16 @@ import com.dnd.runus.domain.scale.ScaleAchievementRepository;
 import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
+import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordSummaryResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordWeeklySummaryResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -38,6 +42,8 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
+import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_HOUR;
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
 
 @Service
@@ -99,6 +105,45 @@ public class RunningRecordService {
 
         List<RunningRecord> records = runningRecordRepository.findByMemberIdAndStartAtBetween(memberId, from, to);
         return RunningRecordSummaryResponse.from(records);
+    }
+
+    @Transactional(readOnly = true)
+    public RunningRecordWeeklySummaryResponse getWeeklySummary(
+            long memberId, RunningRecordWeeklySummaryType summaryType) {
+
+        OffsetDateTime today = LocalDate.now().atStartOfDay().atOffset(defaultZoneOffset);
+        OffsetDateTime startWeekDate = today.with(DayOfWeek.MONDAY);
+        OffsetDateTime nextOfEndWeekDate = startWeekDate.plusWeeks(1);
+
+        List<DailyRunningRecordSummary> weekSummaries;
+        int avgValue;
+        double conversionFactor;
+
+        if (summaryType.equals(RunningRecordWeeklySummaryType.DISTANCE)) {
+            weekSummaries = runningRecordRepository.findDailyDistancesMeterByDateRange(
+                    memberId, startWeekDate, nextOfEndWeekDate);
+            avgValue = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+                    memberId, startWeekDate, nextOfEndWeekDate);
+            conversionFactor = METERS_IN_A_KILOMETER;
+        } else {
+            weekSummaries = runningRecordRepository.findDailyDurationsSecByDateRange(
+                    memberId, startWeekDate, nextOfEndWeekDate);
+            avgValue = runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+                    memberId, startWeekDate, nextOfEndWeekDate);
+            conversionFactor = SECONDS_PER_HOUR;
+        }
+
+        double[] weeklyValues = new double[7];
+        for (DailyRunningRecordSummary summary : weekSummaries) {
+            int dayOfWeek = summary.date().getDayOfWeek().getValue() - 1;
+            weeklyValues[dayOfWeek] = summary.sumValue() / conversionFactor;
+        }
+
+        return new RunningRecordWeeklySummaryResponse(
+                startWeekDate.toLocalDate(),
+                startWeekDate.plusDays(6).toLocalDate(),
+                weeklyValues,
+                avgValue / conversionFactor);
     }
 
     @Transactional

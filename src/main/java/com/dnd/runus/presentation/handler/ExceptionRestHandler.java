@@ -14,7 +14,10 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+
+import java.util.Arrays;
 
 @Slf4j
 @RestControllerAdvice
@@ -46,6 +49,42 @@ public class ExceptionRestHandler {
     public ResponseEntity<ApiErrorDto> handleInsufficientAuthenticationException(
             InsufficientAuthenticationException e) {
         return toResponseEntity(ErrorType.FAILED_AUTHENTICATION, e.getMessage());
+    }
+
+    ////////////////// 요청 파라미터 예외 / 타입 불일치, Enum 매개변수 관련 예외
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiErrorDto> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException ex) {
+
+        String parameterName = ex.getName(); // 파라미터 이름
+        Object receivedValue = ex.getValue(); // 잘못된 값
+        Class<?> requiredType = ex.getRequiredType(); // 기대하는 타입
+        String requiredTypeName =
+                ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown type"; // 기대하는 타입 이름
+        String actualTypeName = receivedValue != null ? receivedValue.getClass().getSimpleName() : "null"; // 받은 타입
+
+        String expectedTypeError = "";
+        if (!requiredTypeName.equals(actualTypeName)) {
+            expectedTypeError = String.format(
+                    "Expected type: %s, but received type: %s; ",
+                    requiredType != null ? requiredType.getSimpleName() : "unknown type",
+                    receivedValue != null ? receivedValue.getClass().getName() : "null");
+        }
+        // requiredType이 Enum타입일 경우
+        String expectedValuesError = "";
+        if (requiredType != null && requiredType.isEnum()) {
+            String enumValues = Arrays.stream(requiredType.getEnumConstants())
+                    .map(enumConstant -> ((Enum<?>) enumConstant).name())
+                    .reduce((a, b) -> a + ", " + b)
+                    .orElse("none");
+            expectedValuesError = String.format(" Expected values: [%s]; ", enumValues);
+        }
+        String errorMessage = String.format(
+                "Invalid value for parameter '%s' for value[%s]; %s%s",
+                parameterName, receivedValue, expectedTypeError, expectedValuesError);
+
+        log.warn("{}; {}", errorMessage, ex.getMessage());
+        return toResponseEntity(ErrorType.FAILED_VALIDATION, errorMessage);
     }
 
     ////////////////// 직렬화 / 역직렬화 예외
