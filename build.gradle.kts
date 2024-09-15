@@ -61,6 +61,8 @@ dependencies {
     testCompileOnly(libs.lombok)
     testAnnotationProcessor(libs.lombok)
 
+    implementation(libs.caffeine)
+
     testImplementation(libs.bundles.spring.boot.test)
     testImplementation(libs.bundles.testcontainers)
     testRuntimeOnly(libs.junit.platform.launcher)
