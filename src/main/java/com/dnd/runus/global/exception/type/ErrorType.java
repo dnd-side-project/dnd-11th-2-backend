@@ -18,6 +18,7 @@ public enum ErrorType {
     FAILED_PARSING(BAD_REQUEST, "WEB_003", "Request JSON body를 파싱하지 못했습니다"),
     UNSUPPORTED_API(BAD_REQUEST, "WEB_004", "지원하지 않는 API입니다"),
     COOKIE_NOT_FOND(BAD_REQUEST, "WEB_005", "요청에 쿠키가 필요합니다"),
+    INVALID_BASE64(BAD_REQUEST, "WEB_006", "잘못된 Base64 문자열입니다"),
 
     // AuthErrorType
     FAILED_AUTHENTICATION(UNAUTHORIZED, "AUTH_001", "인증에 실패하였습니다"),

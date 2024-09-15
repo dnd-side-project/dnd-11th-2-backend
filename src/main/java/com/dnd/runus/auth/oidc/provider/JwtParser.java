@@ -25,7 +25,7 @@ public final class JwtParser {
         try {
             return objectMapper.readValue(Base64.getUrlDecoder().decode(header), new TypeReference<>() {});
         } catch (IOException e) {
-            throw new BusinessException(ErrorType.FAILED_PARSING, e.getMessage());
+            throw new BusinessException(ErrorType.INVALID_BASE64, "OIDC header를 디코딩하는데 실패했습니다.");
         }
     }
 
