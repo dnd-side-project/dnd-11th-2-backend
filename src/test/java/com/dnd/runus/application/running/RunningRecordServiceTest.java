@@ -13,6 +13,7 @@ import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberLevel;
 import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
+import com.dnd.runus.domain.running.DailyRunningRecordSummary;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.domain.scale.ScaleAchievementRepository;
@@ -22,8 +23,10 @@ import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
+import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordWeeklySummaryResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
+import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -316,6 +320,78 @@ class RunningRecordServiceTest {
             assertThat(monthlyRunningSummery.nextLevelName()).isEqualTo("Level 2");
             assertThat(monthlyRunningSummery.nextLevelKm()).isEqualTo("4.22km");
         }
+    }
+
+    @Test
+    @DisplayName("활동 요약 조회(거리)")
+    void getWeeklySummary_Distance() {
+        // given
+        long memberId = 1;
+        RunningRecordWeeklySummaryType summaryType = RunningRecordWeeklySummaryType.DISTANCE;
+
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int todayDayOfWeek = today.get(DAY_OF_WEEK);
+        OffsetDateTime startWeekDate = today.minusDays(todayDayOfWeek - 1);
+        OffsetDateTime nextOfEndWeekDate = startWeekDate.plusDays(7);
+
+        OffsetDateTime runningDate = startWeekDate.plusDays(2);
+
+        given(runningRecordRepository.findDailyDistancesMeterByDateRange(memberId, startWeekDate, nextOfEndWeekDate))
+                .willReturn(List.of(new DailyRunningRecordSummary(runningDate.toLocalDate(), 3567)));
+
+        given(runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+                        memberId, startWeekDate, nextOfEndWeekDate))
+                .willReturn(800);
+
+        // when
+        RunningRecordWeeklySummaryResponse response = runningRecordService.getWeeklySummary(memberId, summaryType);
+
+        // then
+        assertTrue(response.date().contains("~"));
+
+        double[] weeklyValues = response.weeklyValues();
+        int runningDateIdx = runningDate.get(DAY_OF_WEEK) - 1;
+        assertThat(weeklyValues.length).isEqualTo(7);
+        assertThat(weeklyValues[runningDateIdx]).isEqualTo(3.567);
+        assertThat(response.lastWeekAvgValue()).isEqualTo(0.8);
+    }
+
+    @Test
+    @DisplayName("활동 요약 조회(시간)")
+    void getWeeklySummary_Duration() {
+        // given
+        long memberId = 1;
+        RunningRecordWeeklySummaryType summaryType = RunningRecordWeeklySummaryType.TIME;
+        int runningDurationSec = 3600 + 30 * 60; // 1시간 30분
+        double expectedRunningDurationHour = 1.5;
+
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int todayDayOfWeek = today.get(DAY_OF_WEEK);
+        OffsetDateTime startWeekDate = today.minusDays(todayDayOfWeek - 1);
+        OffsetDateTime nextOfEndWeekDate = startWeekDate.plusDays(7);
+
+        OffsetDateTime runningDate = startWeekDate.plusDays(2);
+
+        given(runningRecordRepository.findDailyDurationsSecByDateRange(memberId, startWeekDate, nextOfEndWeekDate))
+                .willReturn(List.of(new DailyRunningRecordSummary(runningDate.toLocalDate(), runningDurationSec)));
+
+        given(runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+                        memberId, startWeekDate, nextOfEndWeekDate))
+                .willReturn(runningDurationSec);
+
+        // when
+        RunningRecordWeeklySummaryResponse response = runningRecordService.getWeeklySummary(memberId, summaryType);
+
+        // then
+        assertTrue(response.date().contains("~"));
+
+        double[] weeklyValues = response.weeklyValues();
+        int runningDateIdx = runningDate.get(DAY_OF_WEEK) - 1;
+        assertThat(weeklyValues.length).isEqualTo(7);
+        assertThat(weeklyValues[runningDateIdx]).isEqualTo(expectedRunningDurationHour);
+        assertThat(response.lastWeekAvgValue()).isEqualTo(expectedRunningDurationHour);
     }
 
     private RunningRecord createRunningRecord(RunningRecordRequest request, Member member) {
