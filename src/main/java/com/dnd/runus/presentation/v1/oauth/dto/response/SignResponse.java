@@ -12,8 +12,7 @@ public record SignResponse(
     String email,
     @Schema(description = "엑세스 토큰")
     String accessToken,
-    //todo refresh token 구현 되면
-    @Schema(description = "리프레시토큰(아직 리프레시 토큰 구현이 아직 안되어서 발급하면 'refreshToken'으로 리턴될 거에요.")
+    @Schema(description = "리프레시 토큰")
     String refreshToken
 ) {
 
@@ -22,6 +21,6 @@ public record SignResponse(
             nickname,
             email,
             tokenDto.accessToken(),
-            "refreshToken");
+            tokenDto.refreshToken());
     }
 }

@@ -17,4 +17,11 @@ class TokenConfig {
             @Value("${app.auth.token.access.secret-key}") String secretKey) {
         return JwtTokenStrategy.of(secretKey, accessExpiration, Jwts.SIG.HS256);
     }
+
+    @Bean("refreshTokenStrategy")
+    TokenStrategy refreshTokenStrategy(
+            @Value("${app.auth.token.refresh.expiration}") Duration refreshExpiration,
+            @Value("${app.auth.token.refresh.secret-key}") String secretKey) {
+        return JwtTokenStrategy.of(secretKey, refreshExpiration, Jwts.SIG.HS256);
+    }
 }

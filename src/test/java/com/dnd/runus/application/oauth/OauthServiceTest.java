@@ -128,7 +128,7 @@ class OauthServiceTest {
             given(claims.get("email")).willReturn(email);
             given(socialProfileRepository.findBySocialTypeAndOauthId(socialType, oauthId))
                     .willReturn(Optional.of(new SocialProfile(1L, member, socialType, oauthId, email)));
-            AuthTokenDto tokenDto = new AuthTokenDto("access-token", "bearer");
+            AuthTokenDto tokenDto = new AuthTokenDto("access-token", "refresh-token", "bearer");
             given(tokenProviderModule.generate(String.valueOf(member.memberId())))
                     .willReturn(tokenDto);
 
@@ -171,7 +171,7 @@ class OauthServiceTest {
             SocialProfile socialProfile = new SocialProfile(1L, member, socialType, oauthId, email);
             given(socialProfileRepository.findBySocialTypeAndOauthId(socialType, oauthId))
                     .willReturn(Optional.of(socialProfile));
-            AuthTokenDto tokenDto = new AuthTokenDto("access-token", "bearer");
+            AuthTokenDto tokenDto = new AuthTokenDto("access-token", "refresh-token", "bearer");
             given(tokenProviderModule.generate(String.valueOf(member.memberId())))
                     .willReturn(tokenDto);
 
@@ -202,7 +202,7 @@ class OauthServiceTest {
             SocialProfile socialProfile = new SocialProfile(1L, newMember, socialType, oauthId, email);
             given(socialProfileRepository.save(any(SocialProfile.class))).willReturn(socialProfile);
 
-            AuthTokenDto tokenDto = new AuthTokenDto("access-token", "bearer");
+            AuthTokenDto tokenDto = new AuthTokenDto("access-token", "refresh-token", "bearer");
             given(tokenProviderModule.generate(String.valueOf(newMember.memberId())))
                     .willReturn(tokenDto);
 
