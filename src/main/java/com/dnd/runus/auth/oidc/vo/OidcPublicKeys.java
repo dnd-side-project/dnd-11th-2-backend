@@ -25,7 +25,8 @@ public record OidcPublicKeys(List<OidcPublicKey> keys) {
         return keys.stream()
                 .filter(key -> Objects.equals(kid, key.kid()) && Objects.equals(alg, key.alg()))
                 .findAny()
-                .orElseThrow(() -> new BusinessException(ErrorType.MALFORMED_ACCESS_TOKEN, "검증할 수 없는 토큰입니다."));
+                .orElseThrow(
+                        () -> new BusinessException(ErrorType.MALFORMED_ACCESS_TOKEN, "kid, alg 일치하는 퍼블릭 키가 없습니다."));
     }
 
     private record OidcPublicKey(String kty, String kid, String use, String alg, String n, String e) {
