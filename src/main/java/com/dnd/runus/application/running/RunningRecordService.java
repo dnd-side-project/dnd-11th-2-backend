@@ -125,13 +125,13 @@ public class RunningRecordService {
                     memberId, startWeekDate, nextOfEndWeekDate);
             avgValue = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
                     memberId, startWeekDate, nextOfEndWeekDate);
-            conversionFactor = SECONDS_PER_HOUR;
+            conversionFactor = METERS_IN_A_KILOMETER;
         } else {
             weekSummaries = runningRecordRepository.findDailyDurationsSecByDateRange(
                     memberId, startWeekDate, nextOfEndWeekDate);
             avgValue = runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
                     memberId, startWeekDate, nextOfEndWeekDate);
-            conversionFactor = METERS_IN_A_KILOMETER;
+            conversionFactor = SECONDS_PER_HOUR;
         }
 
         double[] weeklyValues = new double[7];
