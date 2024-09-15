@@ -18,6 +18,7 @@ spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spr
 spring-boot-devtools = { group = "org.springframework.boot", name = "spring-boot-devtools", version.ref = "spring-boot" }
 spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "spring-boot" }
 spring-boot-testcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers", version.ref = "spring-boot" }
+spring-boot-cache = { group = "org.springframework.boot", name = "spring-boot-starter-cache", version.ref = "spring-boot" }
 
 bcpkix = {group= "org.bouncycastle", name = "bcpkix-jdk18on", version = "1.78.1" }
 
@@ -41,6 +42,7 @@ testcontainers-jdbc = { group = "org.testcontainers", name = "jdbc", version.ref
 testcontainers-postgresql = { group = "org.testcontainers", name = "postgresql", version.ref = "testcontainers" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 spring-cloud-starter-contract-stub-runner = { group = "org.springframework.cloud", name = "spring-cloud-starter-contract-stub-runner", version = "4.1.4" }
+caffeine = { group = "com.github.ben-manes.caffeine", name = "caffeine", version = "3.1.8" }
 
 [bundles]
 spring-boot = [
@@ -50,6 +52,7 @@ spring-boot = [
     "spring-boot-starter-validation",
     "spring-boot-starter-actuator",
     "spring-boot-starter-data-jpa",
+    "spring-boot-cache",
 ]
 
 spring-boot-test = [
