@@ -34,13 +34,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
+import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_HOUR;
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
 import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 
@@ -109,27 +113,39 @@ public class RunningRecordService {
     public RunningRecordWeeklySummaryResponse getWeeklySummary(
             long memberId, RunningRecordWeeklySummaryType summaryType) {
 
-        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+        OffsetDateTime today = LocalDate.now().atStartOfDay().atOffset(defaultZoneOffset);
+        OffsetDateTime startWeekDate = today.with(DayOfWeek.MONDAY);
+        OffsetDateTime nextOfEndWeekDate = startWeekDate.plusWeeks(1);
 
-        int day = today.get(DAY_OF_WEEK) - 1;
-        OffsetDateTime startWeekDate = today.minusDays(day);
-        OffsetDateTime nextOfEndWeekDate = startWeekDate.plusDays(7);
+        List<DailyRunningRecordSummary> weekSummaries = new ArrayList<>();
+        int avgValue = 0;
+        double conversionFactor = 1.0;
 
-        return summaryType.equals(RunningRecordWeeklySummaryType.DISTANCE)
-                ? createWeeklySummaryResponse(
-                        runningRecordRepository.findDailyDistancesMeterByDateRange(
-                                memberId, startWeekDate, nextOfEndWeekDate),
-                        runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
-                                memberId, startWeekDate, nextOfEndWeekDate),
-                        1000,
-                        startWeekDate.toLocalDate())
-                : createWeeklySummaryResponse(
-                        runningRecordRepository.findDailyDurationsSecByDateRange(
-                                memberId, startWeekDate, nextOfEndWeekDate),
-                        runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
-                                memberId, startWeekDate, nextOfEndWeekDate),
-                        3600,
-                        startWeekDate.toLocalDate());
+        if (summaryType.equals(RunningRecordWeeklySummaryType.DISTANCE)) {
+            weekSummaries = runningRecordRepository.findDailyDistancesMeterByDateRange(
+                    memberId, startWeekDate, nextOfEndWeekDate);
+            avgValue = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+                    memberId, startWeekDate, nextOfEndWeekDate);
+            conversionFactor = SECONDS_PER_HOUR;
+        } else {
+            weekSummaries = runningRecordRepository.findDailyDurationsSecByDateRange(
+                    memberId, startWeekDate, nextOfEndWeekDate);
+            avgValue = runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+                    memberId, startWeekDate, nextOfEndWeekDate);
+            conversionFactor = METERS_IN_A_KILOMETER;
+        }
+
+        double[] weeklyValues = new double[7];
+        for (DailyRunningRecordSummary Summary : weekSummaries) {
+            OffsetDateTime dateTime = Summary.date().atStartOfDay().atOffset(defaultZoneOffset);
+            weeklyValues[dateTime.get(DAY_OF_WEEK) - 1] = Summary.sumValue() / conversionFactor;
+        }
+
+        return new RunningRecordWeeklySummaryResponse(
+                startWeekDate.toLocalDate(),
+                startWeekDate.plusDays(6).toLocalDate(),
+                weeklyValues,
+                avgValue / conversionFactor);
     }
 
     @Transactional
@@ -250,18 +266,5 @@ public class RunningRecordService {
 
         GoalAchievement goalAchievement = new GoalAchievement(runningRecord, goalMetricType, goalValue, isAchieved);
         return goalAchievementRepository.save(goalAchievement);
-    }
-
-    private RunningRecordWeeklySummaryResponse createWeeklySummaryResponse(
-            List<DailyRunningRecordSummary> summaries, int avgValue, double conversionFactor, LocalDate startWeekDate) {
-
-        double[] weeklyValues = new double[7];
-        for (DailyRunningRecordSummary Summary : summaries) {
-            OffsetDateTime dateTime = Summary.date().atStartOfDay().atOffset(defaultZoneOffset);
-            weeklyValues[dateTime.get(DAY_OF_WEEK) - 1] = Summary.sumValue() / conversionFactor;
-        }
-
-        return new RunningRecordWeeklySummaryResponse(
-                startWeekDate, startWeekDate.plusDays(6), weeklyValues, avgValue / conversionFactor);
     }
 }
