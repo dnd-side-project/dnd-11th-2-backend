@@ -45,7 +45,6 @@ import java.util.List;
 import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
 import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_HOUR;
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
-import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 
 @Service
 public class RunningRecordService {
@@ -135,9 +134,9 @@ public class RunningRecordService {
         }
 
         double[] weeklyValues = new double[7];
-        for (DailyRunningRecordSummary Summary : weekSummaries) {
-            OffsetDateTime dateTime = Summary.date().atStartOfDay().atOffset(defaultZoneOffset);
-            weeklyValues[dateTime.get(DAY_OF_WEEK) - 1] = Summary.sumValue() / conversionFactor;
+        for (DailyRunningRecordSummary summary : weekSummaries) {
+            int dayOfWeek = summary.date().getDayOfWeek().getValue() - 1;
+            weeklyValues[dayOfWeek] = summary.sumValue() / conversionFactor;
         }
 
         return new RunningRecordWeeklySummaryResponse(
