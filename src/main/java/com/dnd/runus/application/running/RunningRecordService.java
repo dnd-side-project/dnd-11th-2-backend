@@ -16,6 +16,7 @@ import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberLevel;
 import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
+import com.dnd.runus.domain.running.DailyRunningRecordSummary;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.domain.scale.Scale;
@@ -24,9 +25,11 @@ import com.dnd.runus.domain.scale.ScaleAchievementRepository;
 import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
+import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordSummaryResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordWeeklySummaryResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +42,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
+import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 
 @Service
 public class RunningRecordService {
@@ -99,6 +103,33 @@ public class RunningRecordService {
 
         List<RunningRecord> records = runningRecordRepository.findByMemberIdAndStartAtBetween(memberId, from, to);
         return RunningRecordSummaryResponse.from(records);
+    }
+
+    @Transactional(readOnly = true)
+    public RunningRecordWeeklySummaryResponse getWeeklySummary(
+            long memberId, RunningRecordWeeklySummaryType summaryType) {
+
+        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+
+        int day = today.get(DAY_OF_WEEK) - 1;
+        OffsetDateTime startWeekDate = today.minusDays(day);
+        OffsetDateTime nextOfEndWeekDate = startWeekDate.plusDays(7);
+
+        return summaryType.equals(RunningRecordWeeklySummaryType.DISTANCE)
+                ? createWeeklySummaryResponse(
+                        runningRecordRepository.findDailyDistancesMeterByDateRange(
+                                memberId, startWeekDate, nextOfEndWeekDate),
+                        runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+                                memberId, startWeekDate, nextOfEndWeekDate),
+                        1000,
+                        startWeekDate.toLocalDate())
+                : createWeeklySummaryResponse(
+                        runningRecordRepository.findDailyDurationsSecByDateRange(
+                                memberId, startWeekDate, nextOfEndWeekDate),
+                        runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+                                memberId, startWeekDate, nextOfEndWeekDate),
+                        3600,
+                        startWeekDate.toLocalDate());
     }
 
     @Transactional
@@ -219,5 +250,18 @@ public class RunningRecordService {
 
         GoalAchievement goalAchievement = new GoalAchievement(runningRecord, goalMetricType, goalValue, isAchieved);
         return goalAchievementRepository.save(goalAchievement);
+    }
+
+    private RunningRecordWeeklySummaryResponse createWeeklySummaryResponse(
+            List<DailyRunningRecordSummary> summaries, int avgValue, double conversionFactor, LocalDate startWeekDate) {
+
+        double[] weeklyValues = new double[7];
+        for (DailyRunningRecordSummary Summary : summaries) {
+            OffsetDateTime dateTime = Summary.date().atStartOfDay().atOffset(defaultZoneOffset);
+            weeklyValues[dateTime.get(DAY_OF_WEEK) - 1] = Summary.sumValue() / conversionFactor;
+        }
+
+        return new RunningRecordWeeklySummaryResponse(
+                startWeekDate, startWeekDate.plusDays(6), weeklyValues, avgValue / conversionFactor);
     }
 }
