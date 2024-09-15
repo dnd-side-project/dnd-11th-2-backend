@@ -2,9 +2,9 @@ package com.dnd.runus.infrastructure.persistence.annotation;
 
 import com.dnd.runus.config.TestJooqConfig;
 import com.dnd.runus.config.TestcontainersConfig;
-import com.dnd.runus.global.config.JooqConfig;
-import com.dnd.runus.global.config.JpaConfig;
 import com.dnd.runus.infrastructure.persistence.InfrastructurePersistencePackage;
+import com.dnd.runus.infrastructure.persistence.jooq.JooqConfig;
+import com.dnd.runus.infrastructure.persistence.jpa.JpaConfig;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;

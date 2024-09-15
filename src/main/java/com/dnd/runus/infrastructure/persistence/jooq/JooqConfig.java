@@ -1,4 +1,4 @@
-package com.dnd.runus.global.config;
+package com.dnd.runus.infrastructure.persistence.jooq;
 
 import org.jooq.conf.ExecuteWithoutWhere;
 import org.springframework.boot.autoconfigure.jooq.DefaultConfigurationCustomizer;

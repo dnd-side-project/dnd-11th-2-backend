@@ -1,4 +1,4 @@
-package com.dnd.runus.global.config;
+package com.dnd.runus.presentation.config;
 
 import com.dnd.runus.global.constant.AuthConstant;
 import com.dnd.runus.global.exception.type.ApiErrorType;
