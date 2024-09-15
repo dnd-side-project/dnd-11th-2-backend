@@ -2,9 +2,7 @@ package com.dnd.runus.presentation.v1.running.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import org.springframework.format.datetime.DateFormatter;
 
 public record RunningRecordWeeklySummaryResponse(
     @Schema(description = "이번주 날짜", example = "2024.09.09 ~ 09.15")
