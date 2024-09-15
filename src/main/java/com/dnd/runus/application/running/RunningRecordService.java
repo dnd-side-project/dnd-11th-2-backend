@@ -40,7 +40,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
@@ -117,9 +116,9 @@ public class RunningRecordService {
         OffsetDateTime startWeekDate = today.with(DayOfWeek.MONDAY);
         OffsetDateTime nextOfEndWeekDate = startWeekDate.plusWeeks(1);
 
-        List<DailyRunningRecordSummary> weekSummaries = new ArrayList<>();
-        int avgValue = 0;
-        double conversionFactor = 1.0;
+        List<DailyRunningRecordSummary> weekSummaries;
+        int avgValue;
+        double conversionFactor;
 
         if (summaryType.equals(RunningRecordWeeklySummaryType.DISTANCE)) {
             weekSummaries = runningRecordRepository.findDailyDistancesMeterByDateRange(
