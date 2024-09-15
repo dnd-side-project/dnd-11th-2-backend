@@ -1,4 +1,4 @@
-package com.dnd.runus.global.config;
+package com.dnd.runus.infrastructure.persistence.jpa;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
