@@ -6,6 +6,7 @@ import com.dnd.runus.domain.running.RunningRecord;
 import java.text.DecimalFormat;
 
 import static com.dnd.runus.domain.challenge.GoalMetricType.DISTANCE;
+import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
 import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_HOUR;
 import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_MINUTE;
 import static com.dnd.runus.global.constant.RunningResultComment.FAILURE;
@@ -28,7 +29,7 @@ public record GoalAchievement(
 
     public String getTitle() {
         if (goalMetricType == DISTANCE) {
-            return KILO_METER_FORMATTER.format(achievementValue / 1000.0) + " 달성";
+            return KILO_METER_FORMATTER.format(achievementValue / METERS_IN_A_KILOMETER) + " 달성";
         }
 
         return formatSecondToKoreanHHMM(achievementValue) + " 달성";

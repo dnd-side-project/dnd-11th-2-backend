@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
+
 @Service
 @RequiredArgsConstructor
 public class ScaleService {
@@ -70,7 +72,8 @@ public class ScaleService {
                 .mapToInt(log -> log.scale().sizeMeter())
                 .sum();
 
-        double remainingKm = (currentScale.scale().sizeMeter() + achievedCourseMeterSum - memberRunMeterSum) / 1000.0;
+        double remainingKm =
+                (currentScale.scale().sizeMeter() + achievedCourseMeterSum - memberRunMeterSum) / METERS_IN_A_KILOMETER;
 
         String message = String.format("%s까지 %.1fkm 남았어요!", currentScale.scale().endName(), remainingKm);
 
