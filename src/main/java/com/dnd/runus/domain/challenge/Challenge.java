@@ -1,5 +1,8 @@
 package com.dnd.runus.domain.challenge;
 
+import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_HOUR;
+import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_MINUTE;
+
 public record Challenge(long challengeId, String name, int expectedTime, String imageUrl, ChallengeType challengeType) {
 
     public Challenge(long challengeId, String name, String imageUrl, ChallengeType challengeType) {
@@ -11,8 +14,8 @@ public record Challenge(long challengeId, String name, int expectedTime, String 
     }
 
     public String formatExpectedTime() {
-        int hour = expectedTime / 3600;
-        int minute = (expectedTime % 3600) / 60;
+        int hour = expectedTime / SECONDS_PER_HOUR;
+        int minute = (expectedTime % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE;
         StringBuilder sb = new StringBuilder();
 
         if (hour != 0) {

@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.*;
 
+import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_HOUR;
+import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_MINUTE;
 import static com.dnd.runus.global.constant.TimeConstant.*;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
@@ -55,9 +57,9 @@ public class ObjectMapperConfig {
         public void serialize(Duration duration, JsonGenerator generator, SerializerProvider provider)
                 throws IOException {
             long totalSeconds = duration.getSeconds();
-            long hours = totalSeconds / 3600;
-            long minutes = (totalSeconds % 3600) / 60;
-            long seconds = totalSeconds % 60;
+            long hours = totalSeconds / SECONDS_PER_HOUR;
+            long minutes = (totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE;
+            long seconds = totalSeconds % SECONDS_PER_MINUTE;
             // HH:mm:ss or HHH:mm:ss
             String formattedDuration =
                     String.format("%s:%02d:%02d", (hours < 10 ? "0" + hours : hours), minutes, seconds);

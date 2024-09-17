@@ -3,6 +3,8 @@ package com.dnd.runus.domain.common;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_MINUTE;
+
 /**
  * 러닝 페이스를 나타내는 클래스
  *
@@ -11,8 +13,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public record Pace(int minute, int second) {
     public static Pace ofSeconds(int seconds) {
-        int minute = seconds / 60;
-        int second = seconds % 60;
+        int minute = seconds / SECONDS_PER_MINUTE;
+        int second = seconds % SECONDS_PER_MINUTE;
         return new Pace(minute, second);
     }
 
@@ -29,6 +31,6 @@ public record Pace(int minute, int second) {
     }
 
     public int toSeconds() {
-        return minute * 60 + second;
+        return minute * SECONDS_PER_MINUTE + second;
     }
 }

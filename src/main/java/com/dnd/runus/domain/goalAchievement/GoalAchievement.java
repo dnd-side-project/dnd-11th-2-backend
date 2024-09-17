@@ -6,6 +6,8 @@ import com.dnd.runus.domain.running.RunningRecord;
 import java.text.DecimalFormat;
 
 import static com.dnd.runus.domain.challenge.GoalMetricType.DISTANCE;
+import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_HOUR;
+import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_MINUTE;
 import static com.dnd.runus.global.constant.RunningResultComment.FAILURE;
 import static com.dnd.runus.global.constant.RunningResultComment.SUCCESS;
 
@@ -41,8 +43,8 @@ public record GoalAchievement(
     }
 
     private String formatSecondToKoreanHHMM(int second) {
-        int hour = second / 3600;
-        int minute = (second % 3600) / 60;
+        int hour = second / SECONDS_PER_HOUR;
+        int minute = (second % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE;
         StringBuilder sb = new StringBuilder();
 
         if (hour != 0) {
