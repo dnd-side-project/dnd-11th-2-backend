@@ -63,6 +63,8 @@ dependencies {
 
     implementation(libs.caffeine)
 
+    implementation(libs.resilience4j.spring.boot)
+
     testImplementation(libs.bundles.spring.boot.test)
     testImplementation(libs.bundles.testcontainers)
     testRuntimeOnly(libs.junit.platform.launcher)
