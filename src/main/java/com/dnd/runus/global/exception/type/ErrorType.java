@@ -46,7 +46,7 @@ public enum ErrorType {
     GOAL_TIME_AND_DISTANCE_BOTH_EXIST(BAD_REQUEST, "RUNNING_004", "개인 목표 시간과 거리 중 하나만 설정해야 합니다."),
 
     // WeatherErrorType
-    WEATHER_API_ERROR(INTERNAL_SERVER_ERROR, "WEATHER_001", "날씨 API 호출 중 오류가 발생했습니다"),
+    WEATHER_API_ERROR(SERVICE_UNAVAILABLE, "WEATHER_001", "날씨 API 호출 중 오류가 발생했습니다"),
     ;
     private final HttpStatus httpStatus;
     private final String code;
