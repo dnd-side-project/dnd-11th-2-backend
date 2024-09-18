@@ -30,9 +30,9 @@ public class OpenweathermapWeatherClient implements WeatherClient {
 
         return new WeatherInfo(
                 mapWeatherType(info.weather()[0].id()),
-                info.main().feels_like(),
-                info.main().temp_min(),
-                info.main().temp_max(),
+                info.main().feelsLike(),
+                info.main().tempMin(),
+                info.main().tempMax(),
                 info.main().humidity(),
                 info.wind().speed());
     }
