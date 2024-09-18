@@ -8,6 +8,7 @@ import com.dnd.runus.infrastructure.weather.weatherapicom.dto.WeatherapicomCurre
 import com.dnd.runus.infrastructure.weather.weatherapicom.dto.WeatherapicomHistory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import static com.dnd.runus.global.exception.type.ErrorType.WEATHER_API_ERROR;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
+@Component
 @RequiredArgsConstructor
 public class WeatherApiComWeatherClient implements WeatherClient {
     private final WeatherapicomWeatherHttpClient weatherapicomWeatherHttpClient;
