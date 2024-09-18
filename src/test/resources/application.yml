@@ -38,3 +38,6 @@ weather:
   openweathermap:
     url: https://api.openweathermap.org
     api-key: test-openweathermap-api-key
+  weatherapicom:
+    url: https://api.weatherapi.com
+    api-key: test-weatherapicom-api-key

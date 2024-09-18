@@ -43,6 +43,9 @@ weather:
   openweathermap:
     url: https://api.openweathermap.org
     api-key: ${OPENWEATHER_API_KEY}
+  weatherapicom:
+    url: https://api.weatherapi.com
+    api-key: ${WEATHERAPICOM_API_KEY}
 
 ---
 spring.config.activate.on-profile: local
