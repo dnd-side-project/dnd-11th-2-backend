@@ -93,7 +93,7 @@ class OpenweathermapWeatherHttpClientTest {
         // then
         assertNotNull(weatherInfo);
         assertEquals(800, weatherInfo.weather()[0].id());
-        assertEquals(10.0, weatherInfo.main().feels_like());
-        assertEquals(10.0, weatherInfo.main().temp_min());
+        assertEquals(10.0, weatherInfo.main().feelsLike());
+        assertEquals(10.0, weatherInfo.main().tempMin());
     }
 }
