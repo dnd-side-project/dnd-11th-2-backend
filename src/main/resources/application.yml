@@ -47,6 +47,12 @@ weather:
     url: https://api.weatherapi.com
     api-key: ${WEATHERAPICOM_API_KEY}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics
+
 ---
 spring.config.activate.on-profile: local
 
