@@ -11,6 +11,7 @@ import java.util.List;
 public record RunningRecordSummaryResponse(
         List<Info> records
 ) {
+    @Schema(name = "RunningRecordSummaryResponse Info", description = "달리기 기록 요약 정보")
     public record Info(
             long runningRecordId,
             RunningEmoji emoji,
