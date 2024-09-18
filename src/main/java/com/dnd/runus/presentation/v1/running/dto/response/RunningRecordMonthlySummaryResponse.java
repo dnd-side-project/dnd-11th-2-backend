@@ -1,5 +1,7 @@
 package com.dnd.runus.presentation.v1.running.dto.response;
 
+import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.text.DecimalFormat;
@@ -17,6 +19,6 @@ public record RunningRecordMonthlySummaryResponse(
     private static final DecimalFormat KILO_METER_FORMATTER = new DecimalFormat("0.##km");
 
     public RunningRecordMonthlySummaryResponse(int monthValue, int monthlyTotalMeter, String nextLevelName, String nextLevelKm) {
-        this(monthValue + "월", KILO_METER_FORMATTER.format(monthlyTotalMeter / 1000.0), nextLevelName, nextLevelKm);
+        this(monthValue + "월", KILO_METER_FORMATTER.format(monthlyTotalMeter / METERS_IN_A_KILOMETER), nextLevelName, nextLevelKm);
     }
 }

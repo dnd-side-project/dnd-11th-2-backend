@@ -1,5 +1,7 @@
 package com.dnd.runus.presentation.v1.scale.dto;
 
+import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.text.DecimalFormat;
@@ -24,7 +26,7 @@ public record ScaleCoursesResponse(
                 int totalCourses,
                 int totalMeter
         ) {
-            this(totalCourses, KILO_METER_FORMATTER.format(totalMeter / 1000.0));
+            this(totalCourses, KILO_METER_FORMATTER.format(totalMeter / METERS_IN_A_KILOMETER));
         }
     }
 
@@ -41,7 +43,7 @@ public record ScaleCoursesResponse(
                 int totalMeter,
                 LocalDate achievedAt
         ) {
-            this(name, KILO_METER_FORMATTER.format(totalMeter / 1000.0), achievedAt);
+            this(name, KILO_METER_FORMATTER.format(totalMeter / METERS_IN_A_KILOMETER), achievedAt);
         }
     }
 
@@ -61,7 +63,7 @@ public record ScaleCoursesResponse(
                 int achievedMeter,
                 String message
         ) {
-            this(name, KILO_METER_FORMATTER.format(totalMeter / 1000.0), achievedMeter + "m", message);
+            this(name, KILO_METER_FORMATTER.format(totalMeter / METERS_IN_A_KILOMETER), achievedMeter + "m", message);
         }
     }
 }
