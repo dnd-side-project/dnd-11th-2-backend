@@ -16,6 +16,7 @@ public record ScaleCoursesResponse(
 
     private static final DecimalFormat KILO_METER_FORMATTER = new DecimalFormat("0.#km");
 
+    @Schema(name = "course Info", description = "코스 정보")
     public record Info(
             @Schema(description = "총 코스 수 (공개되지 않은 코스 포함)", example = "18")
             int totalCourses,
