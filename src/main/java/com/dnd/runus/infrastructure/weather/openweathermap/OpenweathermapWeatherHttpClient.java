@@ -8,8 +8,8 @@ import org.springframework.web.service.annotation.HttpExchange;
 public interface OpenweathermapWeatherHttpClient {
     @GetExchange("/data/2.5/weather")
     OpenweathermapWeatherInfo getWeatherInfo(
-            @RequestParam("lon") double lon,
-            @RequestParam("lat") double lat,
-            @RequestParam String unit,
+            @RequestParam("lon") double longitude,
+            @RequestParam("lat") double latitude,
+            @RequestParam("units") String unit,
             @RequestParam("appid") String appId);
 }
