@@ -20,8 +20,8 @@ public class WeatherapicomWeatherHttpClientConfig {
     @Bean
     public WeatherapicomWeatherHttpClient weatherapicomWeatherHttpClient() {
         ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
-                .withReadTimeout(Duration.ofSeconds(5))
-                .withConnectTimeout(Duration.ofSeconds(10));
+                .withReadTimeout(Duration.ofSeconds(1))
+                .withConnectTimeout(Duration.ofSeconds(3));
         ClientHttpRequestFactory requestFactory = ClientHttpRequestFactories.get(settings);
 
         RestClient restClient =

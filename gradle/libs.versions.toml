@@ -19,6 +19,7 @@ spring-boot-devtools = { group = "org.springframework.boot", name = "spring-boot
 spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "spring-boot" }
 spring-boot-testcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers", version.ref = "spring-boot" }
 spring-boot-cache = { group = "org.springframework.boot", name = "spring-boot-starter-cache", version.ref = "spring-boot" }
+spring-boot-aop = { group = "org.springframework.boot", name = "spring-boot-starter-aop", version.ref = "spring-boot" }
 
 bcpkix = {group= "org.bouncycastle", name = "bcpkix-jdk18on", version = "1.78.1" }
 
@@ -44,6 +45,8 @@ junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform
 spring-cloud-starter-contract-stub-runner = { group = "org.springframework.cloud", name = "spring-cloud-starter-contract-stub-runner", version = "4.1.4" }
 caffeine = { group = "com.github.ben-manes.caffeine", name = "caffeine", version = "3.1.8" }
 
+resilience4j-spring-boot = { group = "io.github.resilience4j", name = "resilience4j-spring-boot3", version = "2.2.0" }
+
 [bundles]
 spring-boot = [
     "spring-boot-starter",
@@ -53,6 +56,7 @@ spring-boot = [
     "spring-boot-starter-actuator",
     "spring-boot-starter-data-jpa",
     "spring-boot-cache",
+    "spring-boot-aop",
 ]
 
 spring-boot-test = [
