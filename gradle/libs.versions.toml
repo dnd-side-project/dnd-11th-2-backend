@@ -45,6 +45,7 @@ junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform
 spring-cloud-starter-contract-stub-runner = { group = "org.springframework.cloud", name = "spring-cloud-starter-contract-stub-runner", version = "4.1.4" }
 caffeine = { group = "com.github.ben-manes.caffeine", name = "caffeine", version = "3.1.8" }
 
+micrometer-registry-prometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version = "1.13.4" }
 resilience4j-spring-boot = { group = "io.github.resilience4j", name = "resilience4j-spring-boot3", version = "2.2.0" }
 
 [bundles]
