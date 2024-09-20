@@ -65,6 +65,8 @@ dependencies {
 
     implementation(libs.resilience4j.spring.boot)
 
+    runtimeOnly(libs.micrometer.registry.prometheus)
+
     testImplementation(libs.bundles.spring.boot.test)
     testImplementation(libs.bundles.testcontainers)
     testRuntimeOnly(libs.junit.platform.launcher)
