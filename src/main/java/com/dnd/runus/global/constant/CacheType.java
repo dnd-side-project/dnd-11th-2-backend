@@ -6,6 +6,7 @@ import java.time.Duration;
 
 @Getter
 public enum CacheType {
+    WEATHER(Name.WEATHER, Duration.ofMinutes(10), 100),
     ;
     private final String cacheName;
     private final Duration expireAfterWrite;
@@ -15,5 +16,9 @@ public enum CacheType {
         this.cacheName = cacheName;
         this.expireAfterWrite = expireAfterWrite;
         this.maximumSize = maximumSize;
+    }
+
+    public static class Name {
+        public static final String WEATHER = "weather";
     }
 }

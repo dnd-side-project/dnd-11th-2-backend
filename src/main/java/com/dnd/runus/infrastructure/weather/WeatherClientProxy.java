@@ -6,8 +6,11 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+
+import static com.dnd.runus.global.constant.CacheType.Name.WEATHER;
 
 @Slf4j
 @Primary
@@ -25,6 +28,7 @@ public class WeatherClientProxy implements WeatherClient {
     }
 
     @Override
+    @Cacheable(cacheNames = WEATHER, key = "#longitude + ':' + #latitude")
     @CircuitBreaker(name = "weatherClient", fallbackMethod = "fallback")
     public WeatherInfo getWeatherInfo(double longitude, double latitude) {
         return mainWeatherClient.getWeatherInfo(longitude, latitude);
