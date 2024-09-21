@@ -21,7 +21,7 @@ public class ServerController {
     private final ServerVersionService serverVersionService;
 
     @GetMapping("versions")
-    @Operation(summary = "버전 체크", description = "기기의 앱 버전을 확인하고 앱 업데이트가 필요한지 여부를 반환합니다.")
+    @Operation(summary = "앱 버전 지원 여부 확인", description = "기기의 앱 버전을 확인하고 앱 업데이트가 필요한지 여부를 반환합니다.")
     public VersionStatusResponse checkVersion(@RequestParam String version) {
         boolean updateRequired = serverVersionService.isUpdateRequired(Version.parse(version), DeviceType.IOS);
         return new VersionStatusResponse(updateRequired);
