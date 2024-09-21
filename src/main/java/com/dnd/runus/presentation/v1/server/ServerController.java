@@ -1,5 +1,8 @@
 package com.dnd.runus.presentation.v1.server;
 
+import com.dnd.runus.application.server.DeviceType;
+import com.dnd.runus.application.server.ServerVersionService;
+import com.dnd.runus.application.server.Version;
 import com.dnd.runus.presentation.v1.server.dto.response.VersionStatusResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,10 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/servers")
 public class ServerController {
 
+    private final ServerVersionService serverVersionService;
+
     @GetMapping("versions")
-    @Operation(summary = "앱의 버전을 확인합니다.")
+    @Operation(summary = "버전 체크", description = "기기의 앱 버전을 확인하고 앱 업데이트가 필요한지 여부를 반환합니다.")
     public VersionStatusResponse checkVersion(@RequestParam String version) {
-        // FIXME: 버전 체크 로직 구현 필요
-        return new VersionStatusResponse(false);
+        boolean updateRequired = serverVersionService.isUpdateRequired(Version.parse(version), DeviceType.IOS);
+        return new VersionStatusResponse(updateRequired);
     }
 }
