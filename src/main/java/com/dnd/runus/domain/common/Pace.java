@@ -12,6 +12,12 @@ import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_
  * @param second
  */
 public record Pace(int minute, int second) {
+    public Pace {
+        if (minute < 0 || second < 0 || second >= SECONDS_PER_MINUTE) {
+            throw new IllegalArgumentException("분 또는 초는 0 이상 60 미만의 값이어야 합니다.");
+        }
+    }
+
     public static Pace ofSeconds(int seconds) {
         int minute = seconds / SECONDS_PER_MINUTE;
         int second = seconds % SECONDS_PER_MINUTE;
@@ -26,8 +32,8 @@ public record Pace(int minute, int second) {
     }
 
     @JsonValue
-    public String getPace() {
-        return minute + "’" + second + "”";
+    public String getJsonValue() {
+        return minute + "’" + String.format("%02d", second) + "”";
     }
 
     public int toSeconds() {
