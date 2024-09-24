@@ -1,5 +1,5 @@
 [versions]
-spring-boot = "3.3.2"
+spring-boot = "3.3.4"
 dependency-management = "1.1.5"
 spotless = "6.25.0"
 postgresql = "42.7.3"
