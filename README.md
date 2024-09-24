@@ -21,7 +21,7 @@
 
 <div align="center">
 
-[![Java](https://img.shields.io/badge/Java_17-C17000?style=for-the-badge&logo=OpenJDK&logoColor=white)]() [![Spring Boot](https://img.shields.io/badge/Spring_Boot_3.3.2-60B030?style=for-the-badge&logo=Spring%20Boot&logoColor=white)]() [![Postgresql](https://img.shields.io/badge/postgresql_16.3-4169e1?style=for-the-badge&logo=postgresql&logoColor=white)]()
+[![Java](https://img.shields.io/badge/Java_21-C17000?style=for-the-badge&logo=OpenJDK&logoColor=white)]() [![Spring Boot](https://img.shields.io/badge/Spring_Boot_3.3.4-60B030?style=for-the-badge&logo=Spring%20Boot&logoColor=white)]() [![Postgresql](https://img.shields.io/badge/postgresql_16.3-4169e1?style=for-the-badge&logo=postgresql&logoColor=white)]()
 
 [![Docker](https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)]() [![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white)]() [![Nginx](https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)]() [![Prometheus](https://img.shields.io/badge/prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)]() [![Grafana](https://img.shields.io/badge/grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white)]() [![Github Actions](https://img.shields.io/badge/Github_Actions-2088FF?style=for-the-badge&logo=github%20actions&logoColor=white)]()
 </div>
