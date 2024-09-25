@@ -33,7 +33,7 @@ public class SecurityWebConfig {
     private List<String> corsOrigins;
 
     private static final String[] PUBLIC_ENDPOINTS = {
-        "/api/v1/auth/**",
+        "/api/v1/auth/**", "/actuator/prometheus/**",
     };
 
     private static final String[] OPEN_API_ENDPOINTS = {
@@ -41,7 +41,7 @@ public class SecurityWebConfig {
     };
 
     private static final String[] READ_ONLY_ENDPOINTS = {
-        "/api/v1/servers/versions", "/actuator/health", "/actuator/metrics/**", "/actuator/prometheus",
+        "/api/v1/servers/versions", "/actuator/health", "/actuator/metrics/**",
     };
 
     @Bean
