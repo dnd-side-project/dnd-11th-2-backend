@@ -92,30 +92,30 @@ public class OauthService {
 
         OidcProvider oidcProvider = oidcProviderRegistry.getOidcProviderBy(request.socialType());
 
-        Claims claim = oidcProvider.getClaimsBy(request.idToken());
-        String oauthId = claim.getSubject();
+        String oauthId = oidcProvider.getClaimsBy(request.idToken()).getSubject();
 
-        SocialProfile socialProfile = socialProfileRepository
+        socialProfileRepository
                 .findBySocialTypeAndOauthId(request.socialType(), oauthId)
-                .orElseThrow(() -> {
-                    log.error(
-                            "data conflict: 존재하지 않은 SocialProfile입니다. socialType: {}, oauthId: {}",
-                            request.socialType(),
-                            oauthId);
-                    return new NotFoundException("존재하지 않은 SocialProfile");
-                });
+                .filter(profile -> profile.member().memberId() == memberId)
+                .orElseThrow(() -> new AuthException(
+                        ErrorType.INVALID_CREDENTIALS,
+                        String.format(
+                                "socialType: %s, oauthId: %s, memberId: %s", request.socialType(), oauthId, memberId)));
 
-        if (memberId != socialProfile.member().memberId()) {
-            log.error(
-                    "DATA CONFLICT: MemberId and MemberId find by SocialProfile oauthId do not match each other! memberId: {}, socialProfileId: {}",
-                    memberId,
-                    socialProfile.socialProfileId());
-            throw new NotFoundException("잘못된 데이터: Member and SocialProfile do not match each other");
-        }
-
-        // 탈퇴를 위한 access token 발급
-        String accessToken = oidcProvider.getAccessToken(request.authorizationCode());
-        oidcProvider.revoke(accessToken);
+        Thread.startVirtualThread(() -> {
+            try {
+                String accessToken = oidcProvider.getAccessToken(request.authorizationCode());
+                oidcProvider.revoke(accessToken);
+                log.info("토큰 revoke 성공. memberId: {}, socialType: {}", memberId, request.socialType());
+            } catch (Exception e) {
+                log.warn(
+                        "토큰 revoke 실패. memberId: {}, socialType: {}, {}",
+                        memberId,
+                        request.socialType(),
+                        e.getMessage());
+            }
+        });
+        log.info("토큰 revoke 요청 완료. memberId: {}, socialType: {}", memberId, request.socialType());
     }
 
     @Transactional

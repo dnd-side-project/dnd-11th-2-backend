@@ -28,6 +28,7 @@ public enum ErrorType {
     TAMPERED_ACCESS_TOKEN(UNAUTHORIZED, "AUTH_005", "변조된 토큰입니다"),
     UNSUPPORTED_JWT_TOKEN(UNAUTHORIZED, "AUTH_006", "지원하지 않는 JWT 토큰입니다"),
     UNSUPPORTED_SOCIAL_TYPE(UNAUTHORIZED, "AUTH_007", "지원하지 않는 소셜 타입입니다."),
+    INVALID_CREDENTIALS(UNAUTHORIZED, "AUTH_008", "해당 사용자의 정보가 없거나 일치하지 않아 처리할 수 없습니다."),
 
     // OauthErrorType
     USER_NOT_FOUND(NOT_FOUND, "OAUTH_001", "존재하지 않은 사용자 입니다."),
