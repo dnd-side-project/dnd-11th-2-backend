@@ -14,6 +14,10 @@ spring:
     enabled: true
     baseline-on-migrate: true # Baseline 생성이 필요한 상황에서 migration 작업 실행시, Baseline 생성부터 하겠다는 설정
 
+  threads:
+    virtual:
+      enabled: false
+
 app:
   api:
     allow-origins: "*"
