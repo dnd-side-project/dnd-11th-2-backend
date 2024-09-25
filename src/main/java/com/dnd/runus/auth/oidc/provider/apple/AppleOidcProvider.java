@@ -1,5 +1,6 @@
 package com.dnd.runus.auth.oidc.provider.apple;
 
+import com.dnd.runus.auth.exception.AuthException;
 import com.dnd.runus.auth.oidc.client.AppleAuthClient;
 import com.dnd.runus.auth.oidc.provider.OidcProvider;
 import com.dnd.runus.auth.oidc.provider.apple.dto.AppleAuthRevokeRequest;
@@ -77,7 +78,7 @@ public class AppleOidcProvider implements OidcProvider {
                     .build();
             return appleAuthClient.getAuthToken(request.toMultiValueMap()).accessToken();
         } catch (HttpClientErrorException e) {
-            throw new BusinessException(ErrorType.FAILED_AUTHENTICATION, e.getMessage());
+            throw new AuthException(ErrorType.FAILED_AUTHENTICATION, e.getMessage());
         }
     }
 
@@ -92,8 +93,7 @@ public class AppleOidcProvider implements OidcProvider {
                     .build();
             appleAuthClient.revoke(request.toMultiValueMap());
         } catch (HttpClientErrorException e) {
-            log.warn("failed token revoke :{}", e.getMessage());
-            throw new BusinessException(ErrorType.FAILED_AUTHENTICATION, e.getMessage());
+            throw new AuthException(ErrorType.FAILED_AUTHENTICATION, e.getMessage());
         }
     }
 

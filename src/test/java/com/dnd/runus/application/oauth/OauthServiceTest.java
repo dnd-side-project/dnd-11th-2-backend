@@ -1,5 +1,6 @@
 package com.dnd.runus.application.oauth;
 
+import com.dnd.runus.auth.exception.AuthException;
 import com.dnd.runus.auth.oidc.provider.OidcProvider;
 import com.dnd.runus.auth.oidc.provider.OidcProviderRegistry;
 import com.dnd.runus.auth.token.TokenProviderModule;
@@ -10,11 +11,7 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository
 import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
-import com.dnd.runus.domain.member.Member;
-import com.dnd.runus.domain.member.MemberLevelRepository;
-import com.dnd.runus.domain.member.MemberRepository;
-import com.dnd.runus.domain.member.SocialProfile;
-import com.dnd.runus.domain.member.SocialProfileRepository;
+import com.dnd.runus.domain.member.*;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.domain.scale.ScaleAchievementRepository;
@@ -43,7 +40,9 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
@@ -220,7 +219,7 @@ class OauthServiceTest {
 
         @DisplayName("소셜 로그인 연동 해제: 성공")
         @Test
-        void revokeOauth_Success() {
+        void revokeOauth_Success() throws InterruptedException {
 
             // given
             WithdrawRequest request = new WithdrawRequest(socialType, authorizationCode, idToken);
@@ -233,14 +232,27 @@ class OauthServiceTest {
             given(socialProfileRepository.findBySocialTypeAndOauthId(request.socialType(), oauthId))
                     .willReturn(Optional.of(socialProfileMock));
 
+            CountDownLatch latch = new CountDownLatch(2);
+
             String accessToken = "accessToken";
-            given(oidcProvider.getAccessToken(request.authorizationCode())).willReturn(accessToken);
+            given(oidcProvider.getAccessToken(request.authorizationCode())).willAnswer(invocation -> {
+                latch.countDown();
+                return accessToken;
+            });
+
+            will(invocation -> {
+                        latch.countDown();
+                        return null;
+                    })
+                    .given(oidcProvider)
+                    .revoke(accessToken);
 
             // when
             oauthService.revokeOauth(member.memberId(), request);
 
             // then
-            then(oidcProvider).should().revoke(accessToken);
+            boolean completed = latch.await(100, MILLISECONDS);
+            assertTrue(completed);
         }
 
         @DisplayName("소셜 로그인 연동 해제: member_id가 없을 경우 NotFoundException을 발생한다.")
@@ -254,7 +266,7 @@ class OauthServiceTest {
             assertThrows(NotFoundException.class, () -> oauthService.revokeOauth(member.memberId(), request));
         }
 
-        @DisplayName("소셜 로그인 연동 해제: oauthId와 socialType에 해당하는 socialProfile 없을 경우 NotFoundException을 발생한다.")
+        @DisplayName("소셜 로그인 연동 해제: oauthId와 socialType에 해당하는 socialProfile 없을 경우 AuthException을 발생한다.")
         @Test
         void revokeOauth_NotFound_SocialProfile() {
             // given
@@ -267,10 +279,10 @@ class OauthServiceTest {
                     .willReturn(Optional.empty());
 
             // when, then
-            assertThrows(NotFoundException.class, () -> oauthService.revokeOauth(member.memberId(), request));
+            assertThrows(AuthException.class, () -> oauthService.revokeOauth(member.memberId(), request));
         }
 
-        @DisplayName("소셜 로그인 연동 해제: socialProfile의 memberId와 member의 id가 다를 경우 NotFoundException을 발생한다.")
+        @DisplayName("소셜 로그인 연동 해제: socialProfile의 memberId와 member의 id가 다를 경우 AuthException을 발생한다.")
         @Test
         void revokeOauth_MissMatch_socialProfileAndMemberId() {
             // given
@@ -290,7 +302,7 @@ class OauthServiceTest {
                     .willReturn(Optional.of(socialProfileMock));
 
             // when, then
-            assertThrows(NotFoundException.class, () -> oauthService.revokeOauth(member.memberId(), request));
+            assertThrows(AuthException.class, () -> oauthService.revokeOauth(member.memberId(), request));
         }
     }
 

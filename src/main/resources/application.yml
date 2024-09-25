@@ -19,6 +19,10 @@ spring:
     enabled: true
     baseline-on-migrate: true
 
+  threads:
+    virtual:
+      enabled: false
+
 app:
   api:
     allow-origins: ${ALLOW_ORIGINS}
