@@ -6,11 +6,7 @@ import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.annotation.MemberId;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlyDatesResponse;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordSummaryResponse;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordWeeklySummaryResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,6 +23,12 @@ import java.util.List;
 @RequestMapping("/api/v1/running-records")
 public class RunningRecordController {
     private final RunningRecordService runningRecordService;
+
+    @GetMapping("{runningRecordId}")
+    @Operation(summary = "러닝 기록 상세 조회", description = "RunngingRecord id로 러닝 상세 기록을 조회합니다.")
+    public RunningRecordQueryResponse getRunningRecord(@MemberId long memberId, @PathVariable long runningRecordId) {
+        return runningRecordService.getRunningRecord(memberId, runningRecordId);
+    }
 
     @GetMapping("monthly-dates")
     @Operation(summary = "해당 월의 러닝 기록 조회", description = "해당 월의 러닝 기록을 조회합니다. 해당 월에 러닝 기록이 있는 날짜를 반환합니다.")

@@ -26,20 +26,13 @@ import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordSummaryResponse;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordWeeklySummaryResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.time.*;
 import java.util.List;
 
 import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
@@ -81,6 +74,15 @@ public class RunningRecordService {
         this.scaleRepository = scaleRepository;
         this.scaleAchievementRepository = scaleAchievementRepository;
         this.defaultZoneOffset = defaultZoneOffset;
+    }
+
+    @Transactional(readOnly = true)
+    public RunningRecordQueryResponse getRunningRecord(long memberId, long runningRecordId) {
+        RunningRecord record = runningRecordRepository
+                .findById(runningRecordId)
+                .filter(r -> r.member().memberId() == memberId)
+                .orElseThrow(() -> new NotFoundException(RunningRecord.class, runningRecordId));
+        return RunningRecordQueryResponse.from(record);
     }
 
     @Transactional(readOnly = true)

@@ -20,12 +20,14 @@ import com.dnd.runus.domain.scale.ScaleAchievementRepository;
 import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
+import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordQueryResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordWeeklySummaryResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -94,6 +96,63 @@ class RunningRecordServiceTest {
                 scaleRepository,
                 scaleAchievementRepository,
                 defaultZoneOffset);
+    }
+
+    @Test
+    @DisplayName("러닝 기록 조회 - 존재하는 러닝 기록 조회")
+    void getRunningRecord() {
+        // given
+        long memberId = 1;
+        long runningRecordId = 1;
+        Member member = new Member(memberId, MemberRole.USER, "nickname1", OffsetDateTime.now(), OffsetDateTime.now());
+        RunningRecord runningRecord = new RunningRecord(
+                1L,
+                member,
+                10_000,
+                Duration.ofSeconds(10_000),
+                500,
+                new Pace(5, 30),
+                OffsetDateTime.now(),
+                OffsetDateTime.now(),
+                List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)),
+                "start location",
+                "end location",
+                RunningEmoji.VERY_GOOD);
+
+        given(runningRecordRepository.findById(runningRecordId)).willReturn(Optional.of(runningRecord));
+
+        // when
+        RunningRecordQueryResponse result = runningRecordService.getRunningRecord(memberId, runningRecordId);
+
+        // then
+        assertEquals(runningRecordId, result.runningRecordId());
+        assertEquals(runningRecord.emoji(), result.emotion());
+    }
+
+    @Test
+    @DisplayName("러닝 기록 조회 - 존재하지 않는 러닝 기록 조회한다면 NotFoundException을 던진다.")
+    void getRunningRecord_not_found() {
+        // given
+        long memberId = 1;
+        long runningRecordId = 1;
+
+        given(runningRecordRepository.findById(runningRecordId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(NotFoundException.class, () -> runningRecordService.getRunningRecord(memberId, runningRecordId));
+    }
+
+    @Test
+    @DisplayName("러닝 기록 조회 - 존재하지 않는 멤버의 러닝 기록 조회한다면 NotFoundException을 던진다.")
+    void getRunningRecord_member_not_found() {
+        // given
+        long memberId = 1;
+        long runningRecordId = 1;
+
+        given(runningRecordRepository.findById(runningRecordId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(NotFoundException.class, () -> runningRecordService.getRunningRecord(memberId, runningRecordId));
     }
 
     @Test
