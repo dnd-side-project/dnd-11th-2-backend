@@ -24,7 +24,7 @@ import java.util.List;
 public class RunningRecordController {
     private final RunningRecordService runningRecordService;
 
-    @GetMapping("{runningRecordId}")
+    @GetMapping("/{runningRecordId}")
     @Operation(summary = "러닝 기록 상세 조회", description = "RunngingRecord id로 러닝 상세 기록을 조회합니다.")
     public RunningRecordQueryResponse getRunningRecord(@MemberId long memberId, @PathVariable long runningRecordId) {
         return runningRecordService.getRunningRecord(memberId, runningRecordId);
