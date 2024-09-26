@@ -4,6 +4,7 @@ import com.dnd.runus.auth.exception.AuthException;
 import com.dnd.runus.global.exception.BaseException;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.dto.response.ApiErrorDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -35,13 +37,24 @@ public class ExceptionRestHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorDto> handleException(Exception e) {
-        log.error("Unhandled exception: ", e);
+    public ResponseEntity<ApiErrorDto> handleException(Exception e, HttpServletRequest request) {
+        log.error(
+                "Unhandled exception[{}]: {}, method: {}, uri: {}",
+                e.getClass(),
+                e.getMessage(),
+                request.getMethod(),
+                request.getRequestURI());
         return toResponseEntity(ErrorType.UNHANDLED_EXCEPTION, e.getMessage());
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ApiErrorDto> handleNoResourceFoundException(NoResourceFoundException e) {
+        return toResponseEntity(ErrorType.UNSUPPORTED_API, e.getMessage());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiErrorDto> handleHttpRequestMethodNotSupportedException(
+            HttpRequestMethodNotSupportedException e) {
         return toResponseEntity(ErrorType.UNSUPPORTED_API, e.getMessage());
     }
 
