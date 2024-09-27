@@ -18,4 +18,10 @@ public record WeatherapicomCurrent(Current current) {
             double feelslikeC) {
         public record Condition(int code) {}
     }
+
+    public WeatherapicomCurrent {
+        if (current == null) {
+            throw new IllegalStateException("현재 날씨 정보를 가져올 수 없습니다.");
+        }
+    }
 }

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.util.List;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record WeatherapicomHistory(Location location, Forecast forecast) {
     public record Location(String name, String region, String country) {}
@@ -23,6 +25,15 @@ public record WeatherapicomHistory(Location location, Forecast forecast) {
                     int dailyChanceOfRain,
                     int dailyWillItSnow,
                     int dailyChanceOfSnow) {}
+        }
+    }
+
+    public WeatherapicomHistory {
+        if (location == null
+                || forecast == null
+                || isEmpty(forecast.forecastday())
+                || forecast.forecastday().getFirst() == null) {
+            throw new IllegalStateException("과거 날씨 정보를 가져올 수 없습니다.");
         }
     }
 }
