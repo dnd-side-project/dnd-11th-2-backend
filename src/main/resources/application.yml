@@ -23,6 +23,11 @@ spring:
     virtual:
       enabled: false
 
+server:
+  tomcat:
+    mbeanregistry:
+      enabled: true # 톰캣 메트릭 모두 활성화
+
 app:
   api:
     allow-origins: ${ALLOW_ORIGINS}
