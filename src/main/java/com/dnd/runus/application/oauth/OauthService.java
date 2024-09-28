@@ -1,20 +1,15 @@
 package com.dnd.runus.application.oauth;
 
+import com.dnd.runus.application.member.MemberWithdrawService;
 import com.dnd.runus.auth.exception.AuthException;
 import com.dnd.runus.auth.oidc.provider.OidcProvider;
 import com.dnd.runus.auth.oidc.provider.OidcProviderRegistry;
 import com.dnd.runus.auth.token.TokenProviderModule;
 import com.dnd.runus.auth.token.dto.AuthTokenDto;
-import com.dnd.runus.domain.badge.BadgeAchievementRepository;
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentageRepository;
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
-import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
 import com.dnd.runus.domain.member.*;
-import com.dnd.runus.domain.running.RunningRecord;
-import com.dnd.runus.domain.running.RunningRecordRepository;
-import com.dnd.runus.domain.scale.ScaleAchievementRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.SocialType;
+import com.dnd.runus.global.event.AfterTransactionEvent;
 import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.global.exception.type.ErrorType;
@@ -26,10 +21,9 @@ import io.jsonwebtoken.Claims;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -42,12 +36,9 @@ public class OauthService {
     private final MemberRepository memberRepository;
     private final SocialProfileRepository socialProfileRepository;
     private final MemberLevelRepository memberLevelRepository;
-    private final BadgeAchievementRepository badgeAchievementRepository;
-    private final RunningRecordRepository runningRecordRepository;
-    private final ChallengeAchievementRepository challengeAchievementRepository;
-    private final GoalAchievementRepository goalAchievementRepository;
-    private final ChallengeAchievementPercentageRepository challengeAchievementPercentageRepository;
-    private final ScaleAchievementRepository scaleAchievementRepository;
+
+    private final MemberWithdrawService memberWithdrawService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public SignResponse signIn(SignInRequest request) {
@@ -116,41 +107,9 @@ public class OauthService {
             }
         });
         log.info("토큰 revoke 요청 완료. memberId: {}, socialType: {}", memberId, request.socialType());
-    }
 
-    @Transactional
-    public void deleteAllDataAboutMember(long memberId) {
-        Member member =
-                memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
-
-        memberLevelRepository.deleteByMemberId(member.memberId());
-        badgeAchievementRepository.deleteByMemberId(member.memberId());
-        scaleAchievementRepository.deleteByMemberId(member.memberId());
-        socialProfileRepository.deleteByMemberId(member.memberId());
-
-        // running_record 조회
-        List<RunningRecord> runningRecords = runningRecordRepository.findByMember(member);
-        if (runningRecords.isEmpty()) {
-            // running_record가 없으면 멤버 삭제 후 리턴
-            memberRepository.deleteById(member.memberId());
-            return;
-        }
-
-        // goal_achievement 삭제
-        goalAchievementRepository.deleteByRunningRecords(runningRecords);
-
-        // running_record로 challenge_achievement 조회
-        List<Long> challengeAchievementIds = challengeAchievementRepository.findIdsByRunningRecords(runningRecords);
-        // challenge_achievement가 존재하면 challenge_achievement_percentage, challenge_achievement 삭제
-        if (!challengeAchievementIds.isEmpty()) {
-            challengeAchievementPercentageRepository.deleteByChallengeAchievementIds(challengeAchievementIds);
-            challengeAchievementRepository.deleteByIds(challengeAchievementIds);
-        }
-
-        // running_record 삭제
-        runningRecordRepository.deleteByMemberId(member.memberId());
-
-        memberRepository.deleteById(member.memberId());
+        AfterTransactionEvent withDrawEvent = () -> memberWithdrawService.deleteAllDataAboutMember(memberId);
+        eventPublisher.publishEvent(withDrawEvent);
     }
 
     private SocialProfile createMember(String oauthId, String email, SocialType socialType, String nickname) {
