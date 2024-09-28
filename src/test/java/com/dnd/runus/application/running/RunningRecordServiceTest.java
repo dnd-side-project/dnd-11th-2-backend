@@ -156,6 +156,46 @@ class RunningRecordServiceTest {
     }
 
     @Test
+    @DisplayName("러닝 기록 조회 - Challenge 모드의 러닝 기록 조회")
+    void getRunningRecord_challenge() {
+        // given
+        long memberId = 1;
+        long runningRecordId = 1;
+        Member member = new Member(memberId, MemberRole.USER, "nickname1", OffsetDateTime.now(), OffsetDateTime.now());
+        RunningRecord runningRecord = new RunningRecord(
+                1L,
+                member,
+                10_000,
+                Duration.ofSeconds(10_000),
+                500,
+                new Pace(5, 30),
+                OffsetDateTime.now(),
+                OffsetDateTime.now(),
+                List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)),
+                "start location",
+                "end location",
+                RunningEmoji.VERY_GOOD);
+
+        ChallengeAchievement.Status challengeAchievementStatus =
+                new ChallengeAchievement.Status(1L, new Challenge(1L, "challenge", "image", ChallengeType.TODAY), true);
+
+        given(runningRecordRepository.findById(runningRecordId)).willReturn(Optional.of(runningRecord));
+        given(challengeAchievementRepository.findByRunningRecordId(runningRecordId))
+                .willReturn(Optional.of(challengeAchievementStatus));
+
+        // when
+        RunningRecordQueryResponse result = runningRecordService.getRunningRecord(memberId, runningRecordId);
+
+        // then
+        assertEquals(runningRecordId, result.runningRecordId());
+        assertEquals(runningRecord.emoji(), result.emotion());
+        assertEquals(
+                challengeAchievementStatus.challenge().name(),
+                result.challenge().title());
+        assertEquals(RunningAchievementMode.CHALLENGE, result.achievementMode());
+    }
+
+    @Test
     @DisplayName("CHALLENGE 모드의 러닝 기록 추가 요청시, challengeId에 해당하는 챌린지가 있을 경우, 정상적으로 러닝 기록이 추가된다.")
     void addRunningRecord_challenge() {
         // given
