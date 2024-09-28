@@ -107,7 +107,7 @@ public class RunningRecordService {
 
         return records.stream()
                 .map(RunningRecord::startAt)
-                .map(OffsetDateTime::toLocalDate)
+                .map(ZonedDateTime::toLocalDate)
                 .distinct()
                 .sorted()
                 .toList();
@@ -171,8 +171,8 @@ public class RunningRecordService {
 
         RunningRecord record = runningRecordRepository.save(RunningRecord.builder()
                 .member(member)
-                .startAt(request.startAt().atOffset(defaultZoneOffset))
-                .endAt(request.endAt().atOffset(defaultZoneOffset))
+                .startAt(request.startAt().atZone(defaultZoneOffset))
+                .endAt(request.endAt().atZone(defaultZoneOffset))
                 .emoji(request.emotion())
                 .startLocation(request.startLocation())
                 .endLocation(request.endLocation())
