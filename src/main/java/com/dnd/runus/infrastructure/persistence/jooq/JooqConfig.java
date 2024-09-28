@@ -7,6 +7,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class JooqConfig {
+
+    static {
+        System.setProperty("org.jooq.no-logo", "true");
+        System.setProperty("org.jooq.no-tips", "true");
+    }
+
     @Bean
     DefaultConfigurationCustomizer jooqConfigCustomizer() {
         return c -> c.settings()
