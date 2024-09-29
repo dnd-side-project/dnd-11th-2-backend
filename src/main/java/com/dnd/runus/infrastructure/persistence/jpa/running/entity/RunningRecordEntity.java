@@ -17,6 +17,7 @@ import org.locationtech.jts.geom.LineString;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 import static com.dnd.runus.global.constant.GeometryConstant.SRID;
 import static jakarta.persistence.EnumType.STRING;
@@ -57,6 +58,10 @@ public class RunningRecordEntity extends BaseTimeEntity {
     @NotNull
     private OffsetDateTime endAt;
 
+    @NotNull
+    @Size(max = 50)
+    private String timezoneName;
+
     @Column(columnDefinition = "geometry(LineStringZ, " + SRID + ")")
     private LineString route;
 
@@ -80,8 +85,9 @@ public class RunningRecordEntity extends BaseTimeEntity {
                 .durationSeconds((int) runningRecord.duration().toSeconds())
                 .calorie(runningRecord.calorie())
                 .averagePace(runningRecord.averagePace().toSeconds())
-                .startAt(runningRecord.startAt())
-                .endAt(runningRecord.endAt())
+                .startAt(runningRecord.startAt().toOffsetDateTime())
+                .endAt(runningRecord.endAt().toOffsetDateTime())
+                .timezoneName(runningRecord.startAt().getZone().getId())
                 .route(GeometryMapper.toLineString(runningRecord.route()))
                 .startLocation(runningRecord.startLocation())
                 .endLocation(runningRecord.endLocation())
@@ -90,6 +96,8 @@ public class RunningRecordEntity extends BaseTimeEntity {
     }
 
     public RunningRecord toDomain() {
+        ZoneId zoneId = ZoneId.of(timezoneName);
+
         return RunningRecord.builder()
                 .runningId(id)
                 .member(member.toDomain())
@@ -97,8 +105,8 @@ public class RunningRecordEntity extends BaseTimeEntity {
                 .duration(Duration.ofSeconds(durationSeconds))
                 .calorie(calorie)
                 .averagePace(Pace.ofSeconds(averagePace))
-                .startAt(startAt)
-                .endAt(endAt)
+                .startAt(startAt.atZoneSameInstant(zoneId))
+                .endAt(endAt.atZoneSameInstant(zoneId))
                 .route(GeometryMapper.toDomain(route))
                 .startLocation(startLocation)
                 .endLocation(endLocation)

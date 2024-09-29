@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -52,8 +52,8 @@ public class GoalAchievementRepositoryImplTest {
                 runningDuration,
                 1,
                 new Pace(5, 11),
-                OffsetDateTime.now(),
-                OffsetDateTime.now(),
+                ZonedDateTime.now(),
+                ZonedDateTime.now(),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                 "start location",
                 "end location",
@@ -126,8 +126,8 @@ public class GoalAchievementRepositoryImplTest {
                 runningDuration,
                 1,
                 new Pace(5, 11),
-                OffsetDateTime.now(),
-                OffsetDateTime.now(),
+                ZonedDateTime.now(),
+                ZonedDateTime.now(),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                 "start location",
                 "end location",
@@ -139,8 +139,8 @@ public class GoalAchievementRepositoryImplTest {
                 runningDuration,
                 1,
                 new Pace(5, 11),
-                OffsetDateTime.now(),
-                OffsetDateTime.now(),
+                ZonedDateTime.now(),
+                ZonedDateTime.now(),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                 "start location",
                 "end location",

@@ -112,8 +112,8 @@ class RunningRecordServiceTest {
                 Duration.ofSeconds(10_000),
                 500,
                 new Pace(5, 30),
-                OffsetDateTime.now(),
-                OffsetDateTime.now(),
+                ZonedDateTime.now(),
+                ZonedDateTime.now(),
                 List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)),
                 "start location",
                 "end location",
@@ -169,8 +169,8 @@ class RunningRecordServiceTest {
                 Duration.ofSeconds(10_000),
                 500,
                 new Pace(5, 30),
-                OffsetDateTime.now(),
-                OffsetDateTime.now(),
+                ZonedDateTime.now(),
+                ZonedDateTime.now(),
                 List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)),
                 "start location",
                 "end location",
@@ -496,8 +496,8 @@ class RunningRecordServiceTest {
     private RunningRecord createRunningRecord(RunningRecordRequest request, Member member) {
         return RunningRecord.builder()
                 .member(member)
-                .startAt(request.startAt().atOffset(defaultZoneOffset))
-                .endAt(request.endAt().atOffset(defaultZoneOffset))
+                .startAt(request.startAt().atZone(defaultZoneOffset))
+                .endAt(request.endAt().atZone(defaultZoneOffset))
                 .emoji(request.emotion())
                 .startLocation(request.startLocation())
                 .endLocation(request.endLocation())

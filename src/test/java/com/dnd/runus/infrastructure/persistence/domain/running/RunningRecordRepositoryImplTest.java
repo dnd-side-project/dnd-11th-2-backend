@@ -15,12 +15,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.time.*;
 import java.util.List;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
@@ -59,8 +55,8 @@ class RunningRecordRepositoryImplTest {
                 Duration.ofHours(12).plusMinutes(23).plusSeconds(56),
                 1,
                 new Pace(5, 11),
-                OffsetDateTime.now(),
-                OffsetDateTime.now(),
+                ZonedDateTime.now(),
+                ZonedDateTime.now(),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                 "start location",
                 "end location",
@@ -83,7 +79,7 @@ class RunningRecordRepositoryImplTest {
                 .atStartOfDay(SERVER_TIMEZONE_ID)
                 .toOffsetDateTime();
         OffsetDateTime yesterday = todayMidnight.minusDays(1);
-        OffsetDateTime dayBeforeYesterday = yesterday.minusHours(1);
+        ZonedDateTime dayBeforeYesterday = yesterday.minusHours(1).toZonedDateTime();
         // 그제:2, 어제:4, 오늘:1개
         for (int i = 0; i < 7; i++) {
             RunningRecord runningRecord = new RunningRecord(
@@ -117,7 +113,7 @@ class RunningRecordRepositoryImplTest {
                 .atStartOfDay(SERVER_TIMEZONE_ID)
                 .toOffsetDateTime();
         OffsetDateTime yesterday = todayMidnight.minusDays(1);
-        OffsetDateTime dayBeforeYesterday = yesterday.minusHours(1);
+        ZonedDateTime dayBeforeYesterday = yesterday.minusHours(1).toZonedDateTime();
         // 그제:2, 어제:4, 오늘:1개
         for (int i = 0; i < 7; i++) {
             RunningRecord runningRecord = new RunningRecord(
@@ -161,9 +157,8 @@ class RunningRecordRepositoryImplTest {
     @Test
     void getTotalDistanceWithRunningRecords() {
         // given
-        OffsetDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID)
-                .atStartOfDay(SERVER_TIMEZONE_ID)
-                .toOffsetDateTime();
+        ZonedDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID).atStartOfDay(SERVER_TIMEZONE_ID);
+
         // 러닝 기록 저장
         for (int i = 0; i < 3; i++) {
             RunningRecord runningRecord = new RunningRecord(
@@ -205,8 +200,8 @@ class RunningRecordRepositoryImplTest {
                     Duration.ofHours(1),
                     1,
                     new Pace(5, 11),
-                    OffsetDateTime.now(),
-                    OffsetDateTime.now(),
+                    ZonedDateTime.now(),
+                    ZonedDateTime.now(),
                     List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                     "start location",
                     "end location",
@@ -260,8 +255,8 @@ class RunningRecordRepositoryImplTest {
                     Duration.ofHours(1),
                     1,
                     new Pace(5, 11),
-                    OffsetDateTime.now(),
-                    OffsetDateTime.now(),
+                    ZonedDateTime.now(),
+                    ZonedDateTime.now(),
                     List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                     "start location",
                     "end location",
@@ -316,8 +311,8 @@ class RunningRecordRepositoryImplTest {
                     Duration.ofHours(1),
                     1,
                     new Pace(5, 11),
-                    OffsetDateTime.now(),
-                    OffsetDateTime.now(),
+                    ZonedDateTime.now(),
+                    ZonedDateTime.now(),
                     List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                     "start location",
                     "end location",
@@ -357,11 +352,11 @@ class RunningRecordRepositoryImplTest {
     void getAvgDistance_WithRunningRecords() {
         // given
         ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
-        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+        ZonedDateTime today = ZonedDateTime.now(defaultZoneOffset).toLocalDate().atStartOfDay(defaultZoneOffset);
 
         int day = today.get(DAY_OF_WEEK) - 1;
-        OffsetDateTime startDate = today.minusDays(day);
-        OffsetDateTime nextOfDndDate = startDate.plusDays(7);
+        ZonedDateTime startDate = today.minusDays(day);
+        ZonedDateTime nextOfDndDate = startDate.plusDays(7);
 
         // 러닝 기록 경계 값 위주로 저장(시작일 전날 1개, 시작일 1개, 종료일자로 1개, nextOfDndDate로 1개)
         // 시작일 전날 - 1km
@@ -423,7 +418,7 @@ class RunningRecordRepositoryImplTest {
 
         // when
         int avgResult = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
-                savedMember.memberId(), startDate, nextOfDndDate);
+                savedMember.memberId(), startDate.toOffsetDateTime(), nextOfDndDate.toOffsetDateTime());
 
         // then
         assertThat(avgResult).isEqualTo(2000);
@@ -453,11 +448,11 @@ class RunningRecordRepositoryImplTest {
     void getAvgDuration_WithRunningRecords() {
         // given
         ZoneOffset defaultZoneOffset = ZoneOffset.of("+09:00");
-        OffsetDateTime today = OffsetDateTime.now().toLocalDate().atStartOfDay().atOffset(defaultZoneOffset);
+        ZonedDateTime today = ZonedDateTime.now(defaultZoneOffset).toLocalDate().atStartOfDay(defaultZoneOffset);
 
         int day = today.get(DAY_OF_WEEK) - 1;
-        OffsetDateTime startDate = today.minusDays(day);
-        OffsetDateTime nextOfDndDate = startDate.plusDays(7);
+        ZonedDateTime startDate = today.minusDays(day);
+        ZonedDateTime nextOfDndDate = startDate.plusDays(7);
 
         // 러닝 기록 경계 값 위주로 저장(시작일 전날 1개, 시작일 1개, 종료일자로 1개, nextOfDndDate로 1개)
         // 시작일 전날 - 1시간
@@ -519,7 +514,7 @@ class RunningRecordRepositoryImplTest {
 
         // when
         int avgResult = runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
-                savedMember.memberId(), startDate, nextOfDndDate);
+                savedMember.memberId(), startDate.toOffsetDateTime(), nextOfDndDate.toOffsetDateTime());
 
         // then
         assertThat(avgResult).isEqualTo(Duration.ofHours(2).toSeconds());

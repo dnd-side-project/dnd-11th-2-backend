@@ -25,7 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -111,8 +111,8 @@ class MemberWithdrawServiceTest {
                 Duration.ofHours(12).plusMinutes(23).plusSeconds(56),
                 1,
                 new Pace(5, 11),
-                OffsetDateTime.now(),
-                OffsetDateTime.now().plusHours(1),
+                ZonedDateTime.now(),
+                ZonedDateTime.now().plusHours(1),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                 "start location",
                 "end location",
@@ -147,8 +147,8 @@ class MemberWithdrawServiceTest {
                 Duration.ofHours(12).plusMinutes(23).plusSeconds(56),
                 1,
                 new Pace(5, 11),
-                OffsetDateTime.now(),
-                OffsetDateTime.now().plusHours(1),
+                ZonedDateTime.now(),
+                ZonedDateTime.now().plusHours(1),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                 "start location",
                 "end location",

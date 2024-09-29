@@ -14,9 +14,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.dnd.runus.jooq.Tables.RUNNING_RECORD;
-import static org.jooq.impl.DSL.avg;
-import static org.jooq.impl.DSL.cast;
-import static org.jooq.impl.DSL.sum;
+import static org.jooq.impl.DSL.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -68,10 +66,10 @@ public class JooqRunningRecordRepository {
     /**
      * 기간 안의 일별 달린 거리을 리턴합니다.
      *
-     * @param startDate 시작 날짜 (정각)
+     * @param startDate         시작 날짜 (정각)
      * @param nextDateOfEndDate 종료 날짜의 다음 날 (정각)
      * @return 기간 내 각 날짜별 달린 거리 합계를 포함한 리스트.
-     *          각 요소는 날짜와 해당 날짜의 거리 합계를 나타내는 {@link DailyRunningRecordSummary} 객체입니다.
+     * 각 요소는 날짜와 해당 날짜의 거리 합계를 나타내는 {@link DailyRunningRecordSummary} 객체입니다.
      */
     public List<DailyRunningRecordSummary> findDailyDistancesMeterByDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
@@ -91,10 +89,10 @@ public class JooqRunningRecordRepository {
     /**
      * 기간 안의 일별 달린 시간을 리턴합니다.
      *
-     * @param startDate 시작 날짜 (정각)
+     * @param startDate         시작 날짜 (정각)
      * @param nextDateOfEndDate 종료 날짜의 다음 날 (정각)
      * @return 기간 내 각 날짜별 달린 시간 합계를 포함한 리스트.
-     *          각 요소는 날짜와 해당 날짜의 달린 시간 합계를 나타내는 {@link DailyRunningRecordSummary} 객체입니다.
+     * 각 요소는 날짜와 해당 날짜의 달린 시간 합계를 나타내는 {@link DailyRunningRecordSummary} 객체입니다.
      */
     public List<DailyRunningRecordSummary> findDailyDurationsSecMeterByDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {

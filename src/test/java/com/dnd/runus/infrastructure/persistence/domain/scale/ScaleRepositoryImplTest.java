@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,8 +92,8 @@ public class ScaleRepositoryImplTest {
                     Duration.ofHours(12).plusMinutes(23).plusSeconds(56),
                     1,
                     new Pace(5, 11),
-                    OffsetDateTime.now(),
-                    OffsetDateTime.now().plusHours(1),
+                    ZonedDateTime.now(),
+                    ZonedDateTime.now().plusHours(1),
                     List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                     "start location",
                     "end location",
@@ -123,8 +124,8 @@ public class ScaleRepositoryImplTest {
                 Duration.ofHours(12).plusMinutes(23).plusSeconds(56),
                 1,
                 new Pace(5, 11),
-                OffsetDateTime.now(),
-                OffsetDateTime.now().plusHours(1),
+                ZonedDateTime.now(),
+                ZonedDateTime.now().plusHours(1),
                 List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                 "start location",
                 "end location",
@@ -141,8 +142,8 @@ public class ScaleRepositoryImplTest {
                     Duration.ofHours(12).plusMinutes(23).plusSeconds(56),
                     1,
                     new Pace(5, 11),
-                    OffsetDateTime.now(),
-                    OffsetDateTime.now().plusHours(1),
+                    ZonedDateTime.now(),
+                    ZonedDateTime.now().plusHours(1),
                     List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
                     "start location",
                     "end location",
