@@ -39,7 +39,7 @@ public class ChallengeEntity {
 
     public static ChallengeEntity from(Challenge challenge) {
         return ChallengeEntity.builder()
-                .id(challenge.challengeId())
+                .id(challenge.challengeId() == 0 ? null : challenge.challengeId())
                 .name(challenge.name())
                 .expectedTime(challenge.expectedTime())
                 .challengeType(challenge.challengeType())

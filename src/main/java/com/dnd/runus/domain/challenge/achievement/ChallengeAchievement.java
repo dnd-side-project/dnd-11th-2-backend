@@ -15,4 +15,6 @@ public record ChallengeAchievement(
     public String description() {
         return isSuccess ? SUCCESS.getComment() : FAILURE.getComment();
     }
+
+    public record Status(long challengeAchievementId, Challenge challenge, boolean isSuccess) {}
 }

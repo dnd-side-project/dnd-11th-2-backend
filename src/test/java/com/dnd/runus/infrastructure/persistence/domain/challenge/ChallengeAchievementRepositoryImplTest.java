@@ -14,6 +14,7 @@ import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.infrastructure.persistence.annotation.RepositoryTest;
 import com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeAchievementEntity;
+import com.dnd.runus.infrastructure.persistence.jpa.challenge.entity.ChallengeEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -71,7 +72,7 @@ public class ChallengeAchievementRepositoryImplTest {
         for (int i = 0; i < 2; i++) {
             savedRunningRecords.add(runningRecordRepository.save(runningRecord));
         }
-        challenge = new Challenge(1, "name", 60, "imageUrl", ChallengeType.DEFEAT_YESTERDAY);
+        challenge = new Challenge(0, "name", 60, "imageUrl", ChallengeType.DEFEAT_YESTERDAY);
     }
 
     @DisplayName("ChallengeAchievement 저장시, 성공여부가 true인지 확인")
@@ -132,5 +133,31 @@ public class ChallengeAchievementRepositoryImplTest {
                 .getResultList();
 
         assertTrue(selectAll.isEmpty());
+    }
+
+    @DisplayName("러닝 레코드 id로 ChallengeAchievement.Status 조회")
+    @Test
+    void findByRunningRecordId() {
+        // given
+        ChallengeEntity challengeEntity = ChallengeEntity.from(challenge);
+        em.persist(challengeEntity);
+
+        challenge = challengeEntity.toDomain();
+        ChallengeAchievementEntity challengeAchievementEntity = ChallengeAchievementEntity.from(
+                new ChallengeAchievement(challenge, savedRunningRecords.getFirst(), true));
+        em.persist(challengeAchievementEntity);
+        em.flush();
+
+        ChallengeAchievement achievement = challengeAchievementEntity.toDomain(challenge);
+
+        // when
+        ChallengeAchievement.Status status = challengeAchievementRepository
+                .findByRunningRecordId(achievement.runningRecord().runningId())
+                .orElse(null);
+
+        // then
+        assertNotNull(status);
+        assertThat(status.challengeAchievementId()).isEqualTo(achievement.ChallengeAchievementId());
+        assertThat(status.challenge()).isEqualTo(achievement.challenge());
     }
 }

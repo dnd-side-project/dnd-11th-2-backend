@@ -78,11 +78,24 @@ public class RunningRecordService {
 
     @Transactional(readOnly = true)
     public RunningRecordQueryResponse getRunningRecord(long memberId, long runningRecordId) {
-        RunningRecord record = runningRecordRepository
+        RunningRecord runningRecord = runningRecordRepository
                 .findById(runningRecordId)
                 .filter(r -> r.member().memberId() == memberId)
                 .orElseThrow(() -> new NotFoundException(RunningRecord.class, runningRecordId));
-        return RunningRecordQueryResponse.from(record);
+
+        ChallengeAchievement challengeAchievement = challengeAchievementRepository
+                .findByRunningRecordId(runningRecordId)
+                .map(status -> new ChallengeAchievement(
+                        status.challengeAchievementId(), status.challenge(), runningRecord, status.isSuccess()))
+                .orElse(null);
+
+        GoalAchievement goalAchievement = (challengeAchievement == null)
+                ? goalAchievementRepository
+                        .findByRunningRecordId(runningRecordId)
+                        .orElse(null)
+                : null;
+
+        return RunningRecordQueryResponse.of(runningRecord, challengeAchievement, goalAchievement);
     }
 
     @Transactional(readOnly = true)

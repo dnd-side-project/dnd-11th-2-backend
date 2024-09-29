@@ -63,6 +63,15 @@ public record RunningRecordQueryResponse(
         );
     }
 
+    public static RunningRecordQueryResponse of(RunningRecord runningRecord, ChallengeAchievement challengeAchievement, GoalAchievement goalAchievement) {
+        if (challengeAchievement != null) {
+            return of(runningRecord, challengeAchievement);
+        } else if (goalAchievement != null) {
+            return of(runningRecord, goalAchievement);
+        }
+        return from(runningRecord);
+    }
+
     private static RunningRecordQueryResponse buildResponse(RunningRecord runningRecord, ChallengeDto challenge, GoalResultDto goal, RunningAchievementMode achievementMode) {
         return new RunningRecordQueryResponse(
                 runningRecord.runningId(),
