@@ -78,6 +78,5 @@ public class OauthController {
     @ResponseStatus(HttpStatus.OK)
     public void withdraw(@MemberId long memberId, @Valid @RequestBody WithdrawRequest request) {
         oauthService.revokeOauth(memberId, request);
-        oauthService.deleteAllDataAboutMember(memberId);
     }
 }
