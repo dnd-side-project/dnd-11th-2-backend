@@ -9,13 +9,6 @@ spring:
     open-in-view: false
     defer-datasource-initialization: false
 
-    properties:
-      hibernate:
-        format_sql: true
-        highlight_sql: true
-        generate_statistics: true
-        session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 300
-
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
@@ -29,13 +22,6 @@ spring:
   threads:
     virtual:
       enabled: false
-
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.orm.jdbc.bind: TRACE
-    org.hibernate.SQL_SLOW: INFO
-    org.hibernate.stat: DEBUG
 
 server:
   tomcat:
@@ -82,11 +68,32 @@ management:
 ---
 spring.config.activate.on-profile: local
 
+spring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        generate_statistics: true
+        session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 300
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.hibernate.SQL_SLOW: INFO
+    org.hibernate.stat: DEBUG
+
 ---
+spring.config.activate.on-profile: prod
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 300
 
 logging:
   level:
     org.hibernate: ERROR
-    org.hibernate.SQL_SLOW: WARN
-
-spring.config.activate.on-profile: prod
+    org.hibernate.SQL_SLOW: INFO
