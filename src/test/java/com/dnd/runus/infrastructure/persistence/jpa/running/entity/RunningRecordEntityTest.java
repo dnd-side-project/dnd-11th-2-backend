@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,8 +29,8 @@ class RunningRecordEntityTest {
                 .duration(Duration.ofSeconds(100))
                 .calorie(1.0)
                 .averagePace(Pace.ofSeconds(100))
-                .startAt(OffsetDateTime.now())
-                .endAt(OffsetDateTime.now())
+                .startAt(ZonedDateTime.now())
+                .endAt(ZonedDateTime.now())
                 .route(List.of(new Coordinate(128.0, 36.0), new Coordinate(128.0, 37.0)))
                 .startLocation("start location")
                 .endLocation("end location")
