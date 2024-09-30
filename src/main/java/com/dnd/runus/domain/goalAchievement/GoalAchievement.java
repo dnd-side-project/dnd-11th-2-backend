@@ -27,12 +27,13 @@ public record GoalAchievement(
                 goalMetricType.getActualValue(runningRecord) >= achievementValue);
     }
 
-    public String getTitle() {
+    public String getTitle(boolean isAchieved) {
+        String returnTitle = (isAchieved ? " 달성" : " 달성 실패");
         if (goalMetricType == DISTANCE) {
-            return KILO_METER_FORMATTER.format(achievementValue / METERS_IN_A_KILOMETER) + " 달성";
+            return KILO_METER_FORMATTER.format(achievementValue / METERS_IN_A_KILOMETER) + returnTitle;
         }
 
-        return formatSecondToKoreanHHMM(achievementValue) + " 달성";
+        return formatSecondToKoreanHHMM(achievementValue) + returnTitle;
     }
 
     public String getDescription() {

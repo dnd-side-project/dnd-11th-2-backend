@@ -54,7 +54,7 @@ public record RunningRecordQueryResponse(
         return buildResponse(runningRecord,
                 null,
                 new GoalResultDto(
-                        achievement.getTitle(),
+                        achievement.getTitle(achievement.isAchieved()),
                         achievement.getDescription(),
                         achievement.getIconUrl(),
                         achievement.isAchieved()
