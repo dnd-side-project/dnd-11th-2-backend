@@ -105,7 +105,7 @@ class ChallengeAchievementPercentageRepositoryImplTest {
                     new ChallengeAchievementRecord(savedChallengeAchievements.get(i), new PercentageValues(0, 0, 0)));
         }
         List<Long> idList = savedChallengeAchievements.stream()
-                .map(ChallengeAchievement::ChallengeAchievementId)
+                .map(ChallengeAchievement::challengeAchievementId)
                 .toList();
 
         // when
