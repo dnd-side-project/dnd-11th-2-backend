@@ -39,7 +39,6 @@ public class JooqBadgeRepository {
                             record.get(BADGE.NAME),
                             record.get(BADGE.IMAGE_URL),
                             BadgeType.valueOf(record.get(BADGE.TYPE))),
-                    achievedTime != null,
                     achievedTime);
         }
     }
