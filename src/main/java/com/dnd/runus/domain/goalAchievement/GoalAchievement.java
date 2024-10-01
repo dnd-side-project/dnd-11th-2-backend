@@ -27,8 +27,8 @@ public record GoalAchievement(
                 goalMetricType.getActualValue(runningRecord) >= achievementValue);
     }
 
-    public String getTitle(boolean isAchieved) {
-        String returnTitle = (isAchieved ? " 달성" : " 달성 실패");
+    public String getTitle() {
+        String returnTitle = (this.isAchieved ? " 달성" : " 달성 실패");
         if (goalMetricType == DISTANCE) {
             return KILO_METER_FORMATTER.format(achievementValue / METERS_IN_A_KILOMETER) + returnTitle;
         }
