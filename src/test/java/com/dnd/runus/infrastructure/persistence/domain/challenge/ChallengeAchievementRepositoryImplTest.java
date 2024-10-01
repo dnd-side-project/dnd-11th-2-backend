@@ -98,7 +98,7 @@ public class ChallengeAchievementRepositoryImplTest {
         for (int i = 0; i < 2; i++) {
             ids.add(challengeAchievementRepository
                     .save(new ChallengeAchievement(challenge, savedRunningRecords.get(i), true))
-                    .ChallengeAchievementId());
+                    .challengeAchievementId());
         }
 
         // then
@@ -118,7 +118,7 @@ public class ChallengeAchievementRepositoryImplTest {
         for (int i = 0; i < 2; i++) {
             ids.add(challengeAchievementRepository
                     .save(new ChallengeAchievement(challenge, savedRunningRecords.get(i), true))
-                    .ChallengeAchievementId());
+                    .challengeAchievementId());
         }
 
         // when
@@ -157,7 +157,7 @@ public class ChallengeAchievementRepositoryImplTest {
 
         // then
         assertNotNull(status);
-        assertThat(status.challengeAchievementId()).isEqualTo(achievement.ChallengeAchievementId());
+        assertThat(status.challengeAchievementId()).isEqualTo(achievement.challengeAchievementId());
         assertThat(status.challenge()).isEqualTo(achievement.challenge());
     }
 }

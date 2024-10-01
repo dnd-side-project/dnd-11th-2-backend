@@ -7,7 +7,7 @@ import static com.dnd.runus.global.constant.RunningResultComment.FAILURE;
 import static com.dnd.runus.global.constant.RunningResultComment.SUCCESS;
 
 public record ChallengeAchievement(
-        long ChallengeAchievementId, Challenge challenge, RunningRecord runningRecord, boolean isSuccess) {
+        long challengeAchievementId, Challenge challenge, RunningRecord runningRecord, boolean isSuccess) {
     public ChallengeAchievement(Challenge challenge, RunningRecord runningRecord, boolean isSuccess) {
         this(0, challenge, runningRecord, isSuccess);
     }

@@ -42,9 +42,9 @@ public class ChallengeAchievementEntity extends BaseTimeEntity {
     public static ChallengeAchievementEntity from(ChallengeAchievement challengeAchievement) {
         return ChallengeAchievementEntity.builder()
                 .id(
-                        challengeAchievement.ChallengeAchievementId() == 0
+                        challengeAchievement.challengeAchievementId() == 0
                                 ? null
-                                : challengeAchievement.ChallengeAchievementId())
+                                : challengeAchievement.challengeAchievementId())
                 .runningRecord(RunningRecordEntity.from(challengeAchievement.runningRecord()))
                 .challengeId(challengeAchievement.challenge().challengeId())
                 .successStatus(challengeAchievement.isSuccess())
