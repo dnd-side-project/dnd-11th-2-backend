@@ -30,7 +30,7 @@ class BadgeServiceTest {
     @DisplayName("자신이 획득한 뱃지 전체 조회에 성공")
     void getAchievedBadges() {
         // given
-        Badge badge1 = new Badge(1L, "badge1", "description", "imageUrl1", BadgeType.RUNNING_COUNT, 100);
+        Badge badge1 = new Badge(1L, "badge1", "description", "imageUrl1", BadgeType.STREAK, 100);
         Badge badge2 = new Badge(2L, "badge2", "description", "imageUrl2", BadgeType.DISTANCE_METER, 1000);
 
         given(badgeAchievementRepository.findByMemberIdWithBadge(1L))

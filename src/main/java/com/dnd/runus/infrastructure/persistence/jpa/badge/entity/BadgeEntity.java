@@ -40,7 +40,7 @@ public class BadgeEntity {
 
     public static BadgeEntity from(Badge badge) {
         BadgeEntity badgeEntity = new BadgeEntity();
-        badgeEntity.id = badge.badgeId();
+        badgeEntity.id = badge.badgeId() == 0 ? null : badge.badgeId();
         badgeEntity.name = badge.name();
         badgeEntity.description = badge.description();
         badgeEntity.imageUrl = badge.imageUrl();
