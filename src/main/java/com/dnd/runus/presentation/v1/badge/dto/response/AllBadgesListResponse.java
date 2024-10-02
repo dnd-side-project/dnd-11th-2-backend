@@ -1,5 +1,6 @@
 package com.dnd.runus.presentation.v1.badge.dto.response;
 
+import com.dnd.runus.domain.badge.Badge;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public record AllBadgesListResponse(
 ) {
     public record BadgeWithAchievedStatus(
         @Schema(description = "뱃지 id")
-        long Id,
+        long id,
         @Schema(description = "뱃지 이름")
         String name,
         @Schema(description = "뱃지 이미지 url")
@@ -27,5 +28,8 @@ public record AllBadgesListResponse(
         @Schema(description = "뱃지 달성 여부")
         boolean isAchieved
     ) {
+        public static BadgeWithAchievedStatus of(Badge badge, boolean isAchieved) {
+            return new BadgeWithAchievedStatus(badge.badgeId(), badge.name(), badge.imageUrl(), isAchieved);
+        }
     }
 }

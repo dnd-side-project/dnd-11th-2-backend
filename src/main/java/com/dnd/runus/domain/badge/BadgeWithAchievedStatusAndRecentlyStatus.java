@@ -10,13 +10,9 @@ public record BadgeWithAchievedStatusAndRecentlyStatus(
     public static BadgeWithAchievedStatusAndRecentlyStatus from(
             BadgeWithAchieveStatusAndAchievedAt badgeWithAchievedStatus, OffsetDateTime criterionDate) {
         return new BadgeWithAchievedStatusAndRecentlyStatus(
-                new AllBadgesListResponse.BadgeWithAchievedStatus(
-                        badgeWithAchievedStatus.badge().badgeId(),
-                        badgeWithAchievedStatus.badge().name(),
-                        badgeWithAchievedStatus.badge().imageUrl(),
-                        badgeWithAchievedStatus.isAchieved()),
+                AllBadgesListResponse.BadgeWithAchievedStatus.of(
+                        badgeWithAchievedStatus.badge(), badgeWithAchievedStatus.isAchieved()),
                 badgeWithAchievedStatus.badge().type(),
-                badgeWithAchievedStatus.achievedAt() != null
-                        && criterionDate.isBefore(badgeWithAchievedStatus.achievedAt()));
+                badgeWithAchievedStatus.isAchieved() && criterionDate.isBefore(badgeWithAchievedStatus.achievedAt()));
     }
 }
