@@ -57,7 +57,7 @@ public class WeatherApiComWeatherClient implements WeatherClient {
                     history.forecast().forecastday().getFirst().day();
 
             return new WeatherInfo(
-                    mapWeatherType(current.current().condition().code()),
+                    mapWeatherType(current.current().condition().code(), current.isDay()),
                     current.current().feelslikeC(),
                     today.mintempC(),
                     today.maxtempC(),
@@ -70,10 +70,10 @@ public class WeatherApiComWeatherClient implements WeatherClient {
         }
     }
 
-    private WeatherType mapWeatherType(int weatherCode) {
+    private WeatherType mapWeatherType(int weatherCode, boolean isDay) {
         return switch (weatherCode) {
-            case 1000 -> WeatherType.CLEAR;
-            case 1003, 1006 -> WeatherType.CLOUDY;
+            case 1000 -> isDay ? WeatherType.CLEAR : WeatherType.CLEAR_NIGHT;
+            case 1003, 1006 -> isDay ? WeatherType.CLOUDY : WeatherType.CLOUDY_NIGHT;
             case 1087, 1273, 1276, 1279, 1282 -> WeatherType.STORM;
             case 1063, 1150, 1153, 1180, 1183, 1186, 1189, 1192, 1195, 1198, 1201, 1240, 1243, 1246 -> WeatherType.RAIN;
             case 1066, 1069, 1072, 1114, 1117, 1210, 1213, 1216, 1219, 1222, 1225, 1255, 1258, 1261, 1264 -> WeatherType
