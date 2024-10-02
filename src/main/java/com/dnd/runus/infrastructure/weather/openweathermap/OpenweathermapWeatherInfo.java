@@ -5,11 +5,17 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record OpenweathermapWeatherInfo(Weather[] weather, Main main, Wind wind) {
+public record OpenweathermapWeatherInfo(Weather[] weather, Main main, Wind wind, long dt, Sys sys) {
     record Weather(int id, String main, String description, String icon) {}
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     record Main(double temp, double feelsLike, double tempMin, double tempMax, double pressure, double humidity) {}
 
     record Wind(double speed, double deg, double gust) {}
+
+    record Sys(long sunrise, long sunset) {}
+
+    public boolean isDay() {
+        return dt > sys.sunrise && dt < sys.sunset;
+    }
 }

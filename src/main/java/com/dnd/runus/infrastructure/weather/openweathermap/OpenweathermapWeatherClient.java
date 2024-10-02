@@ -29,7 +29,7 @@ public class OpenweathermapWeatherClient implements WeatherClient {
         }
 
         return new WeatherInfo(
-                mapWeatherType(info.weather()[0].id()),
+                mapWeatherType(info.weather()[0].id(), info.isDay()),
                 info.main().feelsLike(),
                 info.main().tempMin(),
                 info.main().tempMax(),
@@ -37,26 +37,22 @@ public class OpenweathermapWeatherClient implements WeatherClient {
                 info.wind().speed());
     }
 
-    private WeatherType mapWeatherType(int weatherId) {
-        switch (weatherId / 100) {
-            case 2:
-                return WeatherType.STORM;
-            case 3, 5:
-                return WeatherType.RAIN;
-            case 6:
-                return WeatherType.SNOW;
-            case 7:
-                return WeatherType.FOG;
-            case 8:
+    private WeatherType mapWeatherType(int weatherId, boolean isDay) {
+        return switch (weatherId / 100) {
+            case 2 -> WeatherType.STORM;
+            case 3, 5 -> WeatherType.RAIN;
+            case 6 -> WeatherType.SNOW;
+            case 7 -> WeatherType.FOG;
+            case 8 -> {
                 if (weatherId == 800) {
-                    return WeatherType.CLEAR;
+                    yield isDay ? WeatherType.CLEAR : WeatherType.CLEAR_NIGHT;
                 } else if (weatherId == 801) {
-                    return WeatherType.CLOUDY;
+                    yield isDay ? WeatherType.CLOUDY : WeatherType.CLOUDY_NIGHT;
                 } else {
-                    return WeatherType.CLOUDY_MORE;
+                    yield WeatherType.CLOUDY_MORE;
                 }
-            default:
-                return WeatherType.CLOUDY_MORE;
-        }
+            }
+            default -> WeatherType.CLOUDY_MORE;
+        };
     }
 }
