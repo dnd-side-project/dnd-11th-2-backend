@@ -22,7 +22,7 @@ public class BadgeController {
         return badgeService.getAchievedBadges(memberId);
     }
 
-    @GetMapping("/my-list")
+    @GetMapping("/me/lists")
     @Operation(
             summary = "나의 뱃지 조회 목록 조회",
             description =
