@@ -24,7 +24,6 @@ import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
@@ -134,7 +133,7 @@ class BadgeServiceTest {
         assertFalse(distanceBadges.isEmpty());
         assertFalse(personalBadges.isEmpty());
         assertFalse(durationBadges.isEmpty());
-        assertNull(result.levelBadges());
+        assertTrue(result.levelBadges().isEmpty());
 
         assertThat(recencyBadges.size()).isEqualTo(2);
 

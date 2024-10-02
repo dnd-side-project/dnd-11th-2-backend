@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -59,13 +60,12 @@ public class BadgeService {
                 recencyBadges.add(badgeMapWithRecentlyStatus.badgeWithAchievedStatus());
             }
         });
-
         return new AllBadgesListResponse(
                 recencyBadges,
-                badgeMap.get(BadgeType.PERSONAL_RECORD),
-                badgeMap.get(BadgeType.DISTANCE_METER),
-                badgeMap.get(BadgeType.STREAK),
-                badgeMap.get(BadgeType.DURATION_SECONDS),
-                badgeMap.get(BadgeType.LEVEL));
+                badgeMap.getOrDefault(BadgeType.PERSONAL_RECORD, Collections.emptyList()),
+                badgeMap.getOrDefault(BadgeType.DISTANCE_METER, Collections.emptyList()),
+                badgeMap.getOrDefault(BadgeType.STREAK, Collections.emptyList()),
+                badgeMap.getOrDefault(BadgeType.DURATION_SECONDS, Collections.emptyList()),
+                badgeMap.getOrDefault(BadgeType.LEVEL, Collections.emptyList()));
     }
 }
