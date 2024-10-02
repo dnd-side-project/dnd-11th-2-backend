@@ -24,4 +24,8 @@ public record WeatherapicomCurrent(Current current) {
             throw new IllegalStateException("현재 날씨 정보를 가져올 수 없습니다.");
         }
     }
+
+    public boolean isDay() {
+        return current.isDay() == 1;
+    }
 }
