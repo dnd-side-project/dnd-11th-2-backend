@@ -45,14 +45,14 @@ public class BadgeService {
         Map<BadgeType, List<AllBadgesListResponse.BadgeWithAchievedStatus>> badgeMap = new EnumMap<>(BadgeType.class);
         List<AllBadgesListResponse.BadgeWithAchievedStatus> recencyBadges = new ArrayList<>();
 
-        OffsetDateTime aWeekAgo = LocalDate.now(SERVER_TIMEZONE_ID)
+        OffsetDateTime oneWeekAgo = LocalDate.now(SERVER_TIMEZONE_ID)
                 .atStartOfDay(SERVER_TIMEZONE_ID)
                 .toOffsetDateTime()
                 .minusDays(7);
 
         allBadges.forEach(badge -> {
             BadgeWithAchievedStatusAndRecentlyStatus badgeMapWithRecentlyStatus =
-                    BadgeWithAchievedStatusAndRecentlyStatus.from(badge, aWeekAgo);
+                    BadgeWithAchievedStatusAndRecentlyStatus.from(badge, oneWeekAgo);
             badgeMap.computeIfAbsent(badgeMapWithRecentlyStatus.badgeType(), k -> new ArrayList<>())
                     .add(badgeMapWithRecentlyStatus.badgeWithAchievedStatus());
             if (badgeMapWithRecentlyStatus.isRecent()) {
