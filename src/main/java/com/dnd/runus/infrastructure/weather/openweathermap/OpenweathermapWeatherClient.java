@@ -4,37 +4,60 @@ import com.dnd.runus.global.constant.WeatherType;
 import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.infrastructure.weather.WeatherClient;
 import com.dnd.runus.infrastructure.weather.WeatherInfo;
-import lombok.RequiredArgsConstructor;
+import com.dnd.runus.infrastructure.weather.openweathermap.dto.OpenweathermapCurrent;
+import com.dnd.runus.infrastructure.weather.openweathermap.dto.OpenweathermapForecast;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import static com.dnd.runus.global.exception.type.ErrorType.WEATHER_API_ERROR;
 
 @Component
-@RequiredArgsConstructor
 public class OpenweathermapWeatherClient implements WeatherClient {
     private final OpenweathermapWeatherHttpClient openweathermapWeatherHttpClient;
+    private final String apiKey;
+    private final ExecutorService executorService;
 
-    @Value("${weather.openweathermap.api-key}")
-    private String apiKey;
+    public OpenweathermapWeatherClient(
+            OpenweathermapWeatherHttpClient openweathermapWeatherHttpClient,
+            @Value("${weather.openweathermap.api-key}") String apiKey,
+            @Qualifier("virtualExecutorService") ExecutorService executorService) {
+        this.openweathermapWeatherHttpClient = openweathermapWeatherHttpClient;
+        this.apiKey = apiKey;
+        this.executorService = executorService;
+    }
 
     @Override
     public WeatherInfo getWeatherInfo(double longitude, double latitude) {
         String unit = "metric";
-        OpenweathermapWeatherInfo info =
-                openweathermapWeatherHttpClient.getWeatherInfo(longitude, latitude, unit, apiKey);
 
-        if (info == null || info.weather() == null || info.weather().length == 0) {
-            throw new BusinessException(WEATHER_API_ERROR, "날씨 정보를 가져올 수 없습니다.");
+        Future<OpenweathermapCurrent> currentFuture = executorService.submit(
+                () -> openweathermapWeatherHttpClient.getWeatherInfo(longitude, latitude, unit, apiKey));
+
+        Future<OpenweathermapForecast> forecastFuture = executorService.submit(() -> {
+            int count = 8;
+            return openweathermapWeatherHttpClient.getForecast(longitude, latitude, unit, apiKey, count);
+        });
+
+        try {
+            OpenweathermapCurrent current = currentFuture.get();
+            OpenweathermapForecast forecast = forecastFuture.get();
+
+            return new WeatherInfo(
+                    mapWeatherType(current.weather()[0].id(), current.isDay()),
+                    current.main().feelsLike(),
+                    forecast.findMinTemp(),
+                    forecast.findMaxTemp(),
+                    current.main().humidity(),
+                    current.wind().speed());
+        } catch (Exception e) {
+            throw new BusinessException(
+                    WEATHER_API_ERROR,
+                    String.format("[openweathermap] lon: %f, lat: %f, %s", longitude, latitude, e.getMessage()));
         }
-
-        return new WeatherInfo(
-                mapWeatherType(info.weather()[0].id(), info.isDay()),
-                info.main().feelsLike(),
-                info.main().tempMin(),
-                info.main().tempMax(),
-                info.main().humidity(),
-                info.wind().speed());
     }
 
     private WeatherType mapWeatherType(int weatherId, boolean isDay) {
