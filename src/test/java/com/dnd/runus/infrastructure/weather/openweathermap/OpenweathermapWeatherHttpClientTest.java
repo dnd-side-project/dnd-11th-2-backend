@@ -1,5 +1,6 @@
 package com.dnd.runus.infrastructure.weather.openweathermap;
 
+import com.dnd.runus.infrastructure.weather.openweathermap.dto.OpenweathermapCurrent;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,7 +93,7 @@ class OpenweathermapWeatherHttpClientTest {
                         .withBody(body)));
 
         // when
-        OpenweathermapWeatherInfo weatherInfo =
+        OpenweathermapCurrent weatherInfo =
                 openweathermapWeatherHttpClient.getWeatherInfo(longitude, latitude, "metric", "test");
 
         // then
