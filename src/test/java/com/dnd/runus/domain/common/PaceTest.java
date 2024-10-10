@@ -51,7 +51,7 @@ class PaceTest {
 
     private static Stream<Arguments> providePace() {
         return Stream.of(
-                Arguments.of(0, 0, "0’00”"),
+                Arguments.of(0, 0, "-’--”"),
                 Arguments.of(0, 30, "0’30”"),
                 Arguments.of(1, 1, "1’01”"),
                 Arguments.of(1, 5, "1’05”"),
