@@ -21,7 +21,7 @@ import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.global.exception.NotFoundException;
-import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDto;
+import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDtoForAdd;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
@@ -41,6 +41,8 @@ import java.time.*;
 import java.util.List;
 import java.util.Optional;
 
+import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
+import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_MINUTE;
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
 import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -209,7 +211,7 @@ class RunningRecordServiceTest {
                 null,
                 null,
                 RunningAchievementMode.CHALLENGE,
-                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+                new RunningRecordMetricsDtoForAdd(Duration.ofSeconds(10_100), 10_000, 500.0));
 
         Member member = new Member(MemberRole.USER, "nickname1");
         RunningRecord expected = createRunningRecord(request, member);
@@ -249,7 +251,7 @@ class RunningRecordServiceTest {
                 null,
                 1200,
                 RunningAchievementMode.GOAL,
-                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+                new RunningRecordMetricsDtoForAdd(Duration.ofSeconds(10_100), 10_000, 500.0));
 
         Member member = new Member(MemberRole.USER, "nickname1");
         RunningRecord expected = createRunningRecord(request, member);
@@ -288,7 +290,7 @@ class RunningRecordServiceTest {
                 null,
                 20_000,
                 RunningAchievementMode.GOAL,
-                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+                new RunningRecordMetricsDtoForAdd(Duration.ofSeconds(10_100), 10_000, 500.0));
 
         Member member = new Member(MemberRole.USER, "nickname1");
         RunningRecord expected = createRunningRecord(request, member);
@@ -327,7 +329,7 @@ class RunningRecordServiceTest {
                 5_000,
                 null,
                 RunningAchievementMode.GOAL,
-                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+                new RunningRecordMetricsDtoForAdd(Duration.ofSeconds(10_100), 10_000, 500.0));
 
         Member member = new Member(MemberRole.USER, "nickname1");
         RunningRecord expected = createRunningRecord(request, member);
@@ -366,7 +368,7 @@ class RunningRecordServiceTest {
                 10_000,
                 null,
                 RunningAchievementMode.GOAL,
-                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+                new RunningRecordMetricsDtoForAdd(Duration.ofSeconds(10_100), 10_000, 500.0));
 
         Member member = new Member(MemberRole.USER, "nickname1");
         RunningRecord expected = createRunningRecord(request, member);
@@ -494,6 +496,16 @@ class RunningRecordServiceTest {
     }
 
     private RunningRecord createRunningRecord(RunningRecordRequest request, Member member) {
+
+        RunningRecordMetricsDtoForAdd runningData = request.runningData();
+
+        double calPace = (double) runningData.runningTime().toSeconds()
+                / runningData.distanceMeter()
+                * METERS_IN_A_KILOMETER
+                / SECONDS_PER_MINUTE;
+        int minute = (int) Math.floor(calPace);
+        int second = (int) Math.floor((calPace - minute) * SECONDS_PER_MINUTE);
+
         return RunningRecord.builder()
                 .member(member)
                 .startAt(request.startAt().atZone(defaultZoneOffset))
@@ -504,7 +516,7 @@ class RunningRecordServiceTest {
                 .distanceMeter(request.runningData().distanceMeter())
                 .duration(request.runningData().runningTime())
                 .calorie(request.runningData().calorie())
-                .averagePace(request.runningData().averagePace())
+                .averagePace(new Pace(minute, second))
                 .route(List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)))
                 .build();
     }
