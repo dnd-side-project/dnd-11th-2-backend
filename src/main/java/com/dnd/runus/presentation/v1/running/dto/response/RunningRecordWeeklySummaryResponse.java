@@ -7,10 +7,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public record RunningRecordWeeklySummaryResponse(
-    @Schema(description = "이번주 날짜", example = "2024.09.09 ~ 09.15")
+    @Schema(description = "이번주 날짜", example = "2024.09.09 ~ 2024.09.15")
     String weeklyDate,
-    @Schema(description = "요일 별 활동 값, 거리는 km, 시간은 시간(Hour) 단위<br>"
-        + "월요일(index:0) ~ 일요일(index:6)의 값, 기록없는 날은 0을 리턴")
+    @Schema(description = "요일 별 활동 값<br>"
+        + "월 ~ 일 순서로 리턴")
     List<WeeklyRunningRatingDto> weeklyValues,
     @Schema(description = "지난주 평균 활동 값, 거리는 km, 시간은 시간(Hour) 단위<br>"
         + "지난주에 기록이 없으면 0을 리턴")

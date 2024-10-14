@@ -87,10 +87,6 @@ public class RunningRecordController {
     활동 요약은 주간 거리 기록 또는 주간 달린 기록을 조회합니다.<br>
     - request 값이 DISTANCE 이면 이번주 요일별 달린 거리와, 지난주 달린 거리의 평균 값을 리턴합니다.<br>
     - request 값이 TIME 이면 이번주 요일별 달린 시간과, 지난주 달린 시간의 평균 값을 리턴합니다.<br>
-    - request값과 상관 없이 공통의로 이번주 날짜(월요일 날짜 ~ 일요일 날짜)를 리턴합니다.<br>
-
-    이번 주 기록은 리스트형식으로(weeklyValues)로 리턴 되며 인덱스 값에 따른 데이터는 다음과 같습니다.<br>
-    - weeklyValues = [월요일 기록, 화요일 기록, .... , 일요일 기록]
     """)
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("weekly-summary")
