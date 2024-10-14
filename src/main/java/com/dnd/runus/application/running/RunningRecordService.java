@@ -25,6 +25,7 @@ import com.dnd.runus.domain.scale.ScaleAchievement;
 import com.dnd.runus.domain.scale.ScaleAchievementRepository;
 import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.global.exception.NotFoundException;
+import com.dnd.runus.presentation.v1.running.dto.WeeklyRunningRatingDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.*;
@@ -32,9 +33,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 import java.time.*;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
 import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_HOUR;
@@ -149,10 +154,19 @@ public class RunningRecordService {
             conversionFactor = SECONDS_PER_HOUR;
         }
 
-        double[] weeklyValues = new double[7];
+        List<WeeklyRunningRatingDto> weeklyValues = Arrays.stream(DayOfWeek.values())
+                .map(day -> new WeeklyRunningRatingDto(
+                        day.getDisplayName(TextStyle.SHORT, Locale.KOREAN), 0.0)) // 초기값으로 0.0 설정
+                .collect(Collectors.toList());
+
+        // weeklyValues에 값 set
         for (DailyRunningRecordSummary summary : weekSummaries) {
-            int dayOfWeek = summary.date().getDayOfWeek().getValue() - 1;
-            weeklyValues[dayOfWeek] = summary.sumValue() / conversionFactor;
+            DayOfWeek dayOfWeek = summary.date().getDayOfWeek();
+            weeklyValues.set(
+                    dayOfWeek.getValue() - 1,
+                    new WeeklyRunningRatingDto(
+                            dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN),
+                            summary.sumValue() / conversionFactor));
         }
 
         return new RunningRecordWeeklySummaryResponse(
