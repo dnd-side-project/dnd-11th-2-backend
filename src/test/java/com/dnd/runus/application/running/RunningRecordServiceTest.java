@@ -22,6 +22,7 @@ import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsForAddDto;
+import com.dnd.runus.presentation.v1.running.dto.WeeklyRunningRatingDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
@@ -476,10 +477,10 @@ class RunningRecordServiceTest {
         RunningRecordWeeklySummaryResponse response = runningRecordService.getWeeklySummary(memberId, summaryType);
 
         // then
-        double[] weeklyValues = response.weeklyValues();
-        int runningDateIdx = runningDate.get(DAY_OF_WEEK) - 1;
-        assertThat(weeklyValues.length).isEqualTo(7);
-        assertThat(weeklyValues[runningDateIdx]).isEqualTo(3.567);
+        List<WeeklyRunningRatingDto> weeklyValues = response.weeklyValues();
+        WeeklyRunningRatingDto weeklyValue = weeklyValues.get(runningDate.get(DAY_OF_WEEK) - 1);
+        assertThat(weeklyValues.size()).isEqualTo(7);
+        assertThat(weeklyValue.rating()).isEqualTo(3.567);
         assertThat(response.lastWeekAvgValue()).isEqualTo(0.8);
     }
 
@@ -511,10 +512,10 @@ class RunningRecordServiceTest {
         RunningRecordWeeklySummaryResponse response = runningRecordService.getWeeklySummary(memberId, summaryType);
 
         // then
-        double[] weeklyValues = response.weeklyValues();
-        int runningDateIdx = runningDate.get(DAY_OF_WEEK) - 1;
-        assertThat(weeklyValues.length).isEqualTo(7);
-        assertThat(weeklyValues[runningDateIdx]).isEqualTo(expectedRunningDurationHour);
+        List<WeeklyRunningRatingDto> weeklyValues = response.weeklyValues();
+        WeeklyRunningRatingDto weeklyValue = weeklyValues.get(runningDate.get(DAY_OF_WEEK) - 1);
+        assertThat(weeklyValues.size()).isEqualTo(7);
+        assertThat(weeklyValue.rating()).isEqualTo(expectedRunningDurationHour);
         assertThat(response.lastWeekAvgValue()).isEqualTo(expectedRunningDurationHour);
     }
 
