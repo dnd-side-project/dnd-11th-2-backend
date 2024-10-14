@@ -38,7 +38,6 @@ import java.util.List;
 
 import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
 import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_HOUR;
-import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_MINUTE;
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
 
 @Service
@@ -181,7 +180,7 @@ public class RunningRecordService {
                 .distanceMeter(request.runningData().distanceMeter())
                 .duration(request.runningData().runningTime())
                 .calorie(request.runningData().calorie())
-                .averagePace(calAvgPace(
+                .averagePace(Pace.from(
                         request.runningData().distanceMeter(),
                         request.runningData().runningTime()))
                 .route(route)
@@ -283,14 +282,5 @@ public class RunningRecordService {
 
         GoalAchievement goalAchievement = new GoalAchievement(runningRecord, goalMetricType, goalValue, isAchieved);
         return goalAchievementRepository.save(goalAchievement);
-    }
-
-    private Pace calAvgPace(int distanceMeter, Duration runningTime) {
-        double paceOfSecondPerMeter = (double) runningTime.toSeconds() / distanceMeter;
-        double paceOfMinutePerKilometer = (paceOfSecondPerMeter * METERS_IN_A_KILOMETER) / SECONDS_PER_MINUTE;
-        int minute = (int) Math.floor(paceOfMinutePerKilometer);
-        int second = (int) Math.floor((paceOfMinutePerKilometer - minute) * SECONDS_PER_MINUTE);
-
-        return new Pace(minute, second);
     }
 }

@@ -3,6 +3,9 @@ package com.dnd.runus.domain.common;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.time.Duration;
+
+import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
 import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_MINUTE;
 
 /**
@@ -23,6 +26,15 @@ public record Pace(int minute, int second) {
     public static Pace ofSeconds(int seconds) {
         int minute = seconds / SECONDS_PER_MINUTE;
         int second = seconds % SECONDS_PER_MINUTE;
+        return new Pace(minute, second);
+    }
+
+    public static Pace from(int distanceMeter, Duration runningTime) {
+        double paceOfSecondPerMeter = (double) runningTime.toSeconds() / distanceMeter;
+        double paceOfMinutePerKilometer = (paceOfSecondPerMeter * METERS_IN_A_KILOMETER) / SECONDS_PER_MINUTE;
+        int minute = (int) Math.floor(paceOfMinutePerKilometer);
+        int second = (int) Math.floor((paceOfMinutePerKilometer - minute) * SECONDS_PER_MINUTE);
+
         return new Pace(minute, second);
     }
 

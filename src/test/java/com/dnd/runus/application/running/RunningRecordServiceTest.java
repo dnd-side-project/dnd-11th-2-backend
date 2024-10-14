@@ -41,8 +41,6 @@ import java.time.*;
 import java.util.List;
 import java.util.Optional;
 
-import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
-import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_MINUTE;
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
 import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -526,15 +524,6 @@ class RunningRecordServiceTest {
 
     private RunningRecord createRunningRecord(RunningRecordRequest request, Member member) {
 
-        RunningRecordMetricsForAddDto runningData = request.runningData();
-
-        double calPace = (double) runningData.runningTime().toSeconds()
-                / runningData.distanceMeter()
-                * METERS_IN_A_KILOMETER
-                / SECONDS_PER_MINUTE;
-        int minute = (int) Math.floor(calPace);
-        int second = (int) Math.floor((calPace - minute) * SECONDS_PER_MINUTE);
-
         return RunningRecord.builder()
                 .member(member)
                 .startAt(request.startAt().atZone(defaultZoneOffset))
@@ -545,7 +534,9 @@ class RunningRecordServiceTest {
                 .distanceMeter(request.runningData().distanceMeter())
                 .duration(request.runningData().runningTime())
                 .calorie(request.runningData().calorie())
-                .averagePace(new Pace(minute, second))
+                .averagePace(Pace.from(
+                        request.runningData().distanceMeter(),
+                        request.runningData().runningTime()))
                 .route(List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)))
                 .build();
     }
