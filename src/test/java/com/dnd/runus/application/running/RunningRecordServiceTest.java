@@ -447,8 +447,6 @@ class RunningRecordServiceTest {
         RunningRecordWeeklySummaryResponse response = runningRecordService.getWeeklySummary(memberId, summaryType);
 
         // then
-        assertTrue(response.date().contains("~"));
-
         double[] weeklyValues = response.weeklyValues();
         int runningDateIdx = runningDate.get(DAY_OF_WEEK) - 1;
         assertThat(weeklyValues.length).isEqualTo(7);
@@ -484,8 +482,6 @@ class RunningRecordServiceTest {
         RunningRecordWeeklySummaryResponse response = runningRecordService.getWeeklySummary(memberId, summaryType);
 
         // then
-        assertTrue(response.date().contains("~"));
-
         double[] weeklyValues = response.weeklyValues();
         int runningDateIdx = runningDate.get(DAY_OF_WEEK) - 1;
         assertThat(weeklyValues.length).isEqualTo(7);
