@@ -3,7 +3,7 @@ package com.dnd.runus.presentation.v1.running.dto.request;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.type.ErrorType;
-import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDto;
+import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsForAddDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -34,7 +34,7 @@ public record RunningRecordRequest(
         @Schema(description = "목표 달성 모드, normal: 목표 설정X, challenge: 챌린지, goal: 개인 목표")
         RunningAchievementMode achievementMode,
         @NotNull
-        RunningRecordMetricsDto runningData
+        RunningRecordMetricsForAddDto runningData
 ) {
     public RunningRecordRequest {
         if (startAt.isAfter(endAt)) {

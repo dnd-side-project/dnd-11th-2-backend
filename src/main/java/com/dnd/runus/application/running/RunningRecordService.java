@@ -9,6 +9,7 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentage
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
 import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
 import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
 import com.dnd.runus.domain.level.Level;
@@ -179,7 +180,9 @@ public class RunningRecordService {
                 .distanceMeter(request.runningData().distanceMeter())
                 .duration(request.runningData().runningTime())
                 .calorie(request.runningData().calorie())
-                .averagePace(request.runningData().averagePace())
+                .averagePace(Pace.from(
+                        request.runningData().distanceMeter(),
+                        request.runningData().runningTime()))
                 .route(route)
                 .build());
 

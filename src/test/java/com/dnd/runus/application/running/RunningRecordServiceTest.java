@@ -21,7 +21,7 @@ import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.global.exception.NotFoundException;
-import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsDto;
+import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsForAddDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
@@ -209,7 +209,7 @@ class RunningRecordServiceTest {
                 null,
                 null,
                 RunningAchievementMode.CHALLENGE,
-                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+                new RunningRecordMetricsForAddDto(Duration.ofSeconds(10_100), 10_000, 500.0));
 
         Member member = new Member(MemberRole.USER, "nickname1");
         RunningRecord expected = createRunningRecord(request, member);
@@ -249,7 +249,7 @@ class RunningRecordServiceTest {
                 null,
                 1200,
                 RunningAchievementMode.GOAL,
-                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+                new RunningRecordMetricsForAddDto(Duration.ofSeconds(10_100), 10_000, 500.0));
 
         Member member = new Member(MemberRole.USER, "nickname1");
         RunningRecord expected = createRunningRecord(request, member);
@@ -288,7 +288,7 @@ class RunningRecordServiceTest {
                 null,
                 20_000,
                 RunningAchievementMode.GOAL,
-                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+                new RunningRecordMetricsForAddDto(Duration.ofSeconds(10_100), 10_000, 500.0));
 
         Member member = new Member(MemberRole.USER, "nickname1");
         RunningRecord expected = createRunningRecord(request, member);
@@ -327,7 +327,7 @@ class RunningRecordServiceTest {
                 5_000,
                 null,
                 RunningAchievementMode.GOAL,
-                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+                new RunningRecordMetricsForAddDto(Duration.ofSeconds(10_100), 10_000, 500.0));
 
         Member member = new Member(MemberRole.USER, "nickname1");
         RunningRecord expected = createRunningRecord(request, member);
@@ -366,7 +366,7 @@ class RunningRecordServiceTest {
                 10_000,
                 null,
                 RunningAchievementMode.GOAL,
-                new RunningRecordMetricsDto(new Pace(5, 30), Duration.ofSeconds(10_100), 10_000, 500.0));
+                new RunningRecordMetricsForAddDto(Duration.ofSeconds(10_100), 10_000, 500.0));
 
         Member member = new Member(MemberRole.USER, "nickname1");
         RunningRecord expected = createRunningRecord(request, member);
@@ -388,6 +388,35 @@ class RunningRecordServiceTest {
         assertFalse(response.goal().title().contains("분"));
 
         assertTrue(response.goal().isSuccess());
+    }
+
+    @Test
+    @DisplayName("러닝의 페이스가 올바르게 계산되었는지 확인한다.")
+    void addRunningRecord_check_cal_pace() {
+        // given
+        RunningRecordRequest request = new RunningRecordRequest(
+                LocalDateTime.of(2021, 1, 1, 12, 10, 30),
+                LocalDateTime.of(2021, 1, 1, 13, 12, 10),
+                "start location",
+                "end location",
+                RunningEmoji.VERY_GOOD,
+                null,
+                null,
+                null,
+                RunningAchievementMode.NORMAL,
+                new RunningRecordMetricsForAddDto(Duration.ofSeconds(1_668), 3_280, 500.0));
+
+        Member member = new Member(MemberRole.USER, "nickname1");
+        RunningRecord expected = createRunningRecord(request, member);
+
+        given(memberRepository.findById(1L)).willReturn(Optional.of(member));
+        given(runningRecordRepository.save(expected)).willReturn(expected);
+
+        // when
+        RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
+
+        // then
+        assertEquals(new Pace(8, 28), response.runningData().averagePace());
     }
 
     @Test
@@ -494,6 +523,7 @@ class RunningRecordServiceTest {
     }
 
     private RunningRecord createRunningRecord(RunningRecordRequest request, Member member) {
+
         return RunningRecord.builder()
                 .member(member)
                 .startAt(request.startAt().atZone(defaultZoneOffset))
@@ -504,7 +534,9 @@ class RunningRecordServiceTest {
                 .distanceMeter(request.runningData().distanceMeter())
                 .duration(request.runningData().runningTime())
                 .calorie(request.runningData().calorie())
-                .averagePace(request.runningData().averagePace())
+                .averagePace(Pace.from(
+                        request.runningData().distanceMeter(),
+                        request.runningData().runningTime()))
                 .route(List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)))
                 .build();
     }
