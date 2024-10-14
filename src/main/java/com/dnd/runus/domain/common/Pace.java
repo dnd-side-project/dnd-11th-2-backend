@@ -30,6 +30,10 @@ public record Pace(int minute, int second) {
     }
 
     public static Pace from(int distanceMeter, Duration runningTime) {
+        if (distanceMeter == 0 || runningTime.equals(Duration.ZERO)) {
+            return new Pace(0, 0);
+        }
+
         double paceOfSecondPerMeter = (double) runningTime.toSeconds() / distanceMeter;
         double paceOfMinutePerKilometer = (paceOfSecondPerMeter * METERS_IN_A_KILOMETER) / SECONDS_PER_MINUTE;
         int minute = (int) Math.floor(paceOfMinutePerKilometer);
