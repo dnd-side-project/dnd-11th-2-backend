@@ -9,6 +9,7 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentage
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
 import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
 import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
 import com.dnd.runus.domain.level.Level;
@@ -37,6 +38,7 @@ import java.util.List;
 
 import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
 import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_HOUR;
+import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_MINUTE;
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
 
 @Service
@@ -179,7 +181,9 @@ public class RunningRecordService {
                 .distanceMeter(request.runningData().distanceMeter())
                 .duration(request.runningData().runningTime())
                 .calorie(request.runningData().calorie())
-                .averagePace(request.runningData().averagePace())
+                .averagePace(calAvgPace(
+                        request.runningData().distanceMeter(),
+                        request.runningData().runningTime()))
                 .route(route)
                 .build());
 
@@ -279,5 +283,14 @@ public class RunningRecordService {
 
         GoalAchievement goalAchievement = new GoalAchievement(runningRecord, goalMetricType, goalValue, isAchieved);
         return goalAchievementRepository.save(goalAchievement);
+    }
+
+    private Pace calAvgPace(int distanceMeter, Duration runningTime) {
+        double paceOfSecondPerMeter = (double) runningTime.toSeconds() / distanceMeter;
+        double paceOfMinutePerKilometer = (paceOfSecondPerMeter * METERS_IN_A_KILOMETER) / SECONDS_PER_MINUTE;
+        int minute = (int) Math.floor(paceOfMinutePerKilometer);
+        int second = (int) Math.floor((paceOfMinutePerKilometer - minute) * SECONDS_PER_MINUTE);
+
+        return new Pace(minute, second);
     }
 }
