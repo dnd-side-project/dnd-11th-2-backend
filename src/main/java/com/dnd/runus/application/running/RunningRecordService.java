@@ -156,8 +156,7 @@ public class RunningRecordService {
 
         List<WeeklyRunningRatingDto> weeklyValues = Arrays.stream(DayOfWeek.values())
                 .map(day -> new WeeklyRunningRatingDto(
-                        day.getDisplayName(TextStyle.SHORT, Locale.KOREAN), 0.0 // 초기값으로 0.0 설정
-                        ))
+                        day.getDisplayName(TextStyle.SHORT, Locale.KOREAN), 0.0)) // 초기값으로 0.0 설정
                 .collect(Collectors.toList());
 
         // weeklyValues에 값 set
