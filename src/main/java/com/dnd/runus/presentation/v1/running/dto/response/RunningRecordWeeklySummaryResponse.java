@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 public record RunningRecordWeeklySummaryResponse(
     @Schema(description = "이번주 날짜", example = "2024.09.09 ~ 09.15")
-    String date,
+    String weeklyDate,
     @Schema(description = "요일 별 활동 값, 거리는 km, 시간은 시간(Hour) 단위<br>"
         + "월요일(index:0) ~ 일요일(index:6)의 값, 기록없는 날은 0을 리턴")
     double[] weeklyValues,
@@ -21,12 +21,7 @@ public record RunningRecordWeeklySummaryResponse(
     private static String dateFormat(LocalDate startDate, LocalDate endDate) {
         DateTimeFormatter yyyyMMddFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         String formattedStartDate = startDate.format(yyyyMMddFormatter);
-        String formattedEndDate = endDate.format(DateTimeFormatter.ofPattern("MM.dd"));
-        if (startDate.getYear() != endDate.getYear()) {
-            //연도가 다를 경우 yyyy.MM.dd ~ yyyy.MM.dd
-            formattedEndDate = endDate.format(yyyyMMddFormatter);
-        }
-        //yyyy.MM.dd ~ MM.dd 로 리턴
+        String formattedEndDate = endDate.format(yyyyMMddFormatter);
         return formattedStartDate + " ~ " + formattedEndDate;
     }
 }
