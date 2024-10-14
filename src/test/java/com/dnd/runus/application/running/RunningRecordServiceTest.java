@@ -393,6 +393,35 @@ class RunningRecordServiceTest {
     }
 
     @Test
+    @DisplayName("러닝의 페이스가 올바르게 계산되었는지 확인한다.")
+    void addRunningRecord_check_cal_pace() {
+        // given
+        RunningRecordRequest request = new RunningRecordRequest(
+                LocalDateTime.of(2021, 1, 1, 12, 10, 30),
+                LocalDateTime.of(2021, 1, 1, 13, 12, 10),
+                "start location",
+                "end location",
+                RunningEmoji.VERY_GOOD,
+                null,
+                null,
+                null,
+                RunningAchievementMode.NORMAL,
+                new RunningRecordMetricsDtoForAdd(Duration.ofSeconds(1_668), 3_280, 500.0));
+
+        Member member = new Member(MemberRole.USER, "nickname1");
+        RunningRecord expected = createRunningRecord(request, member);
+
+        given(memberRepository.findById(1L)).willReturn(Optional.of(member));
+        given(runningRecordRepository.save(expected)).willReturn(expected);
+
+        // when
+        RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
+
+        // then
+        assertEquals(new Pace(8, 28), response.runningData().averagePace());
+    }
+
+    @Test
     @DisplayName("이번 달, 달린 키로 수, 러닝 레벨을 조회한다.")
     void getMonthlyRunningSummery() {
         // given
