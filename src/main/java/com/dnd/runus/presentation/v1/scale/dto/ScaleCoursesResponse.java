@@ -1,12 +1,12 @@
 package com.dnd.runus.presentation.v1.scale.dto;
 
-import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.List;
+
+import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
 
 public record ScaleCoursesResponse(
         Info info,
@@ -53,7 +53,7 @@ public record ScaleCoursesResponse(
             String name,
             @Schema(description = "현재 코스 총 거리", example = "200km")
             String totalDistance,
-            @Schema(description = "현재 달성한 거리, 현재 50m 달성", example = "50m")
+            @Schema(description = "현재 달성한 거리, 현재 32.3km 달성", example = "32.3km")
             String achievedDistance,
             @Schema(description = "현재 코스 설명 메시지", example = "대전까지 100km 남았어요!")
             String message
@@ -64,7 +64,14 @@ public record ScaleCoursesResponse(
                 int achievedMeter,
                 String message
         ) {
-            this(name, KILO_METER_FORMATTER.format(totalMeter / METERS_IN_A_KILOMETER), achievedMeter + "m", message);
+            this(name, KILO_METER_FORMATTER.format(totalMeter / METERS_IN_A_KILOMETER), formatAchievedDistance(achievedMeter), message);
+        }
+
+        private static String formatAchievedDistance(int achievedMeter) {
+            if (achievedMeter < METERS_IN_A_KILOMETER) {
+                return achievedMeter + "m";
+            }
+            return KILO_METER_FORMATTER.format(achievedMeter / METERS_IN_A_KILOMETER);
         }
     }
 }
