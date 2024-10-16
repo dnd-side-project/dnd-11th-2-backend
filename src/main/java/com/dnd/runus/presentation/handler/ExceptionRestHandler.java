@@ -26,13 +26,11 @@ import java.util.Arrays;
 public class ExceptionRestHandler {
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiErrorDto> handleBaseException(BaseException e) {
-        log.warn(e.getMessage());
         return toResponseEntity(e.getType(), e.getMessage());
     }
 
     @ExceptionHandler(AuthException.class)
     public ResponseEntity<ApiErrorDto> handleAuthException(AuthException e) {
-        log.warn(e.getMessage());
         return toResponseEntity(e.getType(), e.getMessage());
     }
 
@@ -62,6 +60,11 @@ public class ExceptionRestHandler {
     public ResponseEntity<ApiErrorDto> handleInsufficientAuthenticationException(
             InsufficientAuthenticationException e) {
         return toResponseEntity(ErrorType.FAILED_AUTHENTICATION, e.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorDto> handleIllegalArgumentException(IllegalArgumentException e) {
+        return toResponseEntity(ErrorType.FAILED_VALIDATION, e.getMessage());
     }
 
     ////////////////// 요청 파라미터 예외 / 타입 불일치, Enum 매개변수 관련 예외
@@ -103,7 +106,6 @@ public class ExceptionRestHandler {
     ////////////////// 직렬화 / 역직렬화 예외
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        log.warn(ex.getBindingResult().getAllErrors().toString());
         return toResponseEntity(
                 ErrorType.FAILED_VALIDATION,
                 ex.getBindingResult().getAllErrors().toString());
@@ -117,21 +119,29 @@ public class ExceptionRestHandler {
     ////////////////// Database 관련 예외
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiErrorDto> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        log.warn(ex.getMessage(), ex);
         return toResponseEntity(ErrorType.VIOLATION_OCCURRED, ex);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiErrorDto> handleConstraintViolationException(ConstraintViolationException ex) {
-        log.warn(ex.getMessage(), ex);
         return toResponseEntity(ErrorType.VIOLATION_OCCURRED, ex);
     }
 
     private static ResponseEntity<ApiErrorDto> toResponseEntity(@NotNull ErrorType type, Exception exception) {
-        return toResponseEntity(type, exception.getMessage());
+        return toResponseEntity(type, exception.getClass().getName() + ": " + exception.getMessage());
     }
 
     private static ResponseEntity<ApiErrorDto> toResponseEntity(@NotNull ErrorType type, String message) {
+        loggingExceptionByErrorType(type, message);
         return ResponseEntity.status(type.httpStatus().value()).body(ApiErrorDto.of(type, message));
+    }
+
+    private static void loggingExceptionByErrorType(ErrorType type, String message) {
+        switch (type.level()) {
+            case INFO -> log.info(message);
+            case DEBUG -> log.debug(message);
+            case WARN -> log.warn(message);
+            default -> log.error(message);
+        }
     }
 }
