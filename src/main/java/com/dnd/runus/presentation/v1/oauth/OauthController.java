@@ -8,6 +8,7 @@ import com.dnd.runus.presentation.v1.oauth.dto.request.SignInRequest;
 import com.dnd.runus.presentation.v1.oauth.dto.request.SignUpRequest;
 import com.dnd.runus.presentation.v1.oauth.dto.request.WithdrawRequest;
 import com.dnd.runus.presentation.v1.oauth.dto.response.SignResponse;
+import com.dnd.runus.presentation.v1.oauth.dto.response.WithdrawResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -76,7 +77,9 @@ public class OauthController {
     @ApiErrorType({ErrorType.UNSUPPORTED_SOCIAL_TYPE, ErrorType.FAILED_AUTHENTICATION})
     @PostMapping("/withdraw")
     @ResponseStatus(HttpStatus.OK)
-    public void withdraw(@MemberId long memberId, @Valid @RequestBody WithdrawRequest request) {
-        oauthService.revokeOauth(memberId, request);
+    public WithdrawResponse withdraw(@MemberId long memberId, @Valid @RequestBody WithdrawRequest request) {
+        boolean isSuccess = oauthService.revokeOauth(memberId, request);
+
+        return new WithdrawResponse(isSuccess);
     }
 }

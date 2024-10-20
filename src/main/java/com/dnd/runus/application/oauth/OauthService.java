@@ -77,7 +77,7 @@ public class OauthService {
     }
 
     @Transactional(readOnly = true)
-    public void revokeOauth(long memberId, WithdrawRequest request) {
+    public boolean revokeOauth(long memberId, WithdrawRequest request) {
 
         memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
 
@@ -93,23 +93,19 @@ public class OauthService {
                         String.format(
                                 "socialType: %s, oauthId: %s, memberId: %s", request.socialType(), oauthId, memberId)));
 
-        Thread.startVirtualThread(() -> {
-            try {
-                String accessToken = oidcProvider.getAccessToken(request.authorizationCode());
-                oidcProvider.revoke(accessToken);
-                log.info("토큰 revoke 성공. memberId: {}, socialType: {}", memberId, request.socialType());
-            } catch (Exception e) {
-                log.warn(
-                        "토큰 revoke 실패. memberId: {}, socialType: {}, {}",
-                        memberId,
-                        request.socialType(),
-                        e.getMessage());
-            }
-        });
-        log.info("토큰 revoke 요청 완료. memberId: {}, socialType: {}", memberId, request.socialType());
+        try {
+            String accessToken = oidcProvider.getAccessToken(request.authorizationCode());
+            oidcProvider.revoke(accessToken);
+            log.info("토큰 revoke 성공. memberId: {}, socialType: {}", memberId, request.socialType());
 
-        AfterTransactionEvent withDrawEvent = () -> memberWithdrawService.deleteAllDataAboutMember(memberId);
-        eventPublisher.publishEvent(withDrawEvent);
+            AfterTransactionEvent withDrawEvent = () -> memberWithdrawService.deleteAllDataAboutMember(memberId);
+            eventPublisher.publishEvent(withDrawEvent);
+
+            return true;
+        } catch (Exception e) {
+            log.warn("토큰 revoke 실패. memberId: {}, socialType: {}, {}", memberId, request.socialType(), e.getMessage());
+            return false;
+        }
     }
 
     private SocialProfile createMember(String oauthId, String email, SocialType socialType, String nickname) {
