@@ -39,6 +39,7 @@ out/
 ### etc ###
 .DS_Store
 
+### Project ###
 **/main/generated/
 
 **/resources/.env
@@ -46,3 +47,6 @@ out/
 !**/resources/.env.example
 
 **/resources/app/apple/*.p8
+
+### Logs ###
+logs/**

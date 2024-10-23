@@ -48,6 +48,9 @@ caffeine = { group = "com.github.ben-manes.caffeine", name = "caffeine", version
 micrometer-registry-prometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version = "1.13.4" }
 resilience4j-spring-boot = { group = "io.github.resilience4j", name = "resilience4j-spring-boot3", version = "2.2.0" }
 
+logback-json-classic = { group = "ch.qos.logback.contrib", name = "logback-json-classic", version = "0.1.5" }
+logback-jackson = { group = "ch.qos.logback.contrib", name = "logback-jackson", version = "0.1.5" }
+
 [bundles]
 spring-boot = [
     "spring-boot-starter",
@@ -77,6 +80,11 @@ testcontainers = [
 jooq = [
     "jooq",
     "jooq-meta",
+]
+
+logback = [
+    "logback-json-classic",
+    "logback-jackson",
 ]
 
 [plugins]
