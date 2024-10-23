@@ -4,6 +4,8 @@
 
 [![CI][CI_Badge]][CI_Link] [![CD][CD_Badge]][CD_Link]
 
+<a href="https://apps.apple.com/kr/app/runus/id6689522964" target="_blank"> <img src="https://github.com/user-attachments/assets/cfb6c288-7b66-4488-98c7-df07de27e8a5" alt="Download_on_the_App_Store_Badge" width="150"></a>
+
 [CI_Badge]: https://github.com/dnd-side-project/dnd-11th-2-backend/actions/workflows/CI.yml/badge.svg
 
 [CI_Link]: https://github.com/dnd-side-project/dnd-11th-2-backend/actions/workflows/CI.yml
