@@ -5,11 +5,11 @@ import com.dnd.runus.auth.oidc.provider.OidcProvider;
 import com.dnd.runus.auth.oidc.provider.OidcProviderRegistry;
 import com.dnd.runus.auth.token.TokenProviderModule;
 import com.dnd.runus.auth.token.dto.AuthTokenDto;
-import com.dnd.runus.domain.member.*;
+import com.dnd.runus.domain.member.Member;
+import com.dnd.runus.domain.member.SocialProfile;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.SocialType;
 import com.dnd.runus.global.exception.BusinessException;
-import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.v1.oauth.dto.request.SignInRequest;
 import com.dnd.runus.presentation.v1.oauth.dto.request.SignUpRequest;
@@ -27,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.OffsetDateTime;
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -46,16 +45,10 @@ class OauthServiceTest {
     private OidcProvider oidcProvider;
 
     @Mock
-    private SocialProfileRepository socialProfileRepository;
-
-    @Mock
-    private MemberRepository memberRepository;
+    private SocialProfileService socialProfileService;
 
     @Mock
     private TokenProviderModule tokenProviderModule;
-
-    @Mock
-    private MemberLevelRepository memberLevelRepository;
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
@@ -98,8 +91,8 @@ class OauthServiceTest {
             given(oidcProvider.getClaimsBy(idToken)).willReturn(claims);
             given(claims.getSubject()).willReturn(oauthId);
             given(claims.get("email")).willReturn(email);
-            given(socialProfileRepository.findBySocialTypeAndOauthId(socialType, oauthId))
-                    .willReturn(Optional.of(new SocialProfile(1L, member, socialType, oauthId, email)));
+            given(socialProfileService.findOrThrow(socialType, oauthId, email))
+                    .willReturn(new SocialProfile(1L, member, socialType, oauthId, email));
             AuthTokenDto tokenDto = new AuthTokenDto("access-token", "refresh-token", "bearer");
             given(tokenProviderModule.generate(String.valueOf(member.memberId())))
                     .willReturn(tokenDto);
@@ -123,8 +116,8 @@ class OauthServiceTest {
             given(oidcProvider.getClaimsBy(idToken)).willReturn(claims);
             given(claims.getSubject()).willReturn(oauthId);
             given(claims.get("email")).willReturn(email);
-            given(socialProfileRepository.findBySocialTypeAndOauthId(socialType, oauthId))
-                    .willReturn(Optional.empty());
+            given(socialProfileService.findOrThrow(socialType, oauthId, email))
+                    .willThrow(new BusinessException(ErrorType.USER_NOT_FOUND));
 
             // when, then
             BusinessException exception = assertThrows(BusinessException.class, () -> oauthService.signIn(request));
@@ -141,8 +134,8 @@ class OauthServiceTest {
             given(claims.getSubject()).willReturn(oauthId);
             given(claims.get("email")).willReturn(email);
             SocialProfile socialProfile = new SocialProfile(1L, member, socialType, oauthId, email);
-            given(socialProfileRepository.findBySocialTypeAndOauthId(socialType, oauthId))
-                    .willReturn(Optional.of(socialProfile));
+            given(socialProfileService.findOrCreate(socialType, oauthId, email, request.nickname()))
+                    .willReturn(socialProfile);
             AuthTokenDto tokenDto = new AuthTokenDto("access-token", "refresh-token", "bearer");
             given(tokenProviderModule.generate(String.valueOf(member.memberId())))
                     .willReturn(tokenDto);
@@ -158,7 +151,7 @@ class OauthServiceTest {
         }
 
         @Test
-        @DisplayName("sign-up 시 socialProfile이 없다면 socialProfileRepository.save() 호출")
+        @DisplayName("sign-up 시 socialProfile이 없다면 socialProfile을 생성")
         void socialProfile_not_exist_then_signUp_save_social_profile() {
             // given
             SignUpRequest request = new SignUpRequest(socialType, idToken, "nickname");
@@ -166,13 +159,13 @@ class OauthServiceTest {
             given(oidcProvider.getClaimsBy(idToken)).willReturn(claims);
             given(claims.getSubject()).willReturn(oauthId);
             given(claims.get("email")).willReturn(email);
-            given(socialProfileRepository.findBySocialTypeAndOauthId(socialType, oauthId))
-                    .willReturn(Optional.empty());
 
             Member newMember =
                     new Member(2L, MemberRole.USER, request.nickname(), OffsetDateTime.now(), OffsetDateTime.now());
             SocialProfile socialProfile = new SocialProfile(1L, newMember, socialType, oauthId, email);
-            given(socialProfileRepository.save(any(SocialProfile.class))).willReturn(socialProfile);
+
+            given(socialProfileService.findOrCreate(socialType, oauthId, email, request.nickname()))
+                    .willReturn(socialProfile);
 
             AuthTokenDto tokenDto = new AuthTokenDto("access-token", "refresh-token", "bearer");
             given(tokenProviderModule.generate(String.valueOf(newMember.memberId())))
@@ -187,7 +180,7 @@ class OauthServiceTest {
             assertEquals(email, signResponse.email());
             assertEquals(tokenDto.accessToken(), signResponse.accessToken());
 
-            then(socialProfileRepository).should().save(any(SocialProfile.class));
+            then(socialProfileService).should().findOrCreate(socialType, oauthId, email, request.nickname());
         }
 
         @DisplayName("소셜 로그인 연동 해제: 성공")
@@ -196,14 +189,12 @@ class OauthServiceTest {
 
             // given
             WithdrawRequest request = new WithdrawRequest(socialType, authorizationCode, idToken);
-            SocialProfile socialProfileMock = new SocialProfile(1L, member, request.socialType(), oauthId, email);
 
-            given(memberRepository.findById(member.memberId())).willReturn(Optional.of(member));
             given(oidcProviderRegistry.getOidcProviderBy(request.socialType())).willReturn(oidcProvider);
             given(oidcProvider.getClaimsBy(request.idToken())).willReturn(claims);
             given(claims.getSubject()).willReturn(oauthId);
-            given(socialProfileRepository.findBySocialTypeAndOauthId(request.socialType(), oauthId))
-                    .willReturn(Optional.of(socialProfileMock));
+            given(socialProfileService.isSocialMemberExists(request.socialType(), oauthId, member.memberId()))
+                    .willReturn(true);
 
             CountDownLatch latch = new CountDownLatch(2);
 
@@ -228,28 +219,17 @@ class OauthServiceTest {
             assertTrue(completed);
         }
 
-        @DisplayName("소셜 로그인 연동 해제: member_id가 없을 경우 NotFoundException을 발생한다.")
-        @Test
-        void revokeOauth_NotFound_MemberID() {
-            // given
-            WithdrawRequest request = new WithdrawRequest(socialType, authorizationCode, idToken);
-            given(memberRepository.findById(member.memberId())).willReturn(Optional.empty());
-
-            // when, then
-            assertThrows(NotFoundException.class, () -> oauthService.revokeOauth(member.memberId(), request));
-        }
-
         @DisplayName("소셜 로그인 연동 해제: oauthId와 socialType에 해당하는 socialProfile 없을 경우 AuthException을 발생한다.")
         @Test
         void revokeOauth_NotFound_SocialProfile() {
             // given
             WithdrawRequest request = new WithdrawRequest(socialType, authorizationCode, idToken);
-            given(memberRepository.findById(member.memberId())).willReturn(Optional.of(member));
+
             given(oidcProviderRegistry.getOidcProviderBy(request.socialType())).willReturn(oidcProvider);
             given(oidcProvider.getClaimsBy(request.idToken())).willReturn(claims);
             given(claims.getSubject()).willReturn(oauthId);
-            given(socialProfileRepository.findBySocialTypeAndOauthId(request.socialType(), oauthId))
-                    .willReturn(Optional.empty());
+            given(socialProfileService.isSocialMemberExists(request.socialType(), oauthId, member.memberId()))
+                    .willReturn(false);
 
             // when, then
             assertThrows(AuthException.class, () -> oauthService.revokeOauth(member.memberId(), request));
@@ -260,19 +240,12 @@ class OauthServiceTest {
         void revokeOauth_MissMatch_socialProfileAndMemberId() {
             // given
             WithdrawRequest request = new WithdrawRequest(socialType, authorizationCode, idToken);
-            SocialProfile socialProfileMock = new SocialProfile(
-                    1L,
-                    new Member(2L, MemberRole.USER, "nickname", OffsetDateTime.now(), OffsetDateTime.now()),
-                    request.socialType(),
-                    oauthId,
-                    email);
 
-            given(memberRepository.findById(member.memberId())).willReturn(Optional.of(member));
             given(oidcProviderRegistry.getOidcProviderBy(request.socialType())).willReturn(oidcProvider);
             given(oidcProvider.getClaimsBy(request.idToken())).willReturn(claims);
             given(claims.getSubject()).willReturn(oauthId);
-            given(socialProfileRepository.findBySocialTypeAndOauthId(request.socialType(), oauthId))
-                    .willReturn(Optional.of(socialProfileMock));
+            given(socialProfileService.isSocialMemberExists(request.socialType(), oauthId, member.memberId()))
+                    .willReturn(false);
 
             // when, then
             assertThrows(AuthException.class, () -> oauthService.revokeOauth(member.memberId(), request));
