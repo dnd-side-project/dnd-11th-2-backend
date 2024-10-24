@@ -3,6 +3,7 @@ package com.dnd.runus.presentation.v1.badge.dto.response;
 import com.dnd.runus.domain.badge.Badge;
 import com.dnd.runus.domain.badge.BadgeWithAchieveStatusAndAchievedAt;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record AllBadgesListResponse(
@@ -21,18 +22,20 @@ public record AllBadgesListResponse(
 ) {
     public record BadgeWithAchievedStatus(
         @Schema(description = "뱃지 id")
-        long id,
+        long badgeId,
         @Schema(description = "뱃지 이름")
         String name,
         @Schema(description = "뱃지 이미지 url")
         String imageUrl,
         @Schema(description = "뱃지 달성 여부")
-        boolean isAchieved
+        boolean isAchieved,
+        @Schema(description = "배지 달성 날짜")
+        LocalDateTime achievedAt
     ) {
         public static BadgeWithAchievedStatus from(
             BadgeWithAchieveStatusAndAchievedAt badgeWithAchievedStatus) {
             Badge badge = badgeWithAchievedStatus.badge();
-            return new BadgeWithAchievedStatus(badge.badgeId(), badge.name(), badge.imageUrl(), badgeWithAchievedStatus.isAchieved());
+            return new BadgeWithAchievedStatus(badge.badgeId(), badge.name(), badge.imageUrl(), badgeWithAchievedStatus.isAchieved(), badgeWithAchievedStatus.achievedAt());
         }
     }
 }

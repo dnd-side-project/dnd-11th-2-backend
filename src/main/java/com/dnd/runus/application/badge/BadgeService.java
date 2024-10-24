@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
@@ -42,10 +42,11 @@ public class BadgeService {
         List<BadgeWithAchieveStatusAndAchievedAt> allBadges =
                 badgeRepository.findAllBadgesWithAchieveStatusByMemberId(memberId);
 
-        OffsetDateTime oneWeekAgo = LocalDate.now(SERVER_TIMEZONE_ID)
+        LocalDateTime oneWeekAgo = LocalDate.now(SERVER_TIMEZONE_ID)
                 .atStartOfDay(SERVER_TIMEZONE_ID)
                 .toOffsetDateTime()
-                .minusDays(7);
+                .minusDays(7)
+                .toLocalDateTime();
 
         EnumMap<BadgeType, List<BadgeWithAchievedStatus>> badgeMap = allBadges.stream()
                 .collect(Collectors.groupingBy(
@@ -67,7 +68,7 @@ public class BadgeService {
                 badgeMap.getOrDefault(BadgeType.LEVEL, Collections.emptyList()));
     }
 
-    private boolean isRecent(BadgeWithAchieveStatusAndAchievedAt badge, OffsetDateTime criterionDate) {
+    private boolean isRecent(BadgeWithAchieveStatusAndAchievedAt badge, LocalDateTime criterionDate) {
         return badge.isAchieved() && criterionDate.isBefore(badge.achievedAt());
     }
 }
