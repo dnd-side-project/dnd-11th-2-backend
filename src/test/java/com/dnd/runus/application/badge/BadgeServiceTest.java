@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -82,9 +83,7 @@ class BadgeServiceTest {
     void findAllBadges() {
         // given
         long memberId = 1L;
-        OffsetDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID)
-                .atStartOfDay(SERVER_TIMEZONE_ID)
-                .toOffsetDateTime();
+        LocalDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID).atTime(0, 0, 0);
         given(badgeRepository.findAllBadgesWithAchieveStatusByMemberId(memberId))
                 .willReturn(List.of(
                         new BadgeWithAchieveStatusAndAchievedAt(
