@@ -44,11 +44,15 @@ public class MemberWithdrawService {
         scaleAchievementRepository.deleteByMemberId(member.memberId());
         socialProfileRepository.deleteByMemberId(member.memberId());
 
-        // running_record 조회
+        deleteRunningRecordAndRelatedData(member);
+
+        memberRepository.deleteById(member.memberId());
+        log.info("멤버 삭제 완료: memberId={}", member.memberId());
+    }
+
+    private void deleteRunningRecordAndRelatedData(Member member) {
         List<RunningRecord> runningRecords = runningRecordRepository.findByMember(member);
         if (runningRecords.isEmpty()) {
-            // running_record가 없으면 멤버 삭제 후 리턴
-            memberRepository.deleteById(member.memberId());
             return;
         }
 
@@ -63,11 +67,6 @@ public class MemberWithdrawService {
             challengeAchievementRepository.deleteByIds(challengeAchievementIds);
         }
 
-        // running_record 삭제
         runningRecordRepository.deleteByMemberId(member.memberId());
-
-        memberRepository.deleteById(member.memberId());
-
-        log.info("멤버 삭제 완료: memberId={}", member.memberId());
     }
 }
