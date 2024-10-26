@@ -3,9 +3,6 @@
 
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
 
-    <timestamp key="ToMonth" datePattern="yyyy-MM"/>
-    <timestamp key="ToDay" datePattern="yyyy-MM-dd"/>
-
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>%clr(%d{${LOG_DATEFORMAT_PATTERN}}){magenta} %clr([%thread]){blue} %clr(%-5level){} %clr([%logger{0}:%line]){cyan} : %msg %n
@@ -27,13 +24,10 @@
             </layout>
         </encoder>
 
-        <file>${LOG_PATH}/${ToMonth}/${ToDay}_${LOG_FILE_NAME}.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>
-                ${LOG_PATH}/%d{yyyy-MM}/%d{yyyy-MM-dd}_${LOG_FILE_NAME}_%i.log
+                ${LOG_PATH}/%d{yyyy-MM}/%d{yyyy-MM-dd}_${LOG_FILE_NAME}.log
             </fileNamePattern>
-            <maxFileSize>10MB</maxFileSize>
-            <maxHistory>30</maxHistory>
         </rollingPolicy>
     </appender>
 
