@@ -30,6 +30,7 @@ public class JooqBadgeAchievementRepository {
     }
 
     public void saveAllIgnoreDuplicated(List<BadgeAchievement> badgeAchievements) {
+        OffsetDateTime now = OffsetDateTime.now();
         dsl.batch(badgeAchievements.stream()
                         .map(badgeAchievement -> dsl.insertInto(BADGE_ACHIEVEMENT)
                                 .set(
@@ -38,8 +39,12 @@ public class JooqBadgeAchievementRepository {
                                 .set(
                                         BADGE_ACHIEVEMENT.MEMBER_ID,
                                         badgeAchievement.member().memberId())
-                                .set(BADGE_ACHIEVEMENT.CREATED_AT, badgeAchievement.createdAt())
-                                .set(BADGE_ACHIEVEMENT.UPDATED_AT, badgeAchievement.updatedAt())
+                                .set(
+                                        BADGE_ACHIEVEMENT.CREATED_AT,
+                                        badgeAchievement.createdAt() == null ? now : badgeAchievement.createdAt())
+                                .set(
+                                        BADGE_ACHIEVEMENT.UPDATED_AT,
+                                        badgeAchievement.updatedAt() == null ? now : badgeAchievement.updatedAt())
                                 .onConflictDoNothing())
                         .toList())
                 .execute();
