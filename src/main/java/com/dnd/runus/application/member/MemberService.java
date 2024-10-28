@@ -1,6 +1,7 @@
 package com.dnd.runus.application.member;
 
 import com.dnd.runus.domain.level.Level;
+import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberLevel;
 import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.presentation.v1.member.dto.response.MyProfileResponse;
@@ -12,6 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberLevelRepository memberLevelRepository;
+
+    @Transactional
+    public void initMember(Member member) {
+        memberLevelRepository.save(new MemberLevel(member));
+    }
 
     @Transactional(readOnly = true)
     public MyProfileResponse getMyProfile(long memberId) {
