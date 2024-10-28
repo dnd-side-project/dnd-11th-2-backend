@@ -3,8 +3,6 @@ package com.dnd.runus.infrastructure.persistence.jooq.badge;
 import com.dnd.runus.domain.badge.BadgeAchievement;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
@@ -24,17 +22,26 @@ public class JooqBadgeAchievementRepository {
                 .join(BADGE)
                 .on(BADGE_ACHIEVEMENT.BADGE_ID.eq(BADGE.ID))
                 .where(BADGE_ACHIEVEMENT.MEMBER_ID.eq(memberId))
-                .fetch(new BadgeAchievementMapper());
+                .fetch(badge -> new BadgeAchievement.OnlyBadge(
+                        badge.get(BADGE_ACHIEVEMENT.ID),
+                        new JooqBadgeMapper().map(badge),
+                        badge.get(BADGE_ACHIEVEMENT.CREATED_AT, OffsetDateTime.class),
+                        badge.get(BADGE_ACHIEVEMENT.UPDATED_AT, OffsetDateTime.class)));
     }
 
-    private static class BadgeAchievementMapper implements RecordMapper<Record, BadgeAchievement.OnlyBadge> {
-        @Override
-        public BadgeAchievement.OnlyBadge map(Record record) {
-            return new BadgeAchievement.OnlyBadge(
-                    record.get(BADGE_ACHIEVEMENT.ID),
-                    new JooqBadgeMapper().map(record),
-                    record.get(BADGE_ACHIEVEMENT.CREATED_AT, OffsetDateTime.class),
-                    record.get(BADGE_ACHIEVEMENT.UPDATED_AT, OffsetDateTime.class));
-        }
+    public void saveAllIgnoreDuplicated(List<BadgeAchievement> badgeAchievements) {
+        dsl.batch(badgeAchievements.stream()
+                        .map(badgeAchievement -> dsl.insertInto(BADGE_ACHIEVEMENT)
+                                .set(
+                                        BADGE_ACHIEVEMENT.BADGE_ID,
+                                        badgeAchievement.badge().badgeId())
+                                .set(
+                                        BADGE_ACHIEVEMENT.MEMBER_ID,
+                                        badgeAchievement.member().memberId())
+                                .set(BADGE_ACHIEVEMENT.CREATED_AT, badgeAchievement.createdAt())
+                                .set(BADGE_ACHIEVEMENT.UPDATED_AT, badgeAchievement.updatedAt())
+                                .onConflictDoNothing())
+                        .toList())
+                .execute();
     }
 }
