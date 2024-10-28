@@ -1,8 +1,7 @@
 package com.dnd.runus.application.badge;
 
-import com.dnd.runus.domain.badge.BadgeAchievementRepository;
-import com.dnd.runus.domain.badge.BadgeRepository;
-import com.dnd.runus.domain.badge.BadgeWithAchieveStatusAndAchievedAt;
+import com.dnd.runus.domain.badge.*;
+import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.global.constant.BadgeType;
 import com.dnd.runus.presentation.v1.badge.dto.response.AchievedBadgesResponse;
 import com.dnd.runus.presentation.v1.badge.dto.response.AllBadgesListResponse;
@@ -25,6 +24,19 @@ import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
 public class BadgeService {
     private final BadgeAchievementRepository badgeAchievementRepository;
     private final BadgeRepository badgeRepository;
+
+    public void achieveBadge(Member member, BadgeType badgeType, int value) {
+        List<Badge> badges = badgeRepository.findByTypeAndRequiredValueLessThanEqual(badgeType, value);
+        if (badges.isEmpty()) {
+            return;
+        }
+
+        List<BadgeAchievement> badgeAchievements = badges.stream()
+                .map(badge -> new BadgeAchievement(badge, member))
+                .toList();
+
+        badgeAchievementRepository.saveAllIgnoreDuplicated(badgeAchievements);
+    }
 
     public AchievedBadgesResponse getAchievedBadges(long memberId) {
         return new AchievedBadgesResponse(badgeAchievementRepository.findByMemberIdWithBadge(memberId).stream()
