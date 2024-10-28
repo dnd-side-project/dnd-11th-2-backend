@@ -11,5 +11,7 @@ public interface BadgeAchievementRepository {
 
     BadgeAchievement save(BadgeAchievement badgeAchievement);
 
+    void saveAllIgnoreDuplicated(List<BadgeAchievement> badgeAchievements);
+
     void deleteByMemberId(long memberId);
 }

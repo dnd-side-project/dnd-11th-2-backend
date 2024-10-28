@@ -36,6 +36,11 @@ public class BadgeAchievementRepositoryImpl implements BadgeAchievementRepositor
     }
 
     @Override
+    public void saveAllIgnoreDuplicated(List<BadgeAchievement> badgeAchievements) {
+        jooqBadgeAchievementRepository.saveAllIgnoreDuplicated(badgeAchievements);
+    }
+
+    @Override
     public void deleteByMemberId(long memberId) {
         jpaBadgeAchievementRepository.deleteByMemberId(memberId);
     }
