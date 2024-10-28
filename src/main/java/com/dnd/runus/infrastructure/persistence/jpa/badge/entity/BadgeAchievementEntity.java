@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
+@Table(
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"badge_id", "member_id"}),
+        })
 @Getter
 @Entity(name = "badge_achievement")
 @NoArgsConstructor(access = PROTECTED)
