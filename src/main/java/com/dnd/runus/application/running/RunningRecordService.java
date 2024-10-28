@@ -144,13 +144,13 @@ public class RunningRecordService {
             weekSummaries = runningRecordRepository.findDailyDistancesMeterByDateRange(
                     memberId, startWeekDate, nextOfEndWeekDate);
             avgValue = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
-                    memberId, startWeekDate, nextOfEndWeekDate);
+                    memberId, startWeekDate.minusDays(7), nextOfEndWeekDate.minusDays(7));
             conversionFactor = METERS_IN_A_KILOMETER;
         } else {
             weekSummaries = runningRecordRepository.findDailyDurationsSecByDateRange(
                     memberId, startWeekDate, nextOfEndWeekDate);
             avgValue = runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
-                    memberId, startWeekDate, nextOfEndWeekDate);
+                    memberId, startWeekDate.minusDays(7), nextOfEndWeekDate.minusDays(7));
             conversionFactor = SECONDS_PER_HOUR;
         }
 
