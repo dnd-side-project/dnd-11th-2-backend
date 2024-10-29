@@ -39,13 +39,14 @@ public class BadgeService {
     }
 
     public AchievedBadgesResponse getAchievedBadges(long memberId) {
-        return new AchievedBadgesResponse(badgeAchievementRepository.findByMemberIdWithBadge(memberId).stream()
-                .map(badgeAchievement -> new AchievedBadgesResponse.AchievedBadge(
-                        badgeAchievement.badge().badgeId(),
-                        badgeAchievement.badge().name(),
-                        badgeAchievement.badge().imageUrl(),
-                        badgeAchievement.createdAt().toLocalDateTime()))
-                .toList());
+        return new AchievedBadgesResponse(
+                badgeAchievementRepository.findByMemberIdWithBadgeOrderByAchievedAtLimit(memberId, 3).stream()
+                        .map(badgeAchievement -> new AchievedBadgesResponse.AchievedBadge(
+                                badgeAchievement.badge().badgeId(),
+                                badgeAchievement.badge().name(),
+                                badgeAchievement.badge().imageUrl(),
+                                badgeAchievement.createdAt().toLocalDateTime()))
+                        .toList());
     }
 
     @Transactional(readOnly = true)

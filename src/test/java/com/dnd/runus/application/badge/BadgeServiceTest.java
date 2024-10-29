@@ -46,7 +46,7 @@ class BadgeServiceTest {
         Badge badge1 = new Badge(1L, "badge1", "description", "imageUrl1", BadgeType.STREAK, 100);
         Badge badge2 = new Badge(2L, "badge2", "description", "imageUrl2", BadgeType.DISTANCE_METER, 1000);
 
-        given(badgeAchievementRepository.findByMemberIdWithBadge(1L))
+        given(badgeAchievementRepository.findByMemberIdWithBadgeOrderByAchievedAtLimit(1L, 3))
                 .willReturn(List.of(
                         new BadgeAchievement.OnlyBadge(1, badge1, OffsetDateTime.now(), OffsetDateTime.now()),
                         new BadgeAchievement.OnlyBadge(2, badge2, OffsetDateTime.now(), OffsetDateTime.now())));
@@ -68,7 +68,8 @@ class BadgeServiceTest {
     @DisplayName("자신이 획득한 뱃지가 없다면, 뱃지가 없는 응답을 반환한다.")
     void getAchievedBadges_Empty() {
         // given
-        given(badgeAchievementRepository.findByMemberIdWithBadge(1L)).willReturn(List.of());
+        given(badgeAchievementRepository.findByMemberIdWithBadgeOrderByAchievedAtLimit(1L, 3))
+                .willReturn(List.of());
 
         // when
         AchievedBadgesResponse achievedBadgesResponse = badgeService.getAchievedBadges(1L);

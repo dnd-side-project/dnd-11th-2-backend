@@ -2,6 +2,7 @@ package com.dnd.runus.infrastructure.persistence.domain.badge;
 
 import com.dnd.runus.domain.badge.Badge;
 import com.dnd.runus.domain.badge.BadgeAchievement;
+import com.dnd.runus.domain.badge.BadgeAchievement.OnlyBadge;
 import com.dnd.runus.domain.badge.BadgeAchievementRepository;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberRepository;
@@ -14,6 +15,7 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,6 +51,72 @@ class BadgeAchievementRepositoryImplTest {
         assertFalse(badgeAchievementRepository
                 .findById(badgeAchievement.badgeAchievementId())
                 .isPresent());
+    }
+
+    @Nested
+    @DisplayName("BadeAchievement 조회 테스트")
+    class BadgeAchievementFindTest {
+        @Autowired
+        private EntityManager entityManager;
+
+        private Badge badge1;
+        private Badge badge2;
+        private Badge badge3;
+        private Badge badge4;
+
+        @BeforeEach
+        void beforeEach() {
+            BadgeEntity badgeEntity1 =
+                    BadgeEntity.from(new Badge(0L, "testBadge1", "testBadge1", "tesUrl1", BadgeType.DISTANCE_METER, 0));
+            BadgeEntity badgeEntity2 =
+                    BadgeEntity.from(new Badge(0L, "testBadge2", "testBadge2", "tesUrl2", BadgeType.DISTANCE_METER, 2));
+
+            BadgeEntity badgeEntity3 =
+                    BadgeEntity.from(new Badge(0L, "testBadge3", "testBadge3", "tesUrl3", BadgeType.DISTANCE_METER, 3));
+
+            BadgeEntity badgeEntity4 =
+                    BadgeEntity.from(new Badge(0L, "testBadge4", "testBadge4", "tesUrl4", BadgeType.DISTANCE_METER, 4));
+
+            entityManager.persist(badgeEntity1);
+            entityManager.persist(badgeEntity2);
+            entityManager.persist(badgeEntity3);
+            entityManager.persist(badgeEntity4);
+
+            badge1 = badgeEntity1.toDomain();
+            badge2 = badgeEntity2.toDomain();
+            badge3 = badgeEntity3.toDomain();
+            badge4 = badgeEntity4.toDomain();
+        }
+
+        @AfterEach
+        void afterEach() {
+            entityManager.createQuery("delete from badge_achievement").executeUpdate();
+            entityManager.createQuery("delete from badge").executeUpdate();
+        }
+
+        @Test
+        @DisplayName("획득한 뱃지를 조회한다: 획득한 최신 순, 최대 3개의 데이터를 리턴한다.")
+        void findByMemberIdWithBadgeOrderByAchievedAtLimit() {
+            // given
+            badgeAchievementRepository.save(new BadgeAchievement(badge1, savedMember));
+            badgeAchievementRepository.save(new BadgeAchievement(badge2, savedMember));
+            badgeAchievementRepository.save(new BadgeAchievement(badge3, savedMember));
+            badgeAchievementRepository.save(new BadgeAchievement(badge4, savedMember));
+
+            // when
+            List<OnlyBadge> byMemberIdWithBadgeList =
+                    badgeAchievementRepository.findByMemberIdWithBadgeOrderByAchievedAtLimit(savedMember.memberId(), 3);
+
+            // then
+            assertEquals(3, byMemberIdWithBadgeList.size());
+
+            OffsetDateTime achievedAt1 = byMemberIdWithBadgeList.get(0).createdAt();
+            OffsetDateTime achievedAt2 = byMemberIdWithBadgeList.get(1).createdAt();
+            OffsetDateTime achievedAt3 = byMemberIdWithBadgeList.get(2).createdAt();
+
+            assertTrue(achievedAt1.isAfter(achievedAt2));
+            assertTrue(achievedAt2.isAfter(achievedAt3));
+        }
     }
 
     @Nested
