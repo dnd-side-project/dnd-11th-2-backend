@@ -1,5 +1,6 @@
 package com.dnd.runus.application.running;
 
+import com.dnd.runus.application.running.event.RunningRecordAddedEvent;
 import com.dnd.runus.domain.challenge.Challenge;
 import com.dnd.runus.domain.challenge.ChallengeRepository;
 import com.dnd.runus.domain.challenge.ChallengeWithCondition;
@@ -20,16 +21,13 @@ import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.DailyRunningRecordSummary;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
-import com.dnd.runus.domain.scale.Scale;
-import com.dnd.runus.domain.scale.ScaleAchievement;
-import com.dnd.runus.domain.scale.ScaleAchievementRepository;
-import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.presentation.v1.running.dto.WeeklyRunningRatingDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,10 +52,11 @@ public class RunningRecordService {
     private final ChallengeAchievementRepository challengeAchievementRepository;
     private final ChallengeAchievementPercentageRepository percentageValuesRepository;
     private final GoalAchievementRepository goalAchievementRepository;
-    private final ScaleRepository scaleRepository;
-    private final ScaleAchievementRepository scaleAchievementRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     private final ZoneOffset defaultZoneOffset;
+
+    private static final OffsetDateTime BASE_TIME = Instant.EPOCH.atOffset(ZoneOffset.UTC);
 
     public RunningRecordService(
             RunningRecordRepository runningRecordRepository,
@@ -67,8 +66,7 @@ public class RunningRecordService {
             ChallengeAchievementRepository challengeAchievementRepository,
             ChallengeAchievementPercentageRepository percentageValuesRepository,
             GoalAchievementRepository goalAchievementRepository,
-            ScaleRepository scaleRepository,
-            ScaleAchievementRepository scaleAchievementRepository,
+            ApplicationEventPublisher eventPublisher,
             @Value("${app.default-zone-offset}") ZoneOffset defaultZoneOffset) {
         this.runningRecordRepository = runningRecordRepository;
         this.memberRepository = memberRepository;
@@ -77,8 +75,7 @@ public class RunningRecordService {
         this.challengeAchievementRepository = challengeAchievementRepository;
         this.percentageValuesRepository = percentageValuesRepository;
         this.goalAchievementRepository = goalAchievementRepository;
-        this.scaleRepository = scaleRepository;
-        this.scaleAchievementRepository = scaleAchievementRepository;
+        this.eventPublisher = eventPublisher;
         this.defaultZoneOffset = defaultZoneOffset;
     }
 
@@ -200,13 +197,7 @@ public class RunningRecordService {
                 .route(route)
                 .build());
 
-        memberLevelRepository.updateMemberLevel(memberId, request.runningData().distanceMeter());
-
-        // 사용자가 달성할 수 있는 지구 한바퀴 코스 확인 후 저장
-        List<Long> achievableScaleIds = scaleRepository.findAchievableScaleIds(member.memberId());
-        if (achievableScaleIds != null && !achievableScaleIds.isEmpty() && achievableScaleIds.get(0) != null) {
-            saveScaleAchievements(achievableScaleIds, member);
-        }
+        eventPublisher.publishEvent(new RunningRecordAddedEvent(member, record, totalDistance, totalDuration));
 
         switch (request.achievementMode()) {
             case CHALLENGE -> {
@@ -244,14 +235,6 @@ public class RunningRecordService {
                 monthlyTotalDistance,
                 Level.formatLevelName(nextLevel),
                 Level.formatExp(remainingKmToNextLevel));
-    }
-
-    private void saveScaleAchievements(List<Long> achievableScaleIds, Member member) {
-        OffsetDateTime now = OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE));
-        List<ScaleAchievement> scaleAchievements = achievableScaleIds.stream()
-                .map(id -> new ScaleAchievement(member, new Scale(id), now))
-                .toList();
-        scaleAchievementRepository.saveAll(scaleAchievements);
     }
 
     private ChallengeAchievement handleChallengeMode(Long challengeId, long memberId, RunningRecord runningRecord) {
