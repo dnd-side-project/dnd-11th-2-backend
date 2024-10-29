@@ -22,6 +22,8 @@ public class JooqBadgeAchievementRepository {
                 .join(BADGE)
                 .on(BADGE_ACHIEVEMENT.BADGE_ID.eq(BADGE.ID))
                 .where(BADGE_ACHIEVEMENT.MEMBER_ID.eq(memberId))
+                .orderBy(BADGE_ACHIEVEMENT.CREATED_AT.desc())
+                .limit(3)
                 .fetch(badge -> new BadgeAchievement.OnlyBadge(
                         badge.get(BADGE_ACHIEVEMENT.ID),
                         new JooqBadgeMapper().map(badge),
