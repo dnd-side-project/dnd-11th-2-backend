@@ -33,4 +33,9 @@ public class MemberService {
                 Level.formatLevelName(nextLevel),
                 Level.formatExp(memberCurrentLevel.level().expRangeEnd() - memberCurrentLevel.currentExp()));
     }
+
+    @Transactional
+    public void addExp(long memberId, int plusExp) {
+        memberLevelRepository.updateMemberLevel(memberId, plusExp);
+    }
 }
