@@ -24,8 +24,8 @@ public class BadgeAchievementRepositoryImpl implements BadgeAchievementRepositor
     }
 
     @Override
-    public List<BadgeAchievement.OnlyBadge> findByMemberIdWithBadge(long memberId) {
-        return jooqBadgeAchievementRepository.findByMemberIdWithBadge(memberId);
+    public List<BadgeAchievement.OnlyBadge> findByMemberIdWithBadgeOrderByAchievedAtLimit(long memberId, int limit) {
+        return jooqBadgeAchievementRepository.findByMemberIdWithBadgeOrderByAchievedAtLimit(memberId, limit);
     }
 
     @Override

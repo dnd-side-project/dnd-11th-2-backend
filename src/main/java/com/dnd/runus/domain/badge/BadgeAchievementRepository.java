@@ -7,7 +7,7 @@ public interface BadgeAchievementRepository {
 
     Optional<BadgeAchievement> findById(long id);
 
-    List<BadgeAchievement.OnlyBadge> findByMemberIdWithBadge(long memberId);
+    List<BadgeAchievement.OnlyBadge> findByMemberIdWithBadgeOrderByAchievedAtLimit(long memberId, int limit);
 
     BadgeAchievement save(BadgeAchievement badgeAchievement);
 
