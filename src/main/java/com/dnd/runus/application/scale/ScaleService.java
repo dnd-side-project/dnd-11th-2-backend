@@ -1,11 +1,12 @@
 package com.dnd.runus.application.scale;
 
+import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.running.RunningRecordRepository;
-import com.dnd.runus.domain.scale.ScaleAchievementLog;
-import com.dnd.runus.domain.scale.ScaleAchievementRepository;
+import com.dnd.runus.domain.scale.*;
 import com.dnd.runus.presentation.v1.scale.dto.ScaleCoursesResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -17,9 +18,25 @@ import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_
 @RequiredArgsConstructor
 public class ScaleService {
 
+    private final ScaleRepository scaleRepository;
     private final ScaleAchievementRepository scaleAchievementRepository;
     private final RunningRecordRepository runningRecordRepository;
 
+    @Transactional
+    public void saveScaleAchievements(Member member) {
+        List<Long> achievableScaleIds = scaleRepository.findAchievableScaleIds(member.memberId());
+        if (achievableScaleIds == null || achievableScaleIds.isEmpty() || achievableScaleIds.getFirst() == null) {
+            return;
+        }
+
+        OffsetDateTime now = OffsetDateTime.now();
+        List<ScaleAchievement> scaleAchievements = achievableScaleIds.stream()
+                .map(id -> new ScaleAchievement(member, new Scale(id), now))
+                .toList();
+        scaleAchievementRepository.saveAll(scaleAchievements);
+    }
+
+    @Transactional(readOnly = true)
     public ScaleCoursesResponse getAchievements(long memberId) {
         List<ScaleAchievementLog> scaleAchievementLogs = scaleAchievementRepository.findScaleAchievementLogs(memberId);
 
