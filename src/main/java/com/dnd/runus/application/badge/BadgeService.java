@@ -6,13 +6,17 @@ import com.dnd.runus.global.constant.BadgeType;
 import com.dnd.runus.presentation.v1.badge.dto.response.AchievedBadge;
 import com.dnd.runus.presentation.v1.badge.dto.response.AchievedBadgesResponse;
 import com.dnd.runus.presentation.v1.badge.dto.response.AllBadgesListResponse;
+import com.dnd.runus.presentation.v1.badge.dto.response.AllBadgesListResponse.BadgesWithType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,20 +58,7 @@ public class BadgeService {
         List<BadgeAchievement.OnlyBadge> allBadges =
                 badgeAchievementRepository.findByMemberIdOrderByBadgeTypeAndAchievedAt(memberId);
 
-        // badgeType별 획득한 배지 리스트
-        EnumMap<BadgeType, List<AchievedBadge>> badgesWithType = allBadges.stream()
-                .collect(Collectors.groupingBy(
-                        v -> v.badge().type(),
-                        () -> new EnumMap<>(BadgeType.class),
-                        Collectors.mapping(
-                                v -> new AchievedBadge(
-                                        v.badge().badgeId(),
-                                        v.badge().name(),
-                                        v.badge().imageUrl(),
-                                        v.createdAt().toLocalDateTime()),
-                                Collectors.toList())));
-
-        // 최신 일주일안에 딴 뱃지를 recencyBadges에 추가
+        // 최신 획득한 뱃지(오늘 기준으로 일주일)
         LocalDateTime oneWeekAgo = LocalDate.now(SERVER_TIMEZONE_ID)
                 .atStartOfDay(SERVER_TIMEZONE_ID)
                 .toOffsetDateTime()
@@ -82,6 +73,25 @@ public class BadgeService {
                         v.createdAt().toLocalDateTime()))
                 .toList();
 
-        return AllBadgesListResponse.from(recencyBadges, badgesWithType);
+        // badgeType별 획득한 배지
+        EnumMap<BadgeType, List<AchievedBadge>> badgesWithType = allBadges.stream()
+                .collect(Collectors.groupingBy(
+                        v -> v.badge().type(),
+                        () -> new EnumMap<>(BadgeType.class),
+                        Collectors.mapping(
+                                v -> new AchievedBadge(
+                                        v.badge().badgeId(),
+                                        v.badge().name(),
+                                        v.badge().imageUrl(),
+                                        v.createdAt().toLocalDateTime()),
+                                Collectors.toList())));
+
+        // 타입 별 리스트에 추가
+        List<BadgesWithType> responseBadges = new ArrayList<>();
+        EnumSet.allOf(BadgeType.class)
+                .forEach(type -> responseBadges.add(new BadgesWithType(
+                        type.getName(), badgesWithType.getOrDefault(type, Collections.emptyList()))));
+
+        return new AllBadgesListResponse(recencyBadges, responseBadges);
     }
 }
