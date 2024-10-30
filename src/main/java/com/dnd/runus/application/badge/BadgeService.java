@@ -3,6 +3,7 @@ package com.dnd.runus.application.badge;
 import com.dnd.runus.domain.badge.*;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.global.constant.BadgeType;
+import com.dnd.runus.presentation.v1.badge.dto.response.AchievedBadge;
 import com.dnd.runus.presentation.v1.badge.dto.response.AchievedBadgesResponse;
 import com.dnd.runus.presentation.v1.badge.dto.response.AllBadgesListResponse;
 import com.dnd.runus.presentation.v1.badge.dto.response.AllBadgesListResponse.BadgeWithAchievedStatus;
@@ -41,7 +42,7 @@ public class BadgeService {
     public AchievedBadgesResponse getAchievedBadges(long memberId) {
         return new AchievedBadgesResponse(
                 badgeAchievementRepository.findByMemberIdWithBadgeOrderByAchievedAtLimit(memberId, 3).stream()
-                        .map(badgeAchievement -> new AchievedBadgesResponse.AchievedBadge(
+                        .map(badgeAchievement -> new AchievedBadge(
                                 badgeAchievement.badge().badgeId(),
                                 badgeAchievement.badge().name(),
                                 badgeAchievement.badge().imageUrl(),

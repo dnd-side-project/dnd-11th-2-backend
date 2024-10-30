@@ -6,6 +6,7 @@ import com.dnd.runus.domain.badge.BadgeAchievementRepository;
 import com.dnd.runus.domain.badge.BadgeRepository;
 import com.dnd.runus.domain.badge.BadgeWithAchieveStatusAndAchievedAt;
 import com.dnd.runus.global.constant.BadgeType;
+import com.dnd.runus.presentation.v1.badge.dto.response.AchievedBadge;
 import com.dnd.runus.presentation.v1.badge.dto.response.AchievedBadgesResponse;
 import com.dnd.runus.presentation.v1.badge.dto.response.AllBadgesListResponse;
 import com.dnd.runus.presentation.v1.badge.dto.response.AllBadgesListResponse.BadgeWithAchievedStatus;
@@ -55,9 +56,9 @@ class BadgeServiceTest {
         AchievedBadgesResponse achievedBadgesResponse = badgeService.getAchievedBadges(1L);
 
         // then
-        List<AchievedBadgesResponse.AchievedBadge> achievedBadges = achievedBadgesResponse.badges();
-        AchievedBadgesResponse.AchievedBadge achievedBadge1 = achievedBadges.get(0);
-        AchievedBadgesResponse.AchievedBadge achievedBadge2 = achievedBadges.get(1);
+        List<AchievedBadge> achievedBadges = achievedBadgesResponse.badges();
+        AchievedBadge achievedBadge1 = achievedBadges.get(0);
+        AchievedBadge achievedBadge2 = achievedBadges.get(1);
         assertEquals("badge1", achievedBadge1.name());
         assertEquals("imageUrl1", achievedBadge1.imageUrl());
         assertEquals("badge2", achievedBadge2.name());
@@ -75,7 +76,7 @@ class BadgeServiceTest {
         AchievedBadgesResponse achievedBadgesResponse = badgeService.getAchievedBadges(1L);
 
         // then
-        List<AchievedBadgesResponse.AchievedBadge> achievedBadges = achievedBadgesResponse.badges();
+        List<AchievedBadge> achievedBadges = achievedBadgesResponse.badges();
         assertEquals(0, achievedBadges.size());
     }
 
