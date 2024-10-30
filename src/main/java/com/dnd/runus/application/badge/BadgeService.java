@@ -15,9 +15,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
@@ -64,6 +66,7 @@ public class BadgeService {
                 .toOffsetDateTime()
                 .minusDays(7)
                 .toLocalDateTime();
+
         List<AchievedBadge> recencyBadges = allBadges.stream()
                 .filter(v -> oneWeekAgo.isBefore(v.createdAt().toLocalDateTime()))
                 .map(v -> new AchievedBadge(
@@ -86,11 +89,13 @@ public class BadgeService {
                                         v.createdAt().toLocalDateTime()),
                                 Collectors.toList())));
 
-        // 타입 별 리스트에 추가
+        // 타입 별, showPriority순서로 리스트에 추가
+        TreeSet<BadgeType> badgeTypesSet = new TreeSet<>(Comparator.comparingInt(BadgeType::getShowPriority));
+        badgeTypesSet.addAll(EnumSet.allOf(BadgeType.class));
+
         List<BadgesWithType> responseBadges = new ArrayList<>();
-        EnumSet.allOf(BadgeType.class)
-                .forEach(type -> responseBadges.add(new BadgesWithType(
-                        type.getName(), badgesWithType.getOrDefault(type, Collections.emptyList()))));
+        badgeTypesSet.forEach(badgeType -> responseBadges.add(new BadgesWithType(
+                badgeType.getName(), badgesWithType.getOrDefault(badgeType, Collections.emptyList()))));
 
         return new AllBadgesListResponse(recencyBadges, responseBadges);
     }
