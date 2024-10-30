@@ -137,7 +137,7 @@ class BadgeAchievementRepositoryImplTest {
             OnlyBadge achieved3 = achievedBadges.get(2);
             OnlyBadge achieved4 = achievedBadges.get(3);
 
-            assertTrue(achieved1.badge().type().compareTo(achieved3.badge().type()) > 0);
+            assertTrue(achieved1.badge().type().compareTo(achieved3.badge().type()) < 0);
             assertTrue(achieved1.createdAt().isAfter(achieved2.createdAt()));
             assertTrue(achieved3.createdAt().isAfter(achieved4.createdAt()));
         }
