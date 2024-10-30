@@ -31,6 +31,20 @@ public class JooqBadgeAchievementRepository {
                         badge.get(BADGE_ACHIEVEMENT.UPDATED_AT, OffsetDateTime.class)));
     }
 
+    public List<BadgeAchievement.OnlyBadge> findByMemberIdOrderByBadgeTypeAndAchievedAt(long memberId) {
+        return dsl.select()
+                .from(BADGE_ACHIEVEMENT)
+                .join(BADGE)
+                .on(BADGE_ACHIEVEMENT.BADGE_ID.eq(BADGE.ID))
+                .where(BADGE_ACHIEVEMENT.MEMBER_ID.eq(memberId))
+                .orderBy(BADGE.TYPE, BADGE_ACHIEVEMENT.CREATED_AT.desc())
+                .fetch(badge -> new BadgeAchievement.OnlyBadge(
+                        badge.get(BADGE_ACHIEVEMENT.ID),
+                        new JooqBadgeMapper().map(badge),
+                        badge.get(BADGE_ACHIEVEMENT.CREATED_AT, OffsetDateTime.class),
+                        badge.get(BADGE_ACHIEVEMENT.UPDATED_AT, OffsetDateTime.class)));
+    }
+
     public void saveAllIgnoreDuplicated(List<BadgeAchievement> badgeAchievements) {
         OffsetDateTime now = OffsetDateTime.now();
         dsl.batch(badgeAchievements.stream()
