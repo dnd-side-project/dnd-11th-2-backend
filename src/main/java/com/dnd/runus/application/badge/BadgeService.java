@@ -6,14 +6,12 @@ import com.dnd.runus.global.constant.BadgeType;
 import com.dnd.runus.presentation.v1.badge.dto.response.AchievedBadge;
 import com.dnd.runus.presentation.v1.badge.dto.response.AchievedBadgesResponse;
 import com.dnd.runus.presentation.v1.badge.dto.response.AllBadgesListResponse;
-import com.dnd.runus.presentation.v1.badge.dto.response.AllBadgesListResponse.BadgeWithAchievedStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,36 +51,37 @@ public class BadgeService {
     @Transactional(readOnly = true)
     public AllBadgesListResponse getListOfAllBadges(long memberId) {
 
-        List<BadgeWithAchieveStatusAndAchievedAt> allBadges =
-                badgeRepository.findAllBadgesWithAchieveStatusByMemberId(memberId);
+        List<BadgeAchievement.OnlyBadge> allBadges =
+                badgeAchievementRepository.findByMemberIdOrderByBadgeTypeAndAchievedAt(memberId);
 
+        // badgeType별 획득한 배지 리스트
+        EnumMap<BadgeType, List<AchievedBadge>> badgesWithType = allBadges.stream()
+                .collect(Collectors.groupingBy(
+                        v -> v.badge().type(),
+                        () -> new EnumMap<>(BadgeType.class),
+                        Collectors.mapping(
+                                v -> new AchievedBadge(
+                                        v.badge().badgeId(),
+                                        v.badge().name(),
+                                        v.badge().imageUrl(),
+                                        v.createdAt().toLocalDateTime()),
+                                Collectors.toList())));
+
+        // 최신 일주일안에 딴 뱃지를 recencyBadges에 추가
         LocalDateTime oneWeekAgo = LocalDate.now(SERVER_TIMEZONE_ID)
                 .atStartOfDay(SERVER_TIMEZONE_ID)
                 .toOffsetDateTime()
                 .minusDays(7)
                 .toLocalDateTime();
-
-        EnumMap<BadgeType, List<BadgeWithAchievedStatus>> badgeMap = allBadges.stream()
-                .collect(Collectors.groupingBy(
-                        v -> v.badge().type(),
-                        () -> new EnumMap<>(BadgeType.class),
-                        Collectors.mapping(BadgeWithAchievedStatus::from, Collectors.toList())));
-
-        List<BadgeWithAchievedStatus> recencyBadges = allBadges.stream()
-                .filter(badge -> isRecent(badge, oneWeekAgo))
-                .map(BadgeWithAchievedStatus::from)
+        List<AchievedBadge> recencyBadges = allBadges.stream()
+                .filter(v -> oneWeekAgo.isBefore(v.createdAt().toLocalDateTime()))
+                .map(v -> new AchievedBadge(
+                        v.badge().badgeId(),
+                        v.badge().name(),
+                        v.badge().imageUrl(),
+                        v.createdAt().toLocalDateTime()))
                 .toList();
 
-        return new AllBadgesListResponse(
-                recencyBadges,
-                badgeMap.getOrDefault(BadgeType.PERSONAL_RECORD, Collections.emptyList()),
-                badgeMap.getOrDefault(BadgeType.DISTANCE_METER, Collections.emptyList()),
-                badgeMap.getOrDefault(BadgeType.STREAK, Collections.emptyList()),
-                badgeMap.getOrDefault(BadgeType.DURATION_SECONDS, Collections.emptyList()),
-                badgeMap.getOrDefault(BadgeType.LEVEL, Collections.emptyList()));
-    }
-
-    private boolean isRecent(BadgeWithAchieveStatusAndAchievedAt badge, LocalDateTime criterionDate) {
-        return badge.isAchieved() && criterionDate.isBefore(badge.achievedAt());
+        return AllBadgesListResponse.from(recencyBadges, badgesWithType);
     }
 }

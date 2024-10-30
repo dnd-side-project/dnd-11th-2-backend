@@ -1,41 +1,36 @@
 package com.dnd.runus.presentation.v1.badge.dto.response;
 
-import com.dnd.runus.domain.badge.Badge;
-import com.dnd.runus.domain.badge.BadgeWithAchieveStatusAndAchievedAt;
+import com.dnd.runus.global.constant.BadgeType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 
 public record AllBadgesListResponse(
-    @Schema(description = "신규 뱃지 목록")
-    List<BadgeWithAchievedStatus> recencyBadges,
-    @Schema(description = "개인기록 뱃지 목록")
-    List<BadgeWithAchievedStatus> personalBadges,
-    @Schema(description = "러닝 거리 뱃지 목록")
-    List<BadgeWithAchievedStatus> distanceBadges,
-    @Schema(description = "연속 뱃지 목록")
-    List<BadgeWithAchievedStatus> streakBadges,
-    @Schema(description = "사간 뱃지 목록")
-    List<BadgeWithAchievedStatus> durationBadges,
-    @Schema(description = "레벨 뱃지 목록")
-    List<BadgeWithAchievedStatus> levelBadges
+    List<BadgeWithType> badgeList
 ) {
-    public record BadgeWithAchievedStatus(
-        @Schema(description = "뱃지 id")
-        long badgeId,
-        @Schema(description = "뱃지 이름")
-        String name,
-        @Schema(description = "뱃지 이미지 url")
-        String imageUrl,
-        @Schema(description = "뱃지 달성 여부")
-        boolean isAchieved,
-        @Schema(description = "배지 달성 날짜")
-        LocalDateTime achievedAt
+    public record BadgeWithType(
+        @Schema(description = "뱃지 카테고리 이름")
+        String category,
+        @Schema(description = "뱃지 리스트")
+        List<AchievedBadge> badges
     ) {
-        public static BadgeWithAchievedStatus from(
-            BadgeWithAchieveStatusAndAchievedAt badgeWithAchievedStatus) {
-            Badge badge = badgeWithAchievedStatus.badge();
-            return new BadgeWithAchievedStatus(badge.badgeId(), badge.name(), badge.imageUrl(), badgeWithAchievedStatus.isAchieved(), badgeWithAchievedStatus.achievedAt());
-        }
+    }
+
+    public static AllBadgesListResponse from(List<AchievedBadge> recencyBadges, EnumMap<BadgeType, List<AchievedBadge>> allBadges) {
+        List<BadgeWithType> response = new ArrayList<>();
+        response.add(new BadgeWithType("신규 뱃지", recencyBadges));
+
+        EnumSet<BadgeType> badgeTypes = EnumSet.allOf(BadgeType.class);
+        badgeTypes.forEach(type -> response.add(
+            new BadgeWithType(
+                type.getName(),
+                allBadges.getOrDefault(type, Collections.emptyList())
+            )
+        ));
+
+        return new AllBadgesListResponse(response);
     }
 }
