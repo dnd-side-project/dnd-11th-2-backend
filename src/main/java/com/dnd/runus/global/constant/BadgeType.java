@@ -8,11 +8,12 @@ import static lombok.AccessLevel.PRIVATE;
 @Getter
 @RequiredArgsConstructor(access = PRIVATE)
 public enum BadgeType {
-    STREAK("연속"),
-    DISTANCE_METER("러닝거리"),
-    PERSONAL_RECORD("개인기록"),
-    DURATION_SECONDS("시간"),
-    LEVEL("레벨"),
+    PERSONAL_RECORD("개인기록", 1),
+    DISTANCE_METER("러닝거리", 2),
+    STREAK("연속", 3),
+    DURATION_SECONDS("시간", 4),
+    LEVEL("레벨", 5),
     ;
     private final String name;
+    private final int showPriority;
 }
