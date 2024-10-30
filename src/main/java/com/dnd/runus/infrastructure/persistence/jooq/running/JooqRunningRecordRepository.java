@@ -109,6 +109,19 @@ public class JooqRunningRecordRepository {
                 .fetch(new DailyRunningSummary());
     }
 
+    public long findTotalDurationByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
+        Record1<Long> result = dsl.select(sum(RUNNING_RECORD.DURATION_SECONDS).cast(Long.class))
+                .from(RUNNING_RECORD)
+                .where(RUNNING_RECORD.MEMBER_ID.eq(memberId))
+                .and(RUNNING_RECORD.START_AT.ge(startDate))
+                .and(RUNNING_RECORD.START_AT.lt(nextDateOfEndDate))
+                .fetchOne();
+        if (result != null && result.value1() != null) {
+            return result.value1();
+        }
+        return 0;
+    }
+
     private static class DailyRunningSummary implements RecordMapper<Record, DailyRunningRecordSummary> {
         @Override
         public DailyRunningRecordSummary map(Record record) {

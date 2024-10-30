@@ -10,6 +10,7 @@ import com.dnd.runus.infrastructure.persistence.jpa.running.entity.RunningRecord
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -55,6 +56,12 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     @Override
     public int findTotalDistanceMeterByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime endtDate) {
         return jooqRunningRecordRepository.findTotalDistanceMeterByMemberId(memberId, startDate, endtDate);
+    }
+
+    @Override
+    public Duration findTotalDurationByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime endDate) {
+        return Duration.ofSeconds(
+                jooqRunningRecordRepository.findTotalDurationByMemberId(memberId, startDate, endDate));
     }
 
     @Override

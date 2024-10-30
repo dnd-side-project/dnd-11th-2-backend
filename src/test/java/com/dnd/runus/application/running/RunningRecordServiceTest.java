@@ -16,8 +16,6 @@ import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.DailyRunningRecordSummary;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
-import com.dnd.runus.domain.scale.ScaleAchievementRepository;
-import com.dnd.runus.domain.scale.ScaleRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.global.exception.NotFoundException;
@@ -37,6 +35,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.*;
 import java.util.List;
@@ -77,10 +76,7 @@ class RunningRecordServiceTest {
     private GoalAchievementRepository goalAchievementRepository;
 
     @Mock
-    private ScaleRepository scaleRepository;
-
-    @Mock
-    private ScaleAchievementRepository scaleAchievementRepository;
+    private ApplicationEventPublisher eventPublisher;
 
     private final ZoneOffset defaultZoneOffset = ZoneOffset.of("+9");
 
@@ -94,8 +90,7 @@ class RunningRecordServiceTest {
                 challengeAchievementRepository,
                 percentageValuesRepository,
                 goalAchievementRepository,
-                scaleRepository,
-                scaleAchievementRepository,
+                eventPublisher,
                 defaultZoneOffset);
     }
 
