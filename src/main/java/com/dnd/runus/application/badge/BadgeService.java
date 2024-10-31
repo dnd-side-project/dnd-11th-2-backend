@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -95,9 +94,10 @@ public class BadgeService {
         Set<BadgeType> badgeTypesSet = new TreeSet<>(Comparator.comparingInt(BadgeType::getShowPriority));
         badgeTypesSet.addAll(EnumSet.allOf(BadgeType.class));
 
-        List<BadgesWithType> responseBadges = new ArrayList<>();
-        badgeTypesSet.forEach(badgeType -> responseBadges.add(new BadgesWithType(
-                badgeType.getName(), badgesWithType.getOrDefault(badgeType, Collections.emptyList()))));
+        List<BadgesWithType> responseBadges = badgeTypesSet.stream()
+                .map(badgeType -> new BadgesWithType(
+                        badgeType.getName(), badgesWithType.getOrDefault(badgeType, Collections.emptyList())))
+                .toList();
 
         return new AllBadgesListResponse(recencyBadges, responseBadges);
     }
