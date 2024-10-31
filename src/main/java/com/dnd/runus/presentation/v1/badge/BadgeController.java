@@ -28,9 +28,9 @@ public class BadgeController {
             description =
                     """
         서비스의 전체 뱃지를 조회 합니다.<br>
-        자신이 획득한 뱃지는 isAchieved가 true로 표시됩니다.<br>
-        뱃지의 카테고리별 리스트로 뱃지가 리턴됩니다.<br>
         최근 일주일에 사용자가 획득한 뱃지는 recencyBadges 리스트에 리턴됩니다.<br>
+        뱃지의 카테고리 별 리스트로 뱃지가 리턴됩니다.<br>
+        자세한 응답 구조는 AllBadgesListResponse의 Schema을 확인해주세요.<br>
         """)
     public AllBadgesListResponse getAllBadgesList(@MemberId long memberId) {
         return badgeService.getListOfAllBadges(memberId);

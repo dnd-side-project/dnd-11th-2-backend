@@ -29,6 +29,11 @@ public class BadgeAchievementRepositoryImpl implements BadgeAchievementRepositor
     }
 
     @Override
+    public List<BadgeAchievement.OnlyBadge> findByMemberIdOrderByBadgeTypeAndAchievedAt(long memberId) {
+        return jooqBadgeAchievementRepository.findByMemberIdOrderByBadgeTypeAndAchievedAt(memberId);
+    }
+
+    @Override
     public BadgeAchievement save(BadgeAchievement badgeAchievement) {
         return jpaBadgeAchievementRepository
                 .save(BadgeAchievementEntity.from(badgeAchievement))

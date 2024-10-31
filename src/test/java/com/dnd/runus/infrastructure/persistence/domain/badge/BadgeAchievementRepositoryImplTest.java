@@ -72,10 +72,10 @@ class BadgeAchievementRepositoryImplTest {
                     BadgeEntity.from(new Badge(0L, "testBadge2", "testBadge2", "tesUrl2", BadgeType.DISTANCE_METER, 2));
 
             BadgeEntity badgeEntity3 =
-                    BadgeEntity.from(new Badge(0L, "testBadge3", "testBadge3", "tesUrl3", BadgeType.DISTANCE_METER, 3));
+                    BadgeEntity.from(new Badge(0L, "testBadge3", "testBadge3", "tesUrl3", BadgeType.STREAK, 3));
 
             BadgeEntity badgeEntity4 =
-                    BadgeEntity.from(new Badge(0L, "testBadge4", "testBadge4", "tesUrl4", BadgeType.DISTANCE_METER, 4));
+                    BadgeEntity.from(new Badge(0L, "testBadge4", "testBadge4", "tesUrl4", BadgeType.STREAK, 4));
 
             entityManager.persist(badgeEntity1);
             entityManager.persist(badgeEntity2);
@@ -116,6 +116,30 @@ class BadgeAchievementRepositoryImplTest {
 
             assertTrue(achievedAt1.isAfter(achievedAt2));
             assertTrue(achievedAt2.isAfter(achievedAt3));
+        }
+
+        @Test
+        @DisplayName("나의 뱃지 목록을 조회한다: 뱃지 타입순, 최신 획득한 순으로 데이터를 리턴한다.")
+        void findBadgesList() {
+            // given
+            badgeAchievementRepository.save(new BadgeAchievement(badge1, savedMember));
+            badgeAchievementRepository.save(new BadgeAchievement(badge2, savedMember));
+            badgeAchievementRepository.save(new BadgeAchievement(badge3, savedMember));
+            badgeAchievementRepository.save(new BadgeAchievement(badge4, savedMember));
+
+            // when
+            List<OnlyBadge> achievedBadges =
+                    badgeAchievementRepository.findByMemberIdOrderByBadgeTypeAndAchievedAt(savedMember.memberId());
+
+            // then
+            OnlyBadge achieved1 = achievedBadges.get(0);
+            OnlyBadge achieved2 = achievedBadges.get(1);
+            OnlyBadge achieved3 = achievedBadges.get(2);
+            OnlyBadge achieved4 = achievedBadges.get(3);
+
+            assertTrue(achieved1.badge().type().compareTo(achieved3.badge().type()) < 0);
+            assertTrue(achieved1.createdAt().isAfter(achieved2.createdAt()));
+            assertTrue(achieved3.createdAt().isAfter(achieved4.createdAt()));
         }
     }
 

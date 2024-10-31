@@ -9,6 +9,8 @@ public interface BadgeAchievementRepository {
 
     List<BadgeAchievement.OnlyBadge> findByMemberIdWithBadgeOrderByAchievedAtLimit(long memberId, int limit);
 
+    List<BadgeAchievement.OnlyBadge> findByMemberIdOrderByBadgeTypeAndAchievedAt(long memberId);
+
     BadgeAchievement save(BadgeAchievement badgeAchievement);
 
     void saveAllIgnoreDuplicated(List<BadgeAchievement> badgeAchievements);
