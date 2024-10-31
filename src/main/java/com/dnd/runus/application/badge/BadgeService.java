@@ -19,6 +19,8 @@ import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -77,7 +79,7 @@ public class BadgeService {
                 .toList();
 
         // badgeType별 획득한 배지
-        EnumMap<BadgeType, List<AchievedBadge>> badgesWithType = allBadges.stream()
+        Map<BadgeType, List<AchievedBadge>> badgesWithType = allBadges.stream()
                 .collect(Collectors.groupingBy(
                         v -> v.badge().type(),
                         () -> new EnumMap<>(BadgeType.class),
@@ -90,7 +92,7 @@ public class BadgeService {
                                 Collectors.toList())));
 
         // 타입 별, showPriority순서로 리스트에 추가
-        TreeSet<BadgeType> badgeTypesSet = new TreeSet<>(Comparator.comparingInt(BadgeType::getShowPriority));
+        Set<BadgeType> badgeTypesSet = new TreeSet<>(Comparator.comparingInt(BadgeType::getShowPriority));
         badgeTypesSet.addAll(EnumSet.allOf(BadgeType.class));
 
         List<BadgesWithType> responseBadges = new ArrayList<>();
