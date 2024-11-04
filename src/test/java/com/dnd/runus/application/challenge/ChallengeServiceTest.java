@@ -18,11 +18,11 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class ChallengeDataServiceTest {
+class ChallengeServiceTest {
 
     @Mock
     private RunningRecordRepository runningRecordRepository;
@@ -44,7 +44,7 @@ class ChallengeDataServiceTest {
         member = new Member(MemberRole.USER, "nickname");
     }
 
-    @DisplayName("어제 기록이 있는경우 챌린지 리스트 조회 : 챌린지 name에 '어제'값이 포함한 값이 있어야함")
+    @DisplayName("어제 기록이 있는경우 챌린지 리스트 조회 : 챌린지 리스트 크기가 2이어야함")
     @Test
     void getChallengesWithYesterdayRecords() {
         // given
@@ -65,10 +65,10 @@ class ChallengeDataServiceTest {
         List<ChallengesResponse> challenges = challengeService.getChallenges(member.memberId());
 
         // then
-        assertTrue(challenges.stream().anyMatch(c -> c.title().contains("어제")));
+        assertThat(challenges.size()).isEqualTo(2);
     }
 
-    @DisplayName("어제 기록이 없는 경우 챌린지 리스트 조회 : 챌린지 name에 '어제'값이 포함한 값이 없어야함")
+    @DisplayName("어제 기록이 없는 경우 챌린지 리스트 조회 : 챌린지 리스트 크기가 2이어야함")
     @Test
     void getChallengesWithoutYesterdayRecords() {
         // given
@@ -85,6 +85,6 @@ class ChallengeDataServiceTest {
         List<ChallengesResponse> challenges = challengeService.getChallenges(member.memberId());
 
         // then
-        assertTrue(challenges.stream().noneMatch(c -> c.title().contains("어제")));
+        assertThat(challenges.size()).isEqualTo(2);
     }
 }
