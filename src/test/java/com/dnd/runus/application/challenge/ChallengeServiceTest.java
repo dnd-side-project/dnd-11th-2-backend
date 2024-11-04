@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class ChallengeDataServiceTest {
+class ChallengeServiceTest {
 
     @Mock
     private RunningRecordRepository runningRecordRepository;
