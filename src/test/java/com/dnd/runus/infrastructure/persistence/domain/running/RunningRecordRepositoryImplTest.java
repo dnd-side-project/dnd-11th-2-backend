@@ -269,7 +269,7 @@ class RunningRecordRepositoryImplTest {
 
         // then
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).sumValue()).isEqualTo(10_000);
+        assertThat(result.getFirst().sumValue()).isEqualTo(10_000);
     }
 
     @DisplayName("러닝 주간 서머리 조회(시간) : 러닝 데이터가 없을 경우")
@@ -325,7 +325,7 @@ class RunningRecordRepositoryImplTest {
 
         // then
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).sumValue()).isEqualTo(Duration.ofHours(2).toSeconds());
+        assertThat(result.getFirst().sumValue()).isEqualTo(Duration.ofHours(2).toSeconds());
     }
 
     @DisplayName("러닝 기간별 평균 거리 조회: 기간내 러닝 데이터가 없으면 0을 리턴한다.")

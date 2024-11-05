@@ -88,8 +88,8 @@ class ScaleServiceTest {
         assertNotNull(response);
         assertEquals(1, response.achievedCourses().size());
 
-        assertEquals(scale1.name(), response.achievedCourses().get(0).name());
-        assertEquals("0.2km", response.achievedCourses().get(0).totalDistance());
+        assertEquals(scale1.name(), response.achievedCourses().getFirst().name());
+        assertEquals("0.2km", response.achievedCourses().getFirst().totalDistance());
 
         assertEquals(scale2.name(), response.currentCourse().name());
         assertEquals("800m", response.currentCourse().achievedDistance());
