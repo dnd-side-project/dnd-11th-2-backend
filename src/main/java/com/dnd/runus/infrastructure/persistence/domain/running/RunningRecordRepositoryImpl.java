@@ -44,6 +44,11 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     }
 
     @Override
+    public int findTotalDistanceMeterByMemberId(long memberId) {
+        return jooqRunningRecordRepository.findTotalDistanceMeterByMemberId(memberId);
+    }
+
+    @Override
     public int findTotalDistanceMeterByMemberIdWithRangeDate(
             long memberId, OffsetDateTime startDate, OffsetDateTime endDate) {
         return jooqRunningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(memberId, startDate, endDate);
