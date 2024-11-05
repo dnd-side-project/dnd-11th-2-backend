@@ -73,7 +73,8 @@ public class ScaleService {
 
         OffsetDateTime now = OffsetDateTime.now();
         OffsetDateTime start = OffsetDateTime.of(LocalDate.of(1, 1, 1).atStartOfDay(), now.getOffset());
-        int memberRunMeterSum = runningRecordRepository.findTotalDistanceMeterByMemberId(memberId, start, now);
+        int memberRunMeterSum =
+                runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(memberId, start, now);
 
         ScaleAchievementLog currentScale = scaleAchievementLogs.stream()
                 .filter(log -> log.achievedDate() == null)

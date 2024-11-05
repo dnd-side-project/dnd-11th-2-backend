@@ -198,7 +198,8 @@ public class RunningRecordService {
                 .build());
 
         OffsetDateTime now = OffsetDateTime.now();
-        int totalDistance = runningRecordRepository.findTotalDistanceMeterByMemberId(memberId, BASE_TIME, now);
+        int totalDistance =
+                runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(memberId, BASE_TIME, now);
         Duration totalDuration = runningRecordRepository.findTotalDurationByMemberId(memberId, BASE_TIME, now);
 
         eventPublisher.publishEvent(new RunningRecordAddedEvent(member, record, totalDistance, totalDuration));
@@ -226,7 +227,7 @@ public class RunningRecordService {
 
         int monthValue = startDateOfMonth.getMonthValue();
 
-        int monthlyTotalDistance = runningRecordRepository.findTotalDistanceMeterByMemberId(
+        int monthlyTotalDistance = runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
                 memberId, startDateOfMonth, startDateOfNextMonth);
 
         MemberLevel.Current currentMemberLevel = memberLevelRepository.findByMemberIdWithLevel(memberId);

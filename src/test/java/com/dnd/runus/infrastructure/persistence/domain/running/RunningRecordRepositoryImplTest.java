@@ -146,7 +146,7 @@ class RunningRecordRepositoryImplTest {
         OffsetDateTime startDateOfNextMonth = startDateOfMonth.plusMonths(1);
 
         // when
-        int totalDistanceMeterByMemberId = runningRecordRepository.findTotalDistanceMeterByMemberId(
+        int totalDistanceMeterByMemberId = runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
                 savedMember.memberId(), startDateOfMonth, startDateOfNextMonth);
 
         // than
@@ -181,7 +181,7 @@ class RunningRecordRepositoryImplTest {
         OffsetDateTime startDateOfNextMonth = startDateOfMonth.plusMonths(1);
 
         // when
-        int totalDistanceMeterByMemberId = runningRecordRepository.findTotalDistanceMeterByMemberId(
+        int totalDistanceMeterByMemberId = runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
                 savedMember.memberId(), startDateOfMonth, startDateOfNextMonth);
 
         // than

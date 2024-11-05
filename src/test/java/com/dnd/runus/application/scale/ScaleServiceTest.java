@@ -56,7 +56,7 @@ class ScaleServiceTest {
                         new ScaleAchievementLog(scale2, null),
                         new ScaleAchievementLog(scale3, null)));
         int runningMeterSum = 50;
-        given(runningRecordRepository.findTotalDistanceMeterByMemberId(eq(memberId), any(), any()))
+        given(runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(eq(memberId), any(), any()))
                 .willReturn(runningMeterSum);
 
         // when
@@ -78,7 +78,7 @@ class ScaleServiceTest {
                         new ScaleAchievementLog(scale1, OffsetDateTime.now()),
                         new ScaleAchievementLog(scale2, null),
                         new ScaleAchievementLog(scale3, null)));
-        given(runningRecordRepository.findTotalDistanceMeterByMemberId(eq(memberId), any(), any()))
+        given(runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(eq(memberId), any(), any()))
                 .willReturn(1000);
 
         // when
