@@ -37,6 +37,13 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     }
 
     @Override
+    public List<RunningRecord> findByMember(Member member) {
+        return jpaRunningRecordRepository.findByMemberId(member.memberId()).stream()
+                .map(RunningRecordEntity::toDomain)
+                .toList();
+    }
+
+    @Override
     public int findTotalDistanceMeterByMemberIdWithRangeDate(
             long memberId, OffsetDateTime startDate, OffsetDateTime endDate) {
         return jooqRunningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(memberId, startDate, endDate);
@@ -46,13 +53,6 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     public Duration findTotalDurationByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime endDate) {
         return Duration.ofSeconds(
                 jooqRunningRecordRepository.findTotalDurationByMemberId(memberId, startDate, endDate));
-    }
-
-    @Override
-    public List<RunningRecord> findByMember(Member member) {
-        return jpaRunningRecordRepository.findByMemberId(member.memberId()).stream()
-                .map(RunningRecordEntity::toDomain)
-                .toList();
     }
 
     @Override

@@ -35,6 +35,19 @@ public class JooqRunningRecordRepository {
         return 0;
     }
 
+    public long findTotalDurationByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
+        Record1<Long> result = dsl.select(sum(RUNNING_RECORD.DURATION_SECONDS).cast(Long.class))
+                .from(RUNNING_RECORD)
+                .where(RUNNING_RECORD.MEMBER_ID.eq(memberId))
+                .and(RUNNING_RECORD.START_AT.ge(startDate))
+                .and(RUNNING_RECORD.START_AT.lt(nextDateOfEndDate))
+                .fetchOne();
+        if (result != null && result.value1() != null) {
+            return result.value1();
+        }
+        return 0;
+    }
+
     public int findAvgDistanceMeterByMemberIdWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
         Record1<Integer> result = dsl.select(avg(RUNNING_RECORD.DISTANCE_METER).cast(Integer.class))
@@ -108,19 +121,6 @@ public class JooqRunningRecordRepository {
                 .groupBy(cast(RUNNING_RECORD.START_AT, SQLDataType.DATE))
                 .orderBy(cast(RUNNING_RECORD.START_AT, SQLDataType.DATE))
                 .fetch(new DailyRunningSummary());
-    }
-
-    public long findTotalDurationByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
-        Record1<Long> result = dsl.select(sum(RUNNING_RECORD.DURATION_SECONDS).cast(Long.class))
-                .from(RUNNING_RECORD)
-                .where(RUNNING_RECORD.MEMBER_ID.eq(memberId))
-                .and(RUNNING_RECORD.START_AT.ge(startDate))
-                .and(RUNNING_RECORD.START_AT.lt(nextDateOfEndDate))
-                .fetchOne();
-        if (result != null && result.value1() != null) {
-            return result.value1();
-        }
-        return 0;
     }
 
     private static class DailyRunningSummary implements RecordMapper<Record, DailyRunningRecordSummary> {

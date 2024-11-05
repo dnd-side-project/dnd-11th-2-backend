@@ -13,11 +13,11 @@ public interface RunningRecordRepository {
     List<RunningRecord> findByMemberIdAndStartAtBetween(
             long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
 
+    List<RunningRecord> findByMember(Member member);
+
     int findTotalDistanceMeterByMemberIdWithRangeDate(long memberId, OffsetDateTime startDate, OffsetDateTime endDate);
 
     Duration findTotalDurationByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime endDate);
-
-    List<RunningRecord> findByMember(Member member);
 
     List<DailyRunningRecordSummary> findDailyDistancesMeterWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
