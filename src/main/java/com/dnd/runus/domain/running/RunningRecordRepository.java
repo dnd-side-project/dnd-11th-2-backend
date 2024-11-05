@@ -10,14 +10,8 @@ import java.util.Optional;
 public interface RunningRecordRepository {
     Optional<RunningRecord> findById(long runningRecordId);
 
-    RunningRecord save(RunningRecord runningRecord);
-
-    void deleteByMemberId(long memberId);
-
     List<RunningRecord> findByMemberIdAndStartAtBetween(
             long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
-
-    boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
 
     int findTotalDistanceMeterByMemberIdWithRangeDate(long memberId, OffsetDateTime startDate, OffsetDateTime endDate);
 
@@ -31,9 +25,15 @@ public interface RunningRecordRepository {
     List<DailyRunningRecordSummary> findDailyDurationsSecByDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 
-    int findAvgDistanceMeterByMemberIdAndDateRange(
+    int findAvgDistanceMeterByMemberIdWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 
     int findAvgDurationSecByMemberIdAndDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
+
+    boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
+
+    RunningRecord save(RunningRecord runningRecord);
+
+    void deleteByMemberId(long memberId);
 }

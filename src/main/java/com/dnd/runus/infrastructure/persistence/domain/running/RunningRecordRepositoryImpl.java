@@ -29,28 +29,11 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     }
 
     @Override
-    public RunningRecord save(RunningRecord runningRecord) {
-        return jpaRunningRecordRepository
-                .save(RunningRecordEntity.from(runningRecord))
-                .toDomain();
-    }
-
-    @Override
-    public void deleteByMemberId(long memberId) {
-        jpaRunningRecordRepository.deleteByMemberId(memberId);
-    }
-
-    @Override
     public List<RunningRecord> findByMemberIdAndStartAtBetween(
             long memberId, OffsetDateTime startTime, OffsetDateTime endTime) {
         return jpaRunningRecordRepository.findByMemberIdAndStartAtBetween(memberId, startTime, endTime).stream()
                 .map(RunningRecordEntity::toDomain)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime) {
-        return jpaRunningRecordRepository.existsByMemberIdAndStartAtBetween(memberId, startTime, endTime);
     }
 
     @Override
@@ -86,9 +69,9 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     }
 
     @Override
-    public int findAvgDistanceMeterByMemberIdAndDateRange(
+    public int findAvgDistanceMeterByMemberIdWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
-        return jooqRunningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+        return jooqRunningRecordRepository.findAvgDistanceMeterByMemberIdWithDateRange(
                 memberId, startDate, nextDateOfEndDate);
     }
 
@@ -97,5 +80,22 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
         return jooqRunningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
                 memberId, startDate, nextDateOfEndDate);
+    }
+
+    @Override
+    public boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime) {
+        return jpaRunningRecordRepository.existsByMemberIdAndStartAtBetween(memberId, startTime, endTime);
+    }
+
+    @Override
+    public RunningRecord save(RunningRecord runningRecord) {
+        return jpaRunningRecordRepository
+                .save(RunningRecordEntity.from(runningRecord))
+                .toDomain();
+    }
+
+    @Override
+    public void deleteByMemberId(long memberId) {
+        jpaRunningRecordRepository.deleteByMemberId(memberId);
     }
 }
