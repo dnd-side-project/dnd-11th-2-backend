@@ -340,7 +340,7 @@ class RunningRecordRepositoryImplTest {
         OffsetDateTime nextOfDndDate = startDate.plusDays(7);
 
         // when
-        int avgResult = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+        int avgResult = runningRecordRepository.findAvgDistanceMeterByMemberIdWithDateRange(
                 savedMember.memberId(), startDate, nextOfDndDate);
 
         // then
@@ -417,7 +417,7 @@ class RunningRecordRepositoryImplTest {
                 RunningEmoji.SOSO));
 
         // when
-        int avgResult = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+        int avgResult = runningRecordRepository.findAvgDistanceMeterByMemberIdWithDateRange(
                 savedMember.memberId(), startDate.toOffsetDateTime(), nextOfDndDate.toOffsetDateTime());
 
         // then

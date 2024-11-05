@@ -464,7 +464,7 @@ class RunningRecordServiceTest {
         given(runningRecordRepository.findDailyDistancesMeterByDateRange(memberId, startWeekDate, nextOfEndWeekDate))
                 .willReturn(List.of(new DailyRunningRecordSummary(runningDate.toLocalDate(), 3567)));
 
-        given(runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+        given(runningRecordRepository.findAvgDistanceMeterByMemberIdWithDateRange(
                         memberId, startWeekDate.minusDays(7), nextOfEndWeekDate.minusDays(7)))
                 .willReturn(800);
 

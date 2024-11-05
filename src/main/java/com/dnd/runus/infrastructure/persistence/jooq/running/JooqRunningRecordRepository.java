@@ -35,7 +35,7 @@ public class JooqRunningRecordRepository {
         return 0;
     }
 
-    public int findAvgDistanceMeterByMemberIdAndDateRange(
+    public int findAvgDistanceMeterByMemberIdWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
         Record1<Integer> result = dsl.select(avg(RUNNING_RECORD.DISTANCE_METER).cast(Integer.class))
                 .from(RUNNING_RECORD)

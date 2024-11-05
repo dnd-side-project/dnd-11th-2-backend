@@ -140,7 +140,7 @@ public class RunningRecordService {
         if (summaryType.equals(RunningRecordWeeklySummaryType.DISTANCE)) {
             weekSummaries = runningRecordRepository.findDailyDistancesMeterByDateRange(
                     memberId, startWeekDate, nextOfEndWeekDate);
-            avgValue = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+            avgValue = runningRecordRepository.findAvgDistanceMeterByMemberIdWithDateRange(
                     memberId, startWeekDate.minusDays(7), nextOfEndWeekDate.minusDays(7));
             conversionFactor = METERS_IN_A_KILOMETER;
         } else {
