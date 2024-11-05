@@ -17,8 +17,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,7 +54,7 @@ class ScaleServiceTest {
                         new ScaleAchievementLog(scale2, null),
                         new ScaleAchievementLog(scale3, null)));
         int runningMeterSum = 50;
-        given(runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(eq(memberId), any(), any()))
+        given(runningRecordRepository.findTotalDistanceMeterByMemberId(memberId))
                 .willReturn(runningMeterSum);
 
         // when
@@ -78,7 +76,7 @@ class ScaleServiceTest {
                         new ScaleAchievementLog(scale1, OffsetDateTime.now()),
                         new ScaleAchievementLog(scale2, null),
                         new ScaleAchievementLog(scale3, null)));
-        given(runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(eq(memberId), any(), any()))
+        given(runningRecordRepository.findTotalDistanceMeterByMemberId(memberId))
                 .willReturn(1000);
 
         // when

@@ -198,8 +198,7 @@ public class RunningRecordService {
                 .build());
 
         OffsetDateTime now = OffsetDateTime.now();
-        int totalDistance =
-                runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(memberId, BASE_TIME, now);
+        int totalDistance = runningRecordRepository.findTotalDistanceMeterByMemberId(memberId);
         Duration totalDuration = runningRecordRepository.findTotalDurationByMemberId(memberId, BASE_TIME, now);
 
         eventPublisher.publishEvent(new RunningRecordAddedEvent(member, record, totalDistance, totalDuration));
