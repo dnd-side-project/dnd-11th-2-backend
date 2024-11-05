@@ -461,7 +461,7 @@ class RunningRecordServiceTest {
 
         OffsetDateTime runningDate = startWeekDate.plusDays(2);
 
-        given(runningRecordRepository.findDailyDistancesMeterByDateRange(memberId, startWeekDate, nextOfEndWeekDate))
+        given(runningRecordRepository.findDailyDistancesMeterWithDateRange(memberId, startWeekDate, nextOfEndWeekDate))
                 .willReturn(List.of(new DailyRunningRecordSummary(runningDate.toLocalDate(), 3567)));
 
         given(runningRecordRepository.findAvgDistanceMeterByMemberIdWithDateRange(
@@ -496,10 +496,10 @@ class RunningRecordServiceTest {
 
         OffsetDateTime runningDate = startWeekDate.plusDays(2);
 
-        given(runningRecordRepository.findDailyDurationsSecByDateRange(memberId, startWeekDate, nextOfEndWeekDate))
+        given(runningRecordRepository.findDailyDurationsSecWithDateRange(memberId, startWeekDate, nextOfEndWeekDate))
                 .willReturn(List.of(new DailyRunningRecordSummary(runningDate.toLocalDate(), runningDurationSec)));
 
-        given(runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+        given(runningRecordRepository.findAvgDurationSecByMemberIdWithDateRange(
                         memberId, startWeekDate.minusDays(7), nextOfEndWeekDate.minusDays(7)))
                 .willReturn(runningDurationSec);
 

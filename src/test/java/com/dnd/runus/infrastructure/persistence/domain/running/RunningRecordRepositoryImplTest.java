@@ -228,7 +228,7 @@ class RunningRecordRepositoryImplTest {
         OffsetDateTime nextOfDndDate = startDate.plusDays(7);
 
         // when
-        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDistancesMeterByDateRange(
+        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDistancesMeterWithDateRange(
                 savedMember.memberId(), startDate, nextOfDndDate);
 
         // then
@@ -264,7 +264,7 @@ class RunningRecordRepositoryImplTest {
         }
 
         // when
-        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDistancesMeterByDateRange(
+        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDistancesMeterWithDateRange(
                 savedMember.memberId(), startDate, nextOfDndDate);
 
         // then
@@ -284,7 +284,7 @@ class RunningRecordRepositoryImplTest {
         OffsetDateTime nextOfDndDate = startDate.plusDays(7);
 
         // when
-        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDurationsSecByDateRange(
+        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDurationsSecWithDateRange(
                 savedMember.memberId(), startDate, nextOfDndDate);
 
         // then
@@ -320,7 +320,7 @@ class RunningRecordRepositoryImplTest {
         }
 
         // when
-        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDurationsSecByDateRange(
+        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDurationsSecWithDateRange(
                 savedMember.memberId(), startDate, nextOfDndDate);
 
         // then
@@ -436,7 +436,7 @@ class RunningRecordRepositoryImplTest {
         OffsetDateTime nextOfDndDate = startDate.plusDays(7);
 
         // when
-        int avgResult = runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+        int avgResult = runningRecordRepository.findAvgDurationSecByMemberIdWithDateRange(
                 savedMember.memberId(), startDate, nextOfDndDate);
 
         // then
@@ -513,7 +513,7 @@ class RunningRecordRepositoryImplTest {
                 RunningEmoji.SOSO));
 
         // when
-        int avgResult = runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+        int avgResult = runningRecordRepository.findAvgDurationSecByMemberIdWithDateRange(
                 savedMember.memberId(), startDate.toOffsetDateTime(), nextOfDndDate.toOffsetDateTime());
 
         // then

@@ -56,15 +56,15 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     }
 
     @Override
-    public List<DailyRunningRecordSummary> findDailyDistancesMeterByDateRange(
+    public List<DailyRunningRecordSummary> findDailyDistancesMeterWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
-        return jooqRunningRecordRepository.findDailyDistancesMeterByDateRange(memberId, startDate, nextDateOfEndDate);
+        return jooqRunningRecordRepository.findDailyDistancesMeterWithDateRange(memberId, startDate, nextDateOfEndDate);
     }
 
     @Override
-    public List<DailyRunningRecordSummary> findDailyDurationsSecByDateRange(
+    public List<DailyRunningRecordSummary> findDailyDurationsSecWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
-        return jooqRunningRecordRepository.findDailyDurationsSecMeterByDateRange(
+        return jooqRunningRecordRepository.findDailyDurationsSecMeterWithDateRange(
                 memberId, startDate, nextDateOfEndDate);
     }
 
@@ -76,9 +76,9 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     }
 
     @Override
-    public int findAvgDurationSecByMemberIdAndDateRange(
+    public int findAvgDurationSecByMemberIdWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
-        return jooqRunningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+        return jooqRunningRecordRepository.findAvgDurationSecByMemberIdWithDateRange(
                 memberId, startDate, nextDateOfEndDate);
     }
 

@@ -49,7 +49,7 @@ public class JooqRunningRecordRepository {
         return 0;
     }
 
-    public int findAvgDurationSecByMemberIdAndDateRange(
+    public int findAvgDurationSecByMemberIdWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
         Record1<Integer> result = dsl.select(
                         avg(RUNNING_RECORD.DURATION_SECONDS).cast(Integer.class))
@@ -72,7 +72,7 @@ public class JooqRunningRecordRepository {
      * @return 기간 내 각 날짜별 달린 거리 합계를 포함한 리스트.
      * 각 요소는 날짜와 해당 날짜의 거리 합계를 나타내는 {@link DailyRunningRecordSummary} 객체입니다.
      */
-    public List<DailyRunningRecordSummary> findDailyDistancesMeterByDateRange(
+    public List<DailyRunningRecordSummary> findDailyDistancesMeterWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
 
         return dsl.select(
@@ -95,7 +95,7 @@ public class JooqRunningRecordRepository {
      * @return 기간 내 각 날짜별 달린 시간 합계를 포함한 리스트.
      * 각 요소는 날짜와 해당 날짜의 달린 시간 합계를 나타내는 {@link DailyRunningRecordSummary} 객체입니다.
      */
-    public List<DailyRunningRecordSummary> findDailyDurationsSecMeterByDateRange(
+    public List<DailyRunningRecordSummary> findDailyDurationsSecMeterWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
 
         return dsl.select(

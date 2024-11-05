@@ -19,16 +19,16 @@ public interface RunningRecordRepository {
 
     List<RunningRecord> findByMember(Member member);
 
-    List<DailyRunningRecordSummary> findDailyDistancesMeterByDateRange(
+    List<DailyRunningRecordSummary> findDailyDistancesMeterWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 
-    List<DailyRunningRecordSummary> findDailyDurationsSecByDateRange(
+    List<DailyRunningRecordSummary> findDailyDurationsSecWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 
     int findAvgDistanceMeterByMemberIdWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 
-    int findAvgDurationSecByMemberIdAndDateRange(
+    int findAvgDurationSecByMemberIdWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 
     boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
