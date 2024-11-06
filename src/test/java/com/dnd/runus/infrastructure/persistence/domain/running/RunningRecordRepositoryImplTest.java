@@ -146,7 +146,7 @@ class RunningRecordRepositoryImplTest {
         OffsetDateTime startDateOfNextMonth = startDateOfMonth.plusMonths(1);
 
         // when
-        int totalDistanceMeterByMemberId = runningRecordRepository.findTotalDistanceMeterByMemberId(
+        int totalDistanceMeterByMemberId = runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
                 savedMember.memberId(), startDateOfMonth, startDateOfNextMonth);
 
         // than
@@ -181,7 +181,7 @@ class RunningRecordRepositoryImplTest {
         OffsetDateTime startDateOfNextMonth = startDateOfMonth.plusMonths(1);
 
         // when
-        int totalDistanceMeterByMemberId = runningRecordRepository.findTotalDistanceMeterByMemberId(
+        int totalDistanceMeterByMemberId = runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
                 savedMember.memberId(), startDateOfMonth, startDateOfNextMonth);
 
         // than
@@ -228,7 +228,7 @@ class RunningRecordRepositoryImplTest {
         OffsetDateTime nextOfDndDate = startDate.plusDays(7);
 
         // when
-        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDistancesMeterByDateRange(
+        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDistancesMeterWithDateRange(
                 savedMember.memberId(), startDate, nextOfDndDate);
 
         // then
@@ -264,12 +264,12 @@ class RunningRecordRepositoryImplTest {
         }
 
         // when
-        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDistancesMeterByDateRange(
+        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDistancesMeterWithDateRange(
                 savedMember.memberId(), startDate, nextOfDndDate);
 
         // then
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).sumValue()).isEqualTo(10_000);
+        assertThat(result.getFirst().sumValue()).isEqualTo(10_000);
     }
 
     @DisplayName("러닝 주간 서머리 조회(시간) : 러닝 데이터가 없을 경우")
@@ -284,7 +284,7 @@ class RunningRecordRepositoryImplTest {
         OffsetDateTime nextOfDndDate = startDate.plusDays(7);
 
         // when
-        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDurationsSecByDateRange(
+        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDurationsSecWithDateRange(
                 savedMember.memberId(), startDate, nextOfDndDate);
 
         // then
@@ -320,12 +320,12 @@ class RunningRecordRepositoryImplTest {
         }
 
         // when
-        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDurationsSecByDateRange(
+        List<DailyRunningRecordSummary> result = runningRecordRepository.findDailyDurationsSecWithDateRange(
                 savedMember.memberId(), startDate, nextOfDndDate);
 
         // then
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).sumValue()).isEqualTo(Duration.ofHours(2).toSeconds());
+        assertThat(result.getFirst().sumValue()).isEqualTo(Duration.ofHours(2).toSeconds());
     }
 
     @DisplayName("러닝 기간별 평균 거리 조회: 기간내 러닝 데이터가 없으면 0을 리턴한다.")
@@ -340,7 +340,7 @@ class RunningRecordRepositoryImplTest {
         OffsetDateTime nextOfDndDate = startDate.plusDays(7);
 
         // when
-        int avgResult = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+        int avgResult = runningRecordRepository.findAvgDistanceMeterByMemberIdWithDateRange(
                 savedMember.memberId(), startDate, nextOfDndDate);
 
         // then
@@ -417,7 +417,7 @@ class RunningRecordRepositoryImplTest {
                 RunningEmoji.SOSO));
 
         // when
-        int avgResult = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+        int avgResult = runningRecordRepository.findAvgDistanceMeterByMemberIdWithDateRange(
                 savedMember.memberId(), startDate.toOffsetDateTime(), nextOfDndDate.toOffsetDateTime());
 
         // then
@@ -436,7 +436,7 @@ class RunningRecordRepositoryImplTest {
         OffsetDateTime nextOfDndDate = startDate.plusDays(7);
 
         // when
-        int avgResult = runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+        int avgResult = runningRecordRepository.findAvgDurationSecByMemberIdWithDateRange(
                 savedMember.memberId(), startDate, nextOfDndDate);
 
         // then
@@ -513,7 +513,7 @@ class RunningRecordRepositoryImplTest {
                 RunningEmoji.SOSO));
 
         // when
-        int avgResult = runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+        int avgResult = runningRecordRepository.findAvgDurationSecByMemberIdWithDateRange(
                 savedMember.memberId(), startDate.toOffsetDateTime(), nextOfDndDate.toOffsetDateTime());
 
         // then

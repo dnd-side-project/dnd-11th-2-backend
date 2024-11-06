@@ -138,15 +138,15 @@ public class RunningRecordService {
         double conversionFactor;
 
         if (summaryType.equals(RunningRecordWeeklySummaryType.DISTANCE)) {
-            weekSummaries = runningRecordRepository.findDailyDistancesMeterByDateRange(
+            weekSummaries = runningRecordRepository.findDailyDistancesMeterWithDateRange(
                     memberId, startWeekDate, nextOfEndWeekDate);
-            avgValue = runningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+            avgValue = runningRecordRepository.findAvgDistanceMeterByMemberIdWithDateRange(
                     memberId, startWeekDate.minusDays(7), nextOfEndWeekDate.minusDays(7));
             conversionFactor = METERS_IN_A_KILOMETER;
         } else {
-            weekSummaries = runningRecordRepository.findDailyDurationsSecByDateRange(
+            weekSummaries = runningRecordRepository.findDailyDurationsSecWithDateRange(
                     memberId, startWeekDate, nextOfEndWeekDate);
-            avgValue = runningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+            avgValue = runningRecordRepository.findAvgDurationSecByMemberIdWithDateRange(
                     memberId, startWeekDate.minusDays(7), nextOfEndWeekDate.minusDays(7));
             conversionFactor = SECONDS_PER_HOUR;
         }
@@ -198,7 +198,7 @@ public class RunningRecordService {
                 .build());
 
         OffsetDateTime now = OffsetDateTime.now();
-        int totalDistance = runningRecordRepository.findTotalDistanceMeterByMemberId(memberId, BASE_TIME, now);
+        int totalDistance = runningRecordRepository.findTotalDistanceMeterByMemberId(memberId);
         Duration totalDuration = runningRecordRepository.findTotalDurationByMemberId(memberId, BASE_TIME, now);
 
         eventPublisher.publishEvent(new RunningRecordAddedEvent(member, record, totalDistance, totalDuration));
@@ -226,7 +226,7 @@ public class RunningRecordService {
 
         int monthValue = startDateOfMonth.getMonthValue();
 
-        int monthlyTotalDistance = runningRecordRepository.findTotalDistanceMeterByMemberId(
+        int monthlyTotalDistance = runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
                 memberId, startDateOfMonth, startDateOfNextMonth);
 
         MemberLevel.Current currentMemberLevel = memberLevelRepository.findByMemberIdWithLevel(memberId);

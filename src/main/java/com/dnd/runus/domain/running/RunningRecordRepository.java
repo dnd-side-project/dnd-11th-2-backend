@@ -10,30 +10,32 @@ import java.util.Optional;
 public interface RunningRecordRepository {
     Optional<RunningRecord> findById(long runningRecordId);
 
-    RunningRecord save(RunningRecord runningRecord);
-
-    void deleteByMemberId(long memberId);
-
     List<RunningRecord> findByMemberIdAndStartAtBetween(
             long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
 
-    boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
+    List<RunningRecord> findByMember(Member member);
 
-    int findTotalDistanceMeterByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime endDate);
+    int findTotalDistanceMeterByMemberId(long memberId);
+
+    int findTotalDistanceMeterByMemberIdWithRangeDate(long memberId, OffsetDateTime startDate, OffsetDateTime endDate);
 
     Duration findTotalDurationByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime endDate);
 
-    List<RunningRecord> findByMember(Member member);
-
-    List<DailyRunningRecordSummary> findDailyDistancesMeterByDateRange(
+    List<DailyRunningRecordSummary> findDailyDistancesMeterWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 
-    List<DailyRunningRecordSummary> findDailyDurationsSecByDateRange(
+    List<DailyRunningRecordSummary> findDailyDurationsSecWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 
-    int findAvgDistanceMeterByMemberIdAndDateRange(
+    int findAvgDistanceMeterByMemberIdWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
 
-    int findAvgDurationSecByMemberIdAndDateRange(
+    int findAvgDurationSecByMemberIdWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate);
+
+    boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime);
+
+    RunningRecord save(RunningRecord runningRecord);
+
+    void deleteByMemberId(long memberId);
 }

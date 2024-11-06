@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -71,9 +70,7 @@ public class ScaleService {
     private ScaleCoursesResponse.CurrentCourse calculateCurrentScaleLeftMeter(
             List<ScaleAchievementLog> scaleAchievementLogs, long memberId) {
 
-        OffsetDateTime now = OffsetDateTime.now();
-        OffsetDateTime start = OffsetDateTime.of(LocalDate.of(1, 1, 1).atStartOfDay(), now.getOffset());
-        int memberRunMeterSum = runningRecordRepository.findTotalDistanceMeterByMemberId(memberId, start, now);
+        int memberRunMeterSum = runningRecordRepository.findTotalDistanceMeterByMemberId(memberId);
 
         ScaleAchievementLog currentScale = scaleAchievementLogs.stream()
                 .filter(log -> log.achievedDate() == null)

@@ -29,39 +29,11 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     }
 
     @Override
-    public RunningRecord save(RunningRecord runningRecord) {
-        return jpaRunningRecordRepository
-                .save(RunningRecordEntity.from(runningRecord))
-                .toDomain();
-    }
-
-    @Override
-    public void deleteByMemberId(long memberId) {
-        jpaRunningRecordRepository.deleteByMemberId(memberId);
-    }
-
-    @Override
     public List<RunningRecord> findByMemberIdAndStartAtBetween(
             long memberId, OffsetDateTime startTime, OffsetDateTime endTime) {
         return jpaRunningRecordRepository.findByMemberIdAndStartAtBetween(memberId, startTime, endTime).stream()
                 .map(RunningRecordEntity::toDomain)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime) {
-        return jpaRunningRecordRepository.existsByMemberIdAndStartAtBetween(memberId, startTime, endTime);
-    }
-
-    @Override
-    public int findTotalDistanceMeterByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime endtDate) {
-        return jooqRunningRecordRepository.findTotalDistanceMeterByMemberId(memberId, startDate, endtDate);
-    }
-
-    @Override
-    public Duration findTotalDurationByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime endDate) {
-        return Duration.ofSeconds(
-                jooqRunningRecordRepository.findTotalDurationByMemberId(memberId, startDate, endDate));
     }
 
     @Override
@@ -72,29 +44,63 @@ public class RunningRecordRepositoryImpl implements RunningRecordRepository {
     }
 
     @Override
-    public List<DailyRunningRecordSummary> findDailyDistancesMeterByDateRange(
-            long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
-        return jooqRunningRecordRepository.findDailyDistancesMeterByDateRange(memberId, startDate, nextDateOfEndDate);
+    public int findTotalDistanceMeterByMemberId(long memberId) {
+        return jooqRunningRecordRepository.findTotalDistanceMeterByMemberId(memberId);
     }
 
     @Override
-    public List<DailyRunningRecordSummary> findDailyDurationsSecByDateRange(
+    public int findTotalDistanceMeterByMemberIdWithRangeDate(
+            long memberId, OffsetDateTime startDate, OffsetDateTime endDate) {
+        return jooqRunningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(memberId, startDate, endDate);
+    }
+
+    @Override
+    public Duration findTotalDurationByMemberId(long memberId, OffsetDateTime startDate, OffsetDateTime endDate) {
+        return Duration.ofSeconds(
+                jooqRunningRecordRepository.findTotalDurationByMemberId(memberId, startDate, endDate));
+    }
+
+    @Override
+    public List<DailyRunningRecordSummary> findDailyDistancesMeterWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
-        return jooqRunningRecordRepository.findDailyDurationsSecMeterByDateRange(
+        return jooqRunningRecordRepository.findDailyDistancesMeterWithDateRange(memberId, startDate, nextDateOfEndDate);
+    }
+
+    @Override
+    public List<DailyRunningRecordSummary> findDailyDurationsSecWithDateRange(
+            long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
+        return jooqRunningRecordRepository.findDailyDurationsSecMeterWithDateRange(
                 memberId, startDate, nextDateOfEndDate);
     }
 
     @Override
-    public int findAvgDistanceMeterByMemberIdAndDateRange(
+    public int findAvgDistanceMeterByMemberIdWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
-        return jooqRunningRecordRepository.findAvgDistanceMeterByMemberIdAndDateRange(
+        return jooqRunningRecordRepository.findAvgDistanceMeterByMemberIdWithDateRange(
                 memberId, startDate, nextDateOfEndDate);
     }
 
     @Override
-    public int findAvgDurationSecByMemberIdAndDateRange(
+    public int findAvgDurationSecByMemberIdWithDateRange(
             long memberId, OffsetDateTime startDate, OffsetDateTime nextDateOfEndDate) {
-        return jooqRunningRecordRepository.findAvgDurationSecByMemberIdAndDateRange(
+        return jooqRunningRecordRepository.findAvgDurationSecByMemberIdWithDateRange(
                 memberId, startDate, nextDateOfEndDate);
+    }
+
+    @Override
+    public boolean hasByMemberIdAndStartAtBetween(long memberId, OffsetDateTime startTime, OffsetDateTime endTime) {
+        return jpaRunningRecordRepository.existsByMemberIdAndStartAtBetween(memberId, startTime, endTime);
+    }
+
+    @Override
+    public RunningRecord save(RunningRecord runningRecord) {
+        return jpaRunningRecordRepository
+                .save(RunningRecordEntity.from(runningRecord))
+                .toDomain();
+    }
+
+    @Override
+    public void deleteByMemberId(long memberId) {
+        jpaRunningRecordRepository.deleteByMemberId(memberId);
     }
 }
