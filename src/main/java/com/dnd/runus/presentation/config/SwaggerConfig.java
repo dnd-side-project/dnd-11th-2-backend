@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.customizers.OperationCustomizer;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +43,16 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 public class SwaggerConfig {
     private final BuildProperties buildProperties;
     private final Environment environment;
+
+    @Bean
+    GroupedOpenApi groupV1() {
+        return GroupedOpenApi.builder().group("V1").pathsToMatch("/api/v1/**").build();
+    }
+
+    @Bean
+    GroupedOpenApi groupV2() {
+        return GroupedOpenApi.builder().group("V2").pathsToMatch("/api/v2/**").build();
+    }
 
     @Bean
     OpenAPI openAPI() {
