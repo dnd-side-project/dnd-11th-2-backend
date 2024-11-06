@@ -1,6 +1,5 @@
 package com.dnd.runus.application.member;
 
-import com.dnd.runus.domain.level.Level;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberLevel;
 import com.dnd.runus.domain.member.MemberLevelRepository;
@@ -28,10 +27,11 @@ public class MemberService {
 
         return new MyProfileResponse(
                 memberCurrentLevel.level().imageUrl(),
-                Level.formatLevelName(currentLevel),
-                Level.formatExp(memberCurrentLevel.currentExp()),
-                Level.formatLevelName(nextLevel),
-                Level.formatExp(memberCurrentLevel.level().expRangeEnd() - memberCurrentLevel.currentExp()));
+                currentLevel,
+                memberCurrentLevel.currentExp(),
+                nextLevel,
+                memberCurrentLevel.level().expRangeStart(),
+                memberCurrentLevel.level().expRangeEnd());
     }
 
     @Transactional

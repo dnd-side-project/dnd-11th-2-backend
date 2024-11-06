@@ -2,7 +2,7 @@ package com.dnd.runus.presentation.v1.member;
 
 import com.dnd.runus.application.member.MemberService;
 import com.dnd.runus.presentation.annotation.MemberId;
-import com.dnd.runus.presentation.v1.member.dto.response.MyProfileResponse;
+import com.dnd.runus.presentation.v1.member.dto.response.MyProfileResponseV1;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ public class MemberProfileController {
 
     @GetMapping("me")
     @ResponseStatus(HttpStatus.OK)
-    public MyProfileResponse getMyProfile(@MemberId long memberId) {
-        return memberService.getMyProfile(memberId);
+    public MyProfileResponseV1 getMyProfile(@MemberId long memberId) {
+        return MyProfileResponseV1.from(memberService.getMyProfile(memberId));
     }
 }

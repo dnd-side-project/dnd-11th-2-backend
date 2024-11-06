@@ -22,7 +22,7 @@ class MemberServiceTest {
     @Mock
     private MemberLevelRepository memberLevelRepository;
 
-    @DisplayName("내 프로필 조회 성공 - 현재 레벨 1, 경험치 500일때, 0km로 표현 (소수점 버림)")
+    @DisplayName("내 프로필 조회 성공 - 현재 레벨 1, 경험치 500일때, 다음 레벨이 2여야함")
     @Test
     void getMyProfile_givenCurrentLevel1AndExp500_thenSuccess() {
         // given
@@ -35,26 +35,8 @@ class MemberServiceTest {
 
         // then
         assertEquals("imageUrl", myProfileResponse.profileImageUrl());
-        assertEquals("Level 1", myProfileResponse.currentLevelName());
-        assertEquals("0.5km", myProfileResponse.currentKm());
-        assertEquals("Level 2", myProfileResponse.nextLevelName());
-    }
-
-    @DisplayName("내 프로필 조회 성공 - 현재 레벨 2, 경험치 1500일때, 1km로 표현 (소수점 버림)")
-    @Test
-    void getMyProfile_givenCurrentLevel1AndExp1500_thenSuccess() {
-        // given
-        long memberId = 1L;
-        Level level = new Level(2, 1000, 2000, "imageUrl");
-        given(memberLevelRepository.findByMemberIdWithLevel(memberId)).willReturn(new MemberLevel.Current(level, 1500));
-
-        // when
-        MyProfileResponse myProfileResponse = memberService.getMyProfile(memberId);
-
-        // then
-        assertEquals("imageUrl", myProfileResponse.profileImageUrl());
-        assertEquals("Level 2", myProfileResponse.currentLevelName());
-        assertEquals("1.5km", myProfileResponse.currentKm());
-        assertEquals("Level 3", myProfileResponse.nextLevelName());
+        assertEquals(1, myProfileResponse.currentLevel());
+        assertEquals(500, myProfileResponse.currentExpMeter());
+        assertEquals(2, myProfileResponse.nextLevel());
     }
 }
