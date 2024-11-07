@@ -8,10 +8,7 @@ import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
 import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
-import com.dnd.runus.domain.level.Level;
 import com.dnd.runus.domain.member.Member;
-import com.dnd.runus.domain.member.MemberLevel;
-import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.DailyRunningRecordSummary;
 import com.dnd.runus.domain.running.RunningRecord;
@@ -61,9 +58,6 @@ class RunningRecordServiceTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private MemberLevelRepository memberLevelRepository;
-
-    @Mock
     private ChallengeRepository challengeRepository;
 
     @Mock
@@ -85,7 +79,6 @@ class RunningRecordServiceTest {
         runningRecordService = new RunningRecordService(
                 runningRecordRepository,
                 memberRepository,
-                memberLevelRepository,
                 challengeRepository,
                 challengeAchievementRepository,
                 percentageValuesRepository,
@@ -416,7 +409,7 @@ class RunningRecordServiceTest {
     }
 
     @Test
-    @DisplayName("이번 달, 달린 키로 수, 러닝 레벨을 조회한다.")
+    @DisplayName("이번 달, 달린 키로수를 조회한다.")
     void getMonthlyRunningSummery() {
         // given
         long memberId = 1;
@@ -430,19 +423,14 @@ class RunningRecordServiceTest {
             given(runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(eq(memberId), any(), any()))
                     .willReturn(45_780);
 
-            given(memberLevelRepository.findByMemberIdWithLevel(memberId))
-                    .willReturn(new MemberLevel.Current(new Level(1, 0, 50_000, "image"), 45_780));
-
             // when
             RunningRecordMonthlySummaryResponse monthlyRunningSummery =
                     runningRecordService.getMonthlyRunningSummery(memberId);
 
             // then
             assertNotNull(monthlyRunningSummery);
-            assertThat(monthlyRunningSummery.month()).isEqualTo("1월");
-            assertThat(monthlyRunningSummery.monthlyKm()).isEqualTo("45.78km");
-            assertThat(monthlyRunningSummery.nextLevelName()).isEqualTo("Level 2");
-            assertThat(monthlyRunningSummery.nextLevelKm()).isEqualTo("4.22km");
+            assertThat(monthlyRunningSummery.month()).isEqualTo(1);
+            assertThat(monthlyRunningSummery.monthlyTotalMeter()).isEqualTo(45_780);
         }
     }
 

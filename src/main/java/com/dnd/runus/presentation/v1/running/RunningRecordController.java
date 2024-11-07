@@ -1,9 +1,12 @@
 package com.dnd.runus.presentation.v1.running;
 
+import com.dnd.runus.application.member.MemberService;
 import com.dnd.runus.application.running.RunningRecordService;
+import com.dnd.runus.domain.level.Level;
 import com.dnd.runus.global.exception.type.ApiErrorType;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.annotation.MemberId;
+import com.dnd.runus.presentation.v1.member.dto.response.MyProfileResponse;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.*;
@@ -23,6 +26,7 @@ import java.util.List;
 @RequestMapping("/api/v1/running-records")
 public class RunningRecordController {
     private final RunningRecordService runningRecordService;
+    private final MemberService memberService;
 
     @GetMapping("/{runningRecordId}")
     @Operation(summary = "러닝 기록 상세 조회", description = "RunngingRecord id로 러닝 상세 기록을 조회합니다.")
@@ -76,8 +80,17 @@ public class RunningRecordController {
             """)
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("monthly-summary")
-    public RunningRecordMonthlySummaryResponse getMonthlyRunningSummary(@MemberId long memberId) {
-        return runningRecordService.getMonthlyRunningSummery(memberId);
+    public RunningRecordMonthlySummaryResponseV1 getMonthlyRunningSummary(@MemberId long memberId) {
+        RunningRecordMonthlySummaryResponse monthlyRunningSummery =
+                runningRecordService.getMonthlyRunningSummery(memberId);
+
+        MyProfileResponse myProfile = memberService.getMyProfile(memberId);
+
+        return new RunningRecordMonthlySummaryResponseV1(
+                monthlyRunningSummery.month(),
+                monthlyRunningSummery.monthlyTotalMeter(),
+                Level.formatLevelName(myProfile.nextLevel()),
+                Level.formatExp(myProfile.nextLevelEndExpMeter() - myProfile.currentExpMeter()));
     }
 
     @Operation(
