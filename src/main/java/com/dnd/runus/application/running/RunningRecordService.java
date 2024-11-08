@@ -13,10 +13,7 @@ import com.dnd.runus.domain.common.Coordinate;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
 import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
-import com.dnd.runus.domain.level.Level;
 import com.dnd.runus.domain.member.Member;
-import com.dnd.runus.domain.member.MemberLevel;
-import com.dnd.runus.domain.member.MemberLevelRepository;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.DailyRunningRecordSummary;
 import com.dnd.runus.domain.running.RunningRecord;
@@ -47,7 +44,6 @@ import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
 public class RunningRecordService {
     private final RunningRecordRepository runningRecordRepository;
     private final MemberRepository memberRepository;
-    private final MemberLevelRepository memberLevelRepository;
     private final ChallengeRepository challengeRepository;
     private final ChallengeAchievementRepository challengeAchievementRepository;
     private final ChallengeAchievementPercentageRepository percentageValuesRepository;
@@ -61,7 +57,6 @@ public class RunningRecordService {
     public RunningRecordService(
             RunningRecordRepository runningRecordRepository,
             MemberRepository memberRepository,
-            MemberLevelRepository memberLevelRepository,
             ChallengeRepository challengeRepository,
             ChallengeAchievementRepository challengeAchievementRepository,
             ChallengeAchievementPercentageRepository percentageValuesRepository,
@@ -70,7 +65,6 @@ public class RunningRecordService {
             @Value("${app.default-zone-offset}") ZoneOffset defaultZoneOffset) {
         this.runningRecordRepository = runningRecordRepository;
         this.memberRepository = memberRepository;
-        this.memberLevelRepository = memberLevelRepository;
         this.challengeRepository = challengeRepository;
         this.challengeAchievementRepository = challengeAchievementRepository;
         this.percentageValuesRepository = percentageValuesRepository;
@@ -223,22 +217,11 @@ public class RunningRecordService {
         OffsetDateTime startDateOfMonth =
                 OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE)).withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS);
         OffsetDateTime startDateOfNextMonth = startDateOfMonth.plusMonths(1);
-
-        int monthValue = startDateOfMonth.getMonthValue();
-
-        int monthlyTotalDistance = runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
-                memberId, startDateOfMonth, startDateOfNextMonth);
-
-        MemberLevel.Current currentMemberLevel = memberLevelRepository.findByMemberIdWithLevel(memberId);
-
-        long nextLevel = currentMemberLevel.level().levelId() + 1;
-        int remainingKmToNextLevel = currentMemberLevel.level().expRangeEnd() - currentMemberLevel.currentExp();
-
-        return new RunningRecordMonthlySummaryResponse(
-                monthValue,
-                monthlyTotalDistance,
-                Level.formatLevelName(nextLevel),
-                Level.formatExp(remainingKmToNextLevel));
+        return RunningRecordMonthlySummaryResponse.builder()
+                .month(startDateOfMonth.getMonthValue())
+                .monthlyTotalMeter(runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
+                        memberId, startDateOfMonth, startDateOfNextMonth))
+                .build();
     }
 
     private ChallengeAchievement handleChallengeMode(Long challengeId, long memberId, RunningRecord runningRecord) {
