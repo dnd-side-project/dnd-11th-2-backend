@@ -179,7 +179,7 @@ class RunningRecordServiceTest {
         assertEquals(runningRecordId, result.runningRecordId());
         assertEquals(runningRecord.emoji(), result.emotion());
         assertEquals(
-                challengeAchievementStatus.challenge().name(),
+                challengeAchievementStatus.challenge().name() + " 성공!",
                 result.challenge().title());
         assertEquals(RunningAchievementMode.CHALLENGE, result.achievementMode());
     }

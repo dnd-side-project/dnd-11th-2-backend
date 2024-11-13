@@ -40,7 +40,7 @@ public record RunningRecordQueryResponse(
         return buildResponse(runningRecord,
                 new ChallengeDto(
                         achievement.challenge().challengeId(),
-                        achievement.challenge().name(),
+                        achievement.isSuccess() ? achievement.challenge().name() + " 성공!" : achievement.challenge().name() + " 실패",
                         achievement.description(),
                         achievement.challenge().imageUrl(),
                         achievement.isSuccess()
