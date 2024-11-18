@@ -1,12 +1,12 @@
 package com.dnd.runus.application.oauth;
 
+import com.dnd.runus.auth.exception.AuthException;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.member.SocialProfile;
 import com.dnd.runus.domain.member.SocialProfileRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.SocialType;
-import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.type.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class SocialProfileService {
         SocialProfile socialProfile = socialProfileRepository
                 .findBySocialTypeAndOauthId(socialType, oauthId)
                 .orElseThrow(() ->
-                        new BusinessException(ErrorType.SOCIAL_MEMBER_NOT_FOUND, socialType + ", oauthId: " + oauthId));
+                        new AuthException(ErrorType.SOCIAL_MEMBER_NOT_FOUND, socialType + ", oauthId: " + oauthId));
 
         updateEmailIfChanged(socialProfile, email);
         return socialProfile;
