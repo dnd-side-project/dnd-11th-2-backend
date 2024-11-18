@@ -1,17 +1,21 @@
 package com.dnd.runus.application.scale;
 
+import com.dnd.runus.application.scale.dto.CoursesDto;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.running.RunningRecordRepository;
-import com.dnd.runus.domain.scale.*;
-import com.dnd.runus.presentation.v1.scale.dto.ScaleCoursesResponse;
+import com.dnd.runus.domain.scale.Scale;
+import com.dnd.runus.domain.scale.ScaleAchievement;
+import com.dnd.runus.domain.scale.ScaleAchievementLog;
+import com.dnd.runus.domain.scale.ScaleAchievementRepository;
+import com.dnd.runus.domain.scale.ScaleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
-
-import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,65 +40,60 @@ public class ScaleService {
     }
 
     @Transactional(readOnly = true)
-    public ScaleCoursesResponse getAchievements(long memberId) {
-        List<ScaleAchievementLog> scaleAchievementLogs = scaleAchievementRepository.findScaleAchievementLogs(memberId);
+    public CoursesDto getAchievements(long memberId) {
+        int totalRunningDistanceMeter = runningRecordRepository.findTotalDistanceMeterByMemberId(memberId);
+        // 지구 한바퀴 전체 코스 조회
+        List<CoursesDto.Course> courses = convertToCoursesDto(
+                scaleAchievementRepository.findScaleAchievementLogs(memberId), totalRunningDistanceMeter);
 
-        ScaleCoursesResponse.Info info = new ScaleCoursesResponse.Info(
-                scaleAchievementLogs.size(),
-                scaleAchievementLogs.stream()
-                        .mapToInt(log -> log.scale().sizeMeter())
-                        .sum());
+        List<CoursesDto.Course> achievedCourses =
+                courses.stream().filter(course -> course.achievedAt() != null).toList();
 
-        return new ScaleCoursesResponse(
-                info,
-                getAchievedCourses(scaleAchievementLogs),
-                calculateCurrentScaleLeftMeter(scaleAchievementLogs, memberId));
-    }
+        // 완주하지 못한 코스(현재 + 다음 코스)
+        List<CoursesDto.Course> notAchievedCourses =
+                courses.stream().filter(course -> course.achievedAt() == null).collect(Collectors.toList());
 
-    private List<ScaleCoursesResponse.AchievedCourse> getAchievedCourses(
-            List<ScaleAchievementLog> scaleAchievementLogs) {
-        boolean hasAchievedCourse = scaleAchievementLogs.stream().anyMatch(log -> log.achievedDate() != null);
-        if (!hasAchievedCourse) {
-            return List.of();
+        CoursesDto.Course currentCourse = null;
+        CoursesDto.Course lastCourse;
+
+        if (notAchievedCourses.isEmpty()) {
+            // 전체 코스를 완주했을 경우, 현재 코스에
+            lastCourse = achievedCourses.getLast();
+        } else {
+            currentCourse = notAchievedCourses.getFirst();
+            lastCourse = notAchievedCourses.getLast();
+
+            // nextCourses 값을 구하기 위해 현재 코스 삭제
+            notAchievedCourses.removeFirst();
         }
 
-        return scaleAchievementLogs.stream()
-                .filter(log -> log.achievedDate() != null)
-                .map(log -> new ScaleCoursesResponse.AchievedCourse(
-                        log.scale().name(),
-                        log.scale().sizeMeter(),
-                        log.achievedDate().toLocalDate()))
-                .toList();
+        return CoursesDto.builder()
+                .totalCoursesCount(lastCourse.order())
+                .totalCoursesDistanceMeter(lastCourse.requiredMeterForAchieve())
+                .myTotalRunningMeter(totalRunningDistanceMeter)
+                .achievedCourses(achievedCourses)
+                .currentCourse(currentCourse)
+                .nextCourses(notAchievedCourses)
+                .build();
     }
 
-    private ScaleCoursesResponse.CurrentCourse calculateCurrentScaleLeftMeter(
-            List<ScaleAchievementLog> scaleAchievementLogs, long memberId) {
+    private List<CoursesDto.Course> convertToCoursesDto(
+            List<ScaleAchievementLog> achievementLogs, int totalRunningDistanceMeter) {
 
-        int memberRunMeterSum = runningRecordRepository.findTotalDistanceMeterByMemberId(memberId);
+        List<CoursesDto.Course> result = new ArrayList<>();
+        int requiredForAchieveSum = 0;
 
-        ScaleAchievementLog currentScale = scaleAchievementLogs.stream()
-                .filter(log -> log.achievedDate() == null)
-                .findFirst()
-                .orElse(null);
+        for (ScaleAchievementLog achievementLog : achievementLogs) {
+            // 해당 코스에서 사용자가 달성한 미터값 계산(아직 달성 못한 코스는 0으로, 달성한 코스는 sizeMeter로 들어감)
+            int achievedMeter = Math.min(
+                    Math.max(0, totalRunningDistanceMeter - requiredForAchieveSum),
+                    achievementLog.scale().sizeMeter());
+            // 해당 코스에서 달성하기 위해 필요한 전체 미터값 계산
+            requiredForAchieveSum += achievementLog.scale().sizeMeter();
 
-        if (currentScale == null) {
-            return new ScaleCoursesResponse.CurrentCourse("지구 한바퀴", 0, 0, "축하합니다! 지구 한바퀴 완주하셨네요!");
+            result.add(CoursesDto.Course.of(achievementLog, requiredForAchieveSum, achievedMeter));
         }
 
-        int achievedCourseMeterSum = scaleAchievementLogs.stream()
-                .filter(log -> log.achievedDate() != null)
-                .mapToInt(log -> log.scale().sizeMeter())
-                .sum();
-
-        double remainingKm =
-                (currentScale.scale().sizeMeter() + achievedCourseMeterSum - memberRunMeterSum) / METERS_IN_A_KILOMETER;
-
-        String message = String.format("%s까지 %.1fkm 남았어요!", currentScale.scale().endName(), remainingKm);
-
-        return new ScaleCoursesResponse.CurrentCourse(
-                currentScale.scale().name(),
-                currentScale.scale().sizeMeter(),
-                memberRunMeterSum - achievedCourseMeterSum,
-                message);
+        return result;
     }
 }
