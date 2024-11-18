@@ -32,7 +32,7 @@ public enum ErrorType {
     INVALID_CREDENTIALS(UNAUTHORIZED, DEBUG, "AUTH_008", "해당 사용자의 정보가 없거나 일치하지 않아 처리할 수 없습니다"),
 
     // OauthErrorType
-    USER_NOT_FOUND(NOT_FOUND, DEBUG, "OAUTH_001", "존재하지 않은 사용자 입니다"),
+    SOCIAL_MEMBER_NOT_FOUND(NOT_FOUND, DEBUG, "OAUTH_001", "찾을 수 없는 소셜 회원입니다"),
 
     // DatabaseErrorType
     ENTITY_NOT_FOUND(NOT_FOUND, DEBUG, "DB_001", "해당 엔티티를 찾을 수 없습니다"),

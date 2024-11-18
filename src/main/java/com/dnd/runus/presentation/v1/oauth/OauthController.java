@@ -39,7 +39,7 @@ public class OauthController {
                     """)
     @ApiErrorType({
         ErrorType.UNSUPPORTED_SOCIAL_TYPE,
-        ErrorType.USER_NOT_FOUND,
+        ErrorType.SOCIAL_MEMBER_NOT_FOUND,
         ErrorType.FAILED_AUTHENTICATION,
         ErrorType.UNSUPPORTED_JWT_TOKEN
     })

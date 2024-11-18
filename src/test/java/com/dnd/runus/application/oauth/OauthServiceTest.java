@@ -108,7 +108,7 @@ class OauthServiceTest {
         }
 
         @Test
-        @DisplayName("sign-in 시 socialProfile이 없다면 에러 타입이 USER_NOT_FOUND인 BusinessException 에러 발생")
+        @DisplayName("sign-in 시 socialProfile이 없다면 에러 타입이 SOCIAL_MEMBER_NOT_FOUND인 BusinessException 에러 발생")
         void socialProfile_not_exist_then_signIn_fail() {
             // given
             SignInRequest request = new SignInRequest(socialType, idToken);
@@ -117,11 +117,11 @@ class OauthServiceTest {
             given(claims.getSubject()).willReturn(oauthId);
             given(claims.get("email")).willReturn(email);
             given(socialProfileService.findOrThrow(socialType, oauthId, email))
-                    .willThrow(new BusinessException(ErrorType.USER_NOT_FOUND));
+                    .willThrow(new BusinessException(ErrorType.SOCIAL_MEMBER_NOT_FOUND));
 
             // when, then
             BusinessException exception = assertThrows(BusinessException.class, () -> oauthService.signIn(request));
-            assertEquals(ErrorType.USER_NOT_FOUND, exception.getType());
+            assertEquals(ErrorType.SOCIAL_MEMBER_NOT_FOUND, exception.getType());
         }
 
         @Test

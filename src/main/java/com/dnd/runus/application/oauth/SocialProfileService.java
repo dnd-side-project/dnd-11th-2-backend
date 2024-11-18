@@ -6,7 +6,8 @@ import com.dnd.runus.domain.member.SocialProfile;
 import com.dnd.runus.domain.member.SocialProfileRepository;
 import com.dnd.runus.global.constant.MemberRole;
 import com.dnd.runus.global.constant.SocialType;
-import com.dnd.runus.global.exception.NotFoundException;
+import com.dnd.runus.global.exception.BusinessException;
+import com.dnd.runus.global.exception.type.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,8 @@ public class SocialProfileService {
     public SocialProfile findOrThrow(SocialType socialType, String oauthId, String email) {
         SocialProfile socialProfile = socialProfileRepository
                 .findBySocialTypeAndOauthId(socialType, oauthId)
-                .orElseThrow(() -> new NotFoundException(SocialProfile.class, oauthId));
+                .orElseThrow(() ->
+                        new BusinessException(ErrorType.SOCIAL_MEMBER_NOT_FOUND, socialType + ", oauthId: " + oauthId));
 
         updateEmailIfChanged(socialProfile, email);
         return socialProfile;
