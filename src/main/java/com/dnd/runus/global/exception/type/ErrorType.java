@@ -33,6 +33,7 @@ public enum ErrorType {
 
     // OauthErrorType
     SOCIAL_MEMBER_NOT_FOUND(NOT_FOUND, DEBUG, "OAUTH_001", "찾을 수 없는 소셜 회원입니다"),
+    EMAIL_NOT_FOUND_IN_ID_TOKEN(BAD_REQUEST, DEBUG, "OAUTH_002", "ID 토큰 필드에 이메일이 없습니다"),
 
     // DatabaseErrorType
     ENTITY_NOT_FOUND(NOT_FOUND, DEBUG, "DB_001", "해당 엔티티를 찾을 수 없습니다"),

@@ -91,7 +91,8 @@ public class OauthService {
         String email = (String) claim.get("email");
         if (StringUtils.isBlank(email)) {
             log.warn("Failed to get email from idToken! type: {}, claim: {}", socialType, claim);
-            throw new AuthException(ErrorType.FAILED_AUTHENTICATION, "Failed to get email from idToken");
+            throw new AuthException(
+                    ErrorType.EMAIL_NOT_FOUND_IN_ID_TOKEN, socialType + ": subject: " + claim.getSubject());
         }
         return email;
     }
