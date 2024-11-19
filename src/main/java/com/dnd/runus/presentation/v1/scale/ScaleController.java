@@ -1,6 +1,7 @@
 package com.dnd.runus.presentation.v1.scale;
 
 import com.dnd.runus.application.scale.ScaleService;
+import com.dnd.runus.application.scale.dto.CoursesDto;
 import com.dnd.runus.presentation.annotation.MemberId;
 import com.dnd.runus.presentation.v1.scale.dto.ScaleCoursesResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +32,22 @@ public class ScaleController {
                             - 달성한 코스가 있다면, 달성한 코스 목록과 현재 진행중인 코스 정보를 반환합니다.
                             """)
     public ScaleCoursesResponse getCourses(@MemberId long memberId) {
-        return scaleService.getAchievements(memberId);
+        CoursesDto courses = scaleService.getAchievements(memberId);
+        boolean isCompleteAll = courses.currentCourse() == null;
+
+        return ScaleCoursesResponse.builder()
+                .info(new ScaleCoursesResponse.Info(courses.totalCoursesCount(), courses.totalCoursesDistanceMeter()))
+                .achievedCourses(courses.achievedCourses().stream()
+                        .map(ScaleCoursesResponse.AchievedCourse::from)
+                        .toList())
+                .currentCourse(
+                        isCompleteAll
+                                ? new ScaleCoursesResponse.CurrentCourse(
+                                        "지구 한바퀴",
+                                        courses.totalCoursesDistanceMeter(),
+                                        courses.myTotalRunningMeter(),
+                                        "축하합니다! 지구 한바퀴 완주하셨네요!")
+                                : ScaleCoursesResponse.CurrentCourse.from(courses.currentCourse()))
+                .build();
     }
 }
