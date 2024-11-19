@@ -2,7 +2,6 @@ package com.dnd.runus.application.scale.dto;
 
 
 import com.dnd.runus.domain.scale.ScaleAchievementLog;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -30,7 +29,6 @@ public record CoursesDto(
      *                                (ex. 2코스라면, 1코스 totalMeter + 2코스 totalMeter의 값)
      * @param achievedAt 달성한 날짜, 달성하지 않으면 null
      */
-    @Schema(name = "course", description = "코스")
     public record Course(
         String name,
         String StartName,
