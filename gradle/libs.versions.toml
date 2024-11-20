@@ -17,6 +17,7 @@ spring-boot-starter-actuator = { group = "org.springframework.boot", name = "spr
 spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa", version.ref = "spring-boot" }
 spring-boot-devtools = { group = "org.springframework.boot", name = "spring-boot-devtools", version.ref = "spring-boot" }
 spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "spring-boot" }
+spring-boot-security-test = { group = "org.springframework.security", name = "spring-security-test", version = "6.3.4" }
 spring-boot-testcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers", version.ref = "spring-boot" }
 spring-boot-cache = { group = "org.springframework.boot", name = "spring-boot-starter-cache", version.ref = "spring-boot" }
 spring-boot-aop = { group = "org.springframework.boot", name = "spring-boot-starter-aop", version.ref = "spring-boot" }
@@ -66,6 +67,7 @@ spring-boot = [
 spring-boot-test = [
     "spring-boot-devtools",
     "spring-boot-starter-test",
+    "spring-boot-security-test",
     "spring-cloud-starter-contract-stub-runner",
 ]
 
