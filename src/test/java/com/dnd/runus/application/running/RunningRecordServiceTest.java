@@ -165,8 +165,8 @@ class RunningRecordServiceTest {
                 "end location",
                 RunningEmoji.VERY_GOOD);
 
-        ChallengeAchievement.Status challengeAchievementStatus =
-                new ChallengeAchievement.Status(1L, new Challenge(1L, "challenge", "image", ChallengeType.TODAY), true);
+        ChallengeAchievement.Status challengeAchievementStatus = new ChallengeAchievement.Status(
+                1L, new Challenge(1L, "challenge", "image", true, ChallengeType.TODAY), true);
 
         given(runningRecordRepository.findById(runningRecordId)).willReturn(Optional.of(runningRecord));
         given(challengeAchievementRepository.findByRunningRecordId(runningRecordId))
@@ -204,7 +204,7 @@ class RunningRecordServiceTest {
         RunningRecord expected = createRunningRecord(request, member);
 
         ChallengeWithCondition challengeWithCondition = new ChallengeWithCondition(
-                new Challenge(1L, "challenge", "image", ChallengeType.TODAY),
+                new Challenge(1L, "challenge", "image", true, ChallengeType.TODAY),
                 List.of(new ChallengeCondition(
                         GoalMetricType.DISTANCE, ComparisonType.GREATER_THAN_OR_EQUAL_TO, 10_000)));
         ChallengeAchievement challengeAchievement =

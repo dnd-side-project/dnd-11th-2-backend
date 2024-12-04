@@ -75,7 +75,7 @@ class ChallengeAchievementPercentageRepositoryImplTest {
                     RunningEmoji.SOSO)));
         }
 
-        Challenge challenge = new Challenge(1, "name", 60, "imageUrl", ChallengeType.DEFEAT_YESTERDAY);
+        Challenge challenge = new Challenge(1, "name", 60, "imageUrl", true, ChallengeType.DEFEAT_YESTERDAY);
 
         savedChallengeAchievements = new ArrayList<>();
         for (int i = 0; i < 2; i++) {

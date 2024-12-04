@@ -37,17 +37,21 @@ public class ChallengeEntity {
     @NotNull
     private String imageUrl;
 
+    @NotNull
+    private Boolean isActive;
+
     public static ChallengeEntity from(Challenge challenge) {
         return ChallengeEntity.builder()
                 .id(challenge.challengeId() == 0 ? null : challenge.challengeId())
                 .name(challenge.name())
                 .expectedTime(challenge.expectedTime())
+                .isActive(challenge.isActive())
                 .challengeType(challenge.challengeType())
                 .imageUrl(challenge.imageUrl())
                 .build();
     }
 
     public Challenge toDomain() {
-        return new Challenge(id, name, expectedTime, imageUrl, challengeType);
+        return new Challenge(id, name, expectedTime, imageUrl, isActive, challengeType);
     }
 }

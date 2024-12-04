@@ -23,6 +23,7 @@ public class JooqChallengeAchievementRepository {
                         CHALLENGE.NAME,
                         CHALLENGE.EXPECTED_TIME,
                         CHALLENGE.IMAGE_URL,
+                        CHALLENGE.IS_ACTIVE,
                         CHALLENGE.CHALLENGE_TYPE)
                 .from(CHALLENGE_ACHIEVEMENT)
                 .join(CHALLENGE)
@@ -35,6 +36,7 @@ public class JooqChallengeAchievementRepository {
                                 record.get(CHALLENGE.NAME, String.class),
                                 record.get(CHALLENGE.EXPECTED_TIME, Integer.class),
                                 record.get(CHALLENGE.IMAGE_URL, String.class),
+                                record.get(CHALLENGE.IS_ACTIVE, Boolean.class),
                                 ChallengeType.valueOf(record.get(CHALLENGE.CHALLENGE_TYPE, String.class))),
                         record.get(CHALLENGE_ACHIEVEMENT.SUCCESS_STATUS)));
     }
