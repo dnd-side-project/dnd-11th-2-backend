@@ -72,7 +72,7 @@ public class ChallengeAchievementRepositoryImplTest {
         for (int i = 0; i < 2; i++) {
             savedRunningRecords.add(runningRecordRepository.save(runningRecord));
         }
-        challenge = new Challenge(0, "name", 60, "imageUrl", ChallengeType.DEFEAT_YESTERDAY);
+        challenge = new Challenge(0, "name", 60, "imageUrl", true, ChallengeType.DEFEAT_YESTERDAY);
     }
 
     @DisplayName("ChallengeAchievement 저장시, 성공여부가 true인지 확인")
