@@ -32,6 +32,11 @@ public class ChallengeRepositoryImpl implements ChallengeRepository {
     }
 
     @Override
+    public List<ChallengeWithCondition> findAllActiveChallengesWithConditions() {
+        return jooqChallengeRepository.findAllActiveChallengesWithConditions();
+    }
+
+    @Override
     public Optional<ChallengeWithCondition> findChallengeWithConditionsByChallengeId(long challengeId) {
         return Optional.ofNullable(jooqChallengeRepository.findChallengeWithConditionsBy(challengeId));
     }

@@ -8,5 +8,7 @@ public interface ChallengeRepository {
 
     List<Challenge> findAllIsNotDefeatYesterday();
 
+    List<ChallengeWithCondition> findAllActiveChallengesWithConditions();
+
     Optional<ChallengeWithCondition> findChallengeWithConditionsByChallengeId(long challengeId);
 }
