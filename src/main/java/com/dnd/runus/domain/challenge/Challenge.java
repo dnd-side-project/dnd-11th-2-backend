@@ -3,10 +3,16 @@ package com.dnd.runus.domain.challenge;
 import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_HOUR;
 import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_MINUTE;
 
-public record Challenge(long challengeId, String name, int expectedTime, String imageUrl, ChallengeType challengeType) {
+public record Challenge(
+        long challengeId,
+        String name,
+        int expectedTime,
+        String imageUrl,
+        boolean isActive,
+        ChallengeType challengeType) {
 
-    public Challenge(long challengeId, String name, String imageUrl, ChallengeType challengeType) {
-        this(challengeId, name, 0, imageUrl, challengeType);
+    public Challenge(long challengeId, String name, String imageUrl, boolean isActive, ChallengeType challengeType) {
+        this(challengeId, name, 0, imageUrl, isActive, challengeType);
     }
 
     public boolean isDefeatYesterdayChallenge() {

@@ -31,6 +31,7 @@ public class JooqChallengeRepository {
                         CHALLENGE.NAME,
                         CHALLENGE.EXPECTED_TIME,
                         CHALLENGE.IMAGE_URL,
+                        CHALLENGE.IS_ACTIVE,
                         CHALLENGE.CHALLENGE_TYPE)
                 .from(CHALLENGE)
                 .where(CHALLENGE.CHALLENGE_TYPE.ne(ChallengeType.DEFEAT_YESTERDAY.toString()))
@@ -41,7 +42,9 @@ public class JooqChallengeRepository {
         return dsl.select(
                         CHALLENGE.ID,
                         CHALLENGE.NAME,
+                        CHALLENGE.EXPECTED_TIME,
                         CHALLENGE.IMAGE_URL,
+                        CHALLENGE.IS_ACTIVE,
                         CHALLENGE.CHALLENGE_TYPE,
                         multiset(select(
                                                 CHALLENGE_GOAL_CONDITION.GOAL_TYPE,
@@ -68,6 +71,7 @@ public class JooqChallengeRepository {
                     record.get(CHALLENGE.NAME, String.class),
                     record.get(CHALLENGE.EXPECTED_TIME, int.class),
                     record.get(CHALLENGE.IMAGE_URL, String.class),
+                    record.get(CHALLENGE.IS_ACTIVE, Boolean.class),
                     record.get(CHALLENGE.CHALLENGE_TYPE, ChallengeType.class));
         }
     }
@@ -87,7 +91,9 @@ public class JooqChallengeRepository {
                     new Challenge(
                             record.get(CHALLENGE.ID, long.class),
                             record.get(CHALLENGE.NAME, String.class),
+                            record.get(CHALLENGE.EXPECTED_TIME, int.class),
                             record.get(CHALLENGE.IMAGE_URL, String.class),
+                            record.get(CHALLENGE.IS_ACTIVE, Boolean.class),
                             record.get(CHALLENGE.CHALLENGE_TYPE, ChallengeType.class)),
                     challengeConditions);
         }
