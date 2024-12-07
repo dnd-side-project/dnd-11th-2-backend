@@ -62,6 +62,30 @@ public class JooqChallengeRepository {
                 .fetchOne(new ChallengeWithConditionMapper());
     }
 
+    public List<ChallengeWithCondition> findAllActiveChallengesWithConditions() {
+        return dsl.select(
+                        CHALLENGE.ID,
+                        CHALLENGE.NAME,
+                        CHALLENGE.EXPECTED_TIME,
+                        CHALLENGE.IMAGE_URL,
+                        CHALLENGE.IS_ACTIVE,
+                        CHALLENGE.CHALLENGE_TYPE,
+                        multiset(select(
+                                                CHALLENGE_GOAL_CONDITION.GOAL_TYPE,
+                                                CHALLENGE_GOAL_CONDITION.COMPARISON_TYPE,
+                                                CHALLENGE_GOAL_CONDITION.GOAL_VALUE)
+                                        .from(CHALLENGE_GOAL_CONDITION)
+                                        .where(CHALLENGE_GOAL_CONDITION.CHALLENGE_ID.eq(CHALLENGE.ID)))
+                                .convertFrom(r -> r.map(record -> new ChallengeCondition(
+                                        record.get(CHALLENGE_GOAL_CONDITION.GOAL_TYPE, GoalMetricType.class),
+                                        record.get(CHALLENGE_GOAL_CONDITION.COMPARISON_TYPE, ComparisonType.class),
+                                        record.get(CHALLENGE_GOAL_CONDITION.GOAL_VALUE, Integer.class))))
+                                .as("conditions"))
+                .from(CHALLENGE)
+                .where(CHALLENGE.IS_ACTIVE.eq(true))
+                .fetch(new ChallengeWithConditionMapper());
+    }
+
     private static class ChallengeMapper implements RecordMapper<Record, Challenge> {
 
         @Override
