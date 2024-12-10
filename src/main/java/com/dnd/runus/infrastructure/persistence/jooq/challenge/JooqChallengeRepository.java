@@ -25,19 +25,6 @@ public class JooqChallengeRepository {
 
     private final DSLContext dsl;
 
-    public List<Challenge> findAllIsNotDefeatYesterday() {
-        return dsl.select(
-                        CHALLENGE.ID,
-                        CHALLENGE.NAME,
-                        CHALLENGE.EXPECTED_TIME,
-                        CHALLENGE.IMAGE_URL,
-                        CHALLENGE.IS_ACTIVE,
-                        CHALLENGE.CHALLENGE_TYPE)
-                .from(CHALLENGE)
-                .where(CHALLENGE.CHALLENGE_TYPE.ne(ChallengeType.DEFEAT_YESTERDAY.toString()))
-                .fetch(new ChallengeMapper());
-    }
-
     public ChallengeWithCondition findChallengeWithConditionsBy(long challengeId) {
         return dsl.select(
                         CHALLENGE.ID,
@@ -84,20 +71,6 @@ public class JooqChallengeRepository {
                 .from(CHALLENGE)
                 .where(CHALLENGE.IS_ACTIVE.eq(true))
                 .fetch(new ChallengeWithConditionMapper());
-    }
-
-    private static class ChallengeMapper implements RecordMapper<Record, Challenge> {
-
-        @Override
-        public Challenge map(Record record) {
-            return new Challenge(
-                    record.get(CHALLENGE.ID, long.class),
-                    record.get(CHALLENGE.NAME, String.class),
-                    record.get(CHALLENGE.EXPECTED_TIME, int.class),
-                    record.get(CHALLENGE.IMAGE_URL, String.class),
-                    record.get(CHALLENGE.IS_ACTIVE, Boolean.class),
-                    record.get(CHALLENGE.CHALLENGE_TYPE, ChallengeType.class));
-        }
     }
 
     private static class ChallengeWithConditionMapper implements RecordMapper<Record, ChallengeWithCondition> {
