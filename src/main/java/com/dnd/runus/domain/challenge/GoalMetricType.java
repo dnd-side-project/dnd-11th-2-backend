@@ -1,6 +1,8 @@
 package com.dnd.runus.domain.challenge;
 
 import com.dnd.runus.domain.running.RunningRecord;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -29,5 +31,15 @@ public enum GoalMetricType {
             case DISTANCE -> record.distanceMeter();
             case PACE -> record.averagePace().toSeconds();
         };
+    }
+
+    @JsonCreator
+    public GoalMetricType fromString(String value) {
+        return GoalMetricType.valueOf(value.toUpperCase());
+    }
+
+    @JsonValue
+    public String toJson() {
+        return this.name().toLowerCase();
     }
 }
