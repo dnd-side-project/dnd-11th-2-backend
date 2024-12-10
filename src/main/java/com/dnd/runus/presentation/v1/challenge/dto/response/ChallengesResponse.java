@@ -27,7 +27,7 @@ public record ChallengesResponse(
     @Schema(description = "챌린지 이미지 URL")
     @NotNull
     String icon,
-    @Schema(description = "챌린지 타입 : distance, time", example = "")
+    @Schema(description = "챌린지 타입 : distance, time", example = "distance")
     GoalMetricType type,
     @Nullable
     @Schema(description = "챌린지 목표 거리(단위:km)", example = "5.0")
