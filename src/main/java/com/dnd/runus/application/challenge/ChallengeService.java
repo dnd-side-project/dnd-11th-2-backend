@@ -1,17 +1,18 @@
 package com.dnd.runus.application.challenge;
 
 import com.dnd.runus.domain.challenge.ChallengeRepository;
+import com.dnd.runus.domain.challenge.ChallengeWithCondition;
+import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
-import com.dnd.runus.presentation.v1.challenge.dto.response.ChallengesResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE_ID;
 
@@ -23,28 +24,37 @@ public class ChallengeService {
 
     private final RunningRecordRepository runningRecordRepository;
 
-    public List<ChallengesResponse> getChallenges(long memberId) {
+    public List<ChallengeWithCondition> getChallenges(long memberId) {
         OffsetDateTime todayMidnight = LocalDate.now(SERVER_TIMEZONE_ID)
                 .atStartOfDay(SERVER_TIMEZONE_ID)
                 .toOffsetDateTime();
         OffsetDateTime yesterday = todayMidnight.minusDays(1);
 
-        List<ChallengesResponse> challengesResponses;
-        // 어제 기록이 없으면
-        if (!runningRecordRepository.hasByMemberIdAndStartAtBetween(memberId, yesterday, todayMidnight)) {
-            challengesResponses = challengeRepository.findAllIsNotDefeatYesterday().stream()
-                    .map(ChallengesResponse::from)
-                    .collect(Collectors.toList());
+        List<RunningRecord> runningRecords =
+                runningRecordRepository.findByMemberIdAndStartAtBetween(memberId, yesterday, todayMidnight);
+
+        List<ChallengeWithCondition> allChallengesWithConditions =
+                new ArrayList<>(challengeRepository.findAllActiveChallengesWithConditions());
+
+        // 어제 기록이 없으면 어제 기록과 관련된 챌린지 삭제
+        if (runningRecords.isEmpty()) {
+            allChallengesWithConditions.removeIf(
+                    challengeWithCondition -> challengeWithCondition.challenge().isDefeatYesterdayChallenge());
         } else {
-            challengesResponses = challengeRepository.findAllChallenges().stream()
-                    .map(ChallengesResponse::from)
-                    .collect(Collectors.toList());
+            // 어제의 기록과 관련된 챌린지면, 챌린지 비교할 값(성공 유무를 위한 목표 값) 재등록
+            allChallengesWithConditions.stream()
+                    .filter(challengeWithCondition ->
+                            challengeWithCondition.challenge().isDefeatYesterdayChallenge())
+                    .forEach(challengeWithCondition -> challengeWithCondition
+                            .conditions()
+                            .forEach(condition -> condition.registerComparisonValue(
+                                    condition.goalMetricType().getActualValue(runningRecords.getFirst()))));
         }
 
         // 랜덤으로 2개 리턴
         Random randomWithSeed = new Random(todayMidnight.toEpochSecond());
-        Collections.shuffle(challengesResponses, randomWithSeed);
+        Collections.shuffle(allChallengesWithConditions, randomWithSeed);
 
-        return challengesResponses.subList(0, 2);
+        return allChallengesWithConditions.subList(0, 2);
     }
 }
