@@ -1,7 +1,7 @@
 package com.dnd.runus.infrastructure.persistence.domain.goalAchievement;
 
 import com.dnd.runus.domain.challenge.GoalMetricType;
-import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.common.CoordinatePoint;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
 import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
@@ -54,7 +54,7 @@ public class GoalAchievementRepositoryImplTest {
                 new Pace(5, 11),
                 ZonedDateTime.now(),
                 ZonedDateTime.now(),
-                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                 "start location",
                 "end location",
                 RunningEmoji.SOSO));
@@ -128,7 +128,7 @@ public class GoalAchievementRepositoryImplTest {
                 new Pace(5, 11),
                 ZonedDateTime.now(),
                 ZonedDateTime.now(),
-                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                 "start location",
                 "end location",
                 RunningEmoji.SOSO));
@@ -141,7 +141,7 @@ public class GoalAchievementRepositoryImplTest {
                 new Pace(5, 11),
                 ZonedDateTime.now(),
                 ZonedDateTime.now(),
-                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                 "start location",
                 "end location",
                 RunningEmoji.SOSO));

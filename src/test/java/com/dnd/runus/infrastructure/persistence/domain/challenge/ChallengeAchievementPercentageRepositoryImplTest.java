@@ -7,7 +7,7 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentage
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
 import com.dnd.runus.domain.challenge.achievement.PercentageValues;
-import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.common.CoordinatePoint;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberRepository;
@@ -69,7 +69,7 @@ class ChallengeAchievementPercentageRepositoryImplTest {
                     new Pace(5, 11),
                     ZonedDateTime.now(),
                     ZonedDateTime.now(),
-                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                     "start location",
                     "end location",
                     RunningEmoji.SOSO)));

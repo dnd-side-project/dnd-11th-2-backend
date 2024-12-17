@@ -1,6 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.domain.running;
 
-import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.common.CoordinatePoint;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.member.MemberRepository;
@@ -57,7 +57,7 @@ class RunningRecordRepositoryImplTest {
                 new Pace(5, 11),
                 ZonedDateTime.now(),
                 ZonedDateTime.now(),
-                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                 "start location",
                 "end location",
                 RunningEmoji.BAD);
@@ -91,7 +91,7 @@ class RunningRecordRepositoryImplTest {
                     new Pace(5, 11),
                     dayBeforeYesterday.plusHours(i * i).plusMinutes(1),
                     dayBeforeYesterday.plusHours(i * i).plusMinutes(30),
-                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                     "start location",
                     "end location",
                     RunningEmoji.SOSO);
@@ -125,7 +125,7 @@ class RunningRecordRepositoryImplTest {
                     new Pace(5, 11),
                     dayBeforeYesterday.plusHours(i * i).plusMinutes(1),
                     dayBeforeYesterday.plusHours(i * i).plusMinutes(30),
-                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                     "start location",
                     "end location",
                     RunningEmoji.SOSO);
@@ -170,7 +170,7 @@ class RunningRecordRepositoryImplTest {
                     new Pace(5, 11),
                     todayMidnight,
                     todayMidnight,
-                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                     "start location",
                     "end location",
                     RunningEmoji.SOSO);
@@ -202,7 +202,7 @@ class RunningRecordRepositoryImplTest {
                     new Pace(5, 11),
                     ZonedDateTime.now(),
                     ZonedDateTime.now(),
-                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                     "start location",
                     "end location",
                     RunningEmoji.SOSO));
@@ -257,7 +257,7 @@ class RunningRecordRepositoryImplTest {
                     new Pace(5, 11),
                     ZonedDateTime.now(),
                     ZonedDateTime.now(),
-                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                     "start location",
                     "end location",
                     RunningEmoji.SOSO));
@@ -313,7 +313,7 @@ class RunningRecordRepositoryImplTest {
                     new Pace(5, 11),
                     ZonedDateTime.now(),
                     ZonedDateTime.now(),
-                    List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                    List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                     "start location",
                     "end location",
                     RunningEmoji.SOSO));
@@ -369,7 +369,7 @@ class RunningRecordRepositoryImplTest {
                 new Pace(5, 11),
                 startDate.minusDays(1),
                 startDate.minusDays(1).plusHours(1),
-                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                 "start location",
                 "end location",
                 RunningEmoji.SOSO));
@@ -383,7 +383,7 @@ class RunningRecordRepositoryImplTest {
                 new Pace(5, 11),
                 startDate,
                 startDate.plusHours(1),
-                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                 "start location",
                 "end location",
                 RunningEmoji.SOSO));
@@ -397,7 +397,7 @@ class RunningRecordRepositoryImplTest {
                 new Pace(5, 11),
                 nextOfDndDate.minusDays(1),
                 nextOfDndDate.minusDays(1).plusHours(1),
-                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                 "start location",
                 "end location",
                 RunningEmoji.SOSO));
@@ -411,7 +411,7 @@ class RunningRecordRepositoryImplTest {
                 new Pace(5, 11),
                 nextOfDndDate,
                 nextOfDndDate.plusHours(1),
-                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                 "start location",
                 "end location",
                 RunningEmoji.SOSO));
@@ -465,7 +465,7 @@ class RunningRecordRepositoryImplTest {
                 new Pace(5, 11),
                 startDate.minusDays(1),
                 startDate.minusDays(1).plusHours(1),
-                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                 "start location",
                 "end location",
                 RunningEmoji.SOSO));
@@ -479,7 +479,7 @@ class RunningRecordRepositoryImplTest {
                 new Pace(5, 11),
                 startDate,
                 startDate.plusHours(1),
-                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                 "start location",
                 "end location",
                 RunningEmoji.SOSO));
@@ -493,7 +493,7 @@ class RunningRecordRepositoryImplTest {
                 new Pace(5, 11),
                 nextOfDndDate.minusDays(1),
                 nextOfDndDate.minusDays(1).plusHours(1),
-                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                 "start location",
                 "end location",
                 RunningEmoji.SOSO));
@@ -507,7 +507,7 @@ class RunningRecordRepositoryImplTest {
                 new Pace(5, 11),
                 nextOfDndDate,
                 nextOfDndDate.plusHours(1),
-                List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                 "start location",
                 "end location",
                 RunningEmoji.SOSO));

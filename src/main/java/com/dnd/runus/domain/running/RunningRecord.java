@@ -1,6 +1,6 @@
 package com.dnd.runus.domain.running;
 
-import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.common.CoordinatePoint;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.global.constant.RunningEmoji;
@@ -20,7 +20,7 @@ public record RunningRecord(
         Pace averagePace,
         ZonedDateTime startAt,
         ZonedDateTime endAt,
-        List<Coordinate> route,
+        List<CoordinatePoint> route,
         String startLocation,
         String endLocation,
         RunningEmoji emoji) {}
