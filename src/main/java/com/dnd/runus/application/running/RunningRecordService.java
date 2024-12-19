@@ -20,7 +20,7 @@ import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.presentation.v1.running.dto.WeeklyRunningRatingDto;
-import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
+import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequestV1;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -181,7 +181,7 @@ public class RunningRecordService {
     }
 
     @Transactional
-    public RunningRecordAddResultResponseV1 addRunningRecordV1(long memberId, RunningRecordRequest request) {
+    public RunningRecordAddResultResponseV1 addRunningRecordV1(long memberId, RunningRecordRequestV1 request) {
         Member member =
                 memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
 

@@ -7,7 +7,7 @@ import com.dnd.runus.global.exception.type.ApiErrorType;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.annotation.MemberId;
 import com.dnd.runus.presentation.v1.member.dto.response.MyProfileResponse;
-import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
+import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequestV1;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,7 +67,7 @@ public class RunningRecordController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public RunningRecordAddResultResponseV1 addRunningRecord(
-            @MemberId long memberId, @Valid @RequestBody RunningRecordRequest request) {
+            @MemberId long memberId, @Valid @RequestBody RunningRecordRequestV1 request) {
         return runningRecordService.addRunningRecordV1(memberId, request);
     }
 

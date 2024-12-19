@@ -19,7 +19,7 @@ import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.presentation.v1.running.dto.RunningRecordMetricsForAddDto;
 import com.dnd.runus.presentation.v1.running.dto.WeeklyRunningRatingDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
-import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
+import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequestV1;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponseV1;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
@@ -188,7 +188,7 @@ class RunningRecordServiceTest {
     @DisplayName("CHALLENGE 모드의 러닝 기록 추가 요청시, challengeId에 해당하는 챌린지가 있을 경우, 정상적으로 러닝 기록이 추가된다.")
     void addRunningRecord_challenge() {
         // given
-        RunningRecordRequest request = new RunningRecordRequest(
+        RunningRecordRequestV1 request = new RunningRecordRequestV1(
                 LocalDateTime.of(2021, 1, 1, 12, 10, 30),
                 LocalDateTime.of(2021, 1, 1, 13, 12, 10),
                 "start location",
@@ -228,7 +228,7 @@ class RunningRecordServiceTest {
     @DisplayName("GOAL 모드의 러닝 기록 추가 시,goalTime이 null이 아니고 목표값보다 실제값이 더 크다면, 성공한 goalAchievement와 함께 정상적으로 러닝 기록이 추가된다.")
     void addRunningRecord_goal_time_success() {
         // given
-        RunningRecordRequest request = new RunningRecordRequest(
+        RunningRecordRequestV1 request = new RunningRecordRequestV1(
                 LocalDateTime.of(2021, 1, 1, 12, 10, 30),
                 LocalDateTime.of(2021, 1, 1, 13, 12, 10),
                 "start location",
@@ -267,7 +267,7 @@ class RunningRecordServiceTest {
             "GOAL 모드의 러닝 기록 추가 시, goalTime이 null이 아니고 목표값보다 실제값이 더 낮다면, 실패한 goalAchievement와 함께 정상적으로 러닝 기록이 추가된다.")
     void addRunningRecord_goal_time_fail() {
         // given
-        RunningRecordRequest request = new RunningRecordRequest(
+        RunningRecordRequestV1 request = new RunningRecordRequestV1(
                 LocalDateTime.of(2021, 1, 1, 12, 10, 30),
                 LocalDateTime.of(2021, 1, 1, 13, 12, 10),
                 "start location",
@@ -306,7 +306,7 @@ class RunningRecordServiceTest {
             "GOAL 모드의 러닝 기록 추가 요청시, goalDistance가 null이 아니고 목표값보다 실제값이 더 높다면 성공한 goalAchievement와 함께 정상적으로 러닝 기록이 추가된다.")
     void addRunningRecord_goal_distance() {
         // given
-        RunningRecordRequest request = new RunningRecordRequest(
+        RunningRecordRequestV1 request = new RunningRecordRequestV1(
                 LocalDateTime.of(2021, 1, 1, 12, 10, 30),
                 LocalDateTime.of(2021, 1, 1, 13, 12, 10),
                 "start location",
@@ -345,7 +345,7 @@ class RunningRecordServiceTest {
             "GOAL 모드의 러닝 기록 추가 요청시, goalDistance가 null이 아니고 목표값보다 실제값과 같다면 성공한 goalAchievement와 함께 정상적으로 러닝 기록이 추가된다.")
     void addRunningRecord_goal_distance_same_value() {
         // given
-        RunningRecordRequest request = new RunningRecordRequest(
+        RunningRecordRequestV1 request = new RunningRecordRequestV1(
                 LocalDateTime.of(2021, 1, 1, 12, 10, 30),
                 LocalDateTime.of(2021, 1, 1, 13, 12, 10),
                 "start location",
@@ -383,7 +383,7 @@ class RunningRecordServiceTest {
     @DisplayName("러닝의 페이스가 올바르게 계산되었는지 확인한다.")
     void addRunningRecord_check_cal_pace() {
         // given
-        RunningRecordRequest request = new RunningRecordRequest(
+        RunningRecordRequestV1 request = new RunningRecordRequestV1(
                 LocalDateTime.of(2021, 1, 1, 12, 10, 30),
                 LocalDateTime.of(2021, 1, 1, 13, 12, 10),
                 "start location",
@@ -502,7 +502,7 @@ class RunningRecordServiceTest {
         assertThat(response.lastWeekAvgValue()).isEqualTo(expectedRunningDurationHour);
     }
 
-    private RunningRecord createRunningRecord(RunningRecordRequest request, Member member) {
+    private RunningRecord createRunningRecord(RunningRecordRequestV1 request, Member member) {
 
         return RunningRecord.builder()
                 .member(member)
