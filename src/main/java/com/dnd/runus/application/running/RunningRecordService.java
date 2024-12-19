@@ -167,6 +167,19 @@ public class RunningRecordService {
                 avgValue / conversionFactor);
     }
 
+    @Transactional(readOnly = true)
+    public RunningRecordMonthlySummaryResponse getMonthlyRunningSummery(long memberId) {
+
+        OffsetDateTime startDateOfMonth =
+                OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE)).withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS);
+        OffsetDateTime startDateOfNextMonth = startDateOfMonth.plusMonths(1);
+        return RunningRecordMonthlySummaryResponse.builder()
+                .month(startDateOfMonth.getMonthValue())
+                .monthlyTotalMeter(runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
+                        memberId, startDateOfMonth, startDateOfNextMonth))
+                .build();
+    }
+
     @Transactional
     public RunningRecordAddResultResponseV1 addRunningRecordV1(long memberId, RunningRecordRequest request) {
         Member member =
@@ -209,19 +222,6 @@ public class RunningRecordService {
             }
         }
         return RunningRecordAddResultResponseV1.from(record);
-    }
-
-    @Transactional(readOnly = true)
-    public RunningRecordMonthlySummaryResponse getMonthlyRunningSummery(long memberId) {
-
-        OffsetDateTime startDateOfMonth =
-                OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE)).withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS);
-        OffsetDateTime startDateOfNextMonth = startDateOfMonth.plusMonths(1);
-        return RunningRecordMonthlySummaryResponse.builder()
-                .month(startDateOfMonth.getMonthValue())
-                .monthlyTotalMeter(runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
-                        memberId, startDateOfMonth, startDateOfNextMonth))
-                .build();
     }
 
     private ChallengeAchievement handleChallengeMode(Long challengeId, long memberId, RunningRecord runningRecord) {
