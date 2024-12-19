@@ -20,7 +20,7 @@ import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.presentation.v1.running.dto.WeeklyRunningRatingDto;
-import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
+import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequestV1;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -167,8 +167,21 @@ public class RunningRecordService {
                 avgValue / conversionFactor);
     }
 
+    @Transactional(readOnly = true)
+    public RunningRecordMonthlySummaryResponse getMonthlyRunningSummery(long memberId) {
+
+        OffsetDateTime startDateOfMonth =
+                OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE)).withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS);
+        OffsetDateTime startDateOfNextMonth = startDateOfMonth.plusMonths(1);
+        return RunningRecordMonthlySummaryResponse.builder()
+                .month(startDateOfMonth.getMonthValue())
+                .monthlyTotalMeter(runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
+                        memberId, startDateOfMonth, startDateOfNextMonth))
+                .build();
+    }
+
     @Transactional
-    public RunningRecordAddResultResponse addRunningRecord(long memberId, RunningRecordRequest request) {
+    public RunningRecordAddResultResponseV1 addRunningRecordV1(long memberId, RunningRecordRequestV1 request) {
         Member member =
                 memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
 
@@ -201,27 +214,14 @@ public class RunningRecordService {
             case CHALLENGE -> {
                 ChallengeAchievement challengeAchievement =
                         handleChallengeMode(request.challengeId(), memberId, record);
-                return RunningRecordAddResultResponse.of(record, challengeAchievement);
+                return RunningRecordAddResultResponseV1.of(record, challengeAchievement);
             }
             case GOAL -> {
                 GoalAchievement goalAchievement = handleGoalMode(record, request.goalDistance(), request.goalTime());
-                return RunningRecordAddResultResponse.of(record, goalAchievement);
+                return RunningRecordAddResultResponseV1.of(record, goalAchievement);
             }
         }
-        return RunningRecordAddResultResponse.from(record);
-    }
-
-    @Transactional(readOnly = true)
-    public RunningRecordMonthlySummaryResponse getMonthlyRunningSummery(long memberId) {
-
-        OffsetDateTime startDateOfMonth =
-                OffsetDateTime.now(ZoneId.of(SERVER_TIMEZONE)).withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS);
-        OffsetDateTime startDateOfNextMonth = startDateOfMonth.plusMonths(1);
-        return RunningRecordMonthlySummaryResponse.builder()
-                .month(startDateOfMonth.getMonthValue())
-                .monthlyTotalMeter(runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
-                        memberId, startDateOfMonth, startDateOfNextMonth))
-                .build();
+        return RunningRecordAddResultResponseV1.from(record);
     }
 
     private ChallengeAchievement handleChallengeMode(Long challengeId, long memberId, RunningRecord runningRecord) {
