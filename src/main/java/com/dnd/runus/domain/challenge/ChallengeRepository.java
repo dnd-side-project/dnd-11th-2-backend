@@ -7,4 +7,6 @@ public interface ChallengeRepository {
     List<ChallengeWithCondition> findAllActiveChallengesWithConditions();
 
     Optional<ChallengeWithCondition> findChallengeWithConditionsByChallengeId(long challengeId);
+
+    Optional<Challenge> findById(long challengeId);
 }
