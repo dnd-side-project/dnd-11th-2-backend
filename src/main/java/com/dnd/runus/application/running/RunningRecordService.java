@@ -168,7 +168,7 @@ public class RunningRecordService {
     }
 
     @Transactional
-    public RunningRecordAddResultResponse addRunningRecord(long memberId, RunningRecordRequest request) {
+    public RunningRecordAddResultResponseV1 addRunningRecordV1(long memberId, RunningRecordRequest request) {
         Member member =
                 memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
 
@@ -201,14 +201,14 @@ public class RunningRecordService {
             case CHALLENGE -> {
                 ChallengeAchievement challengeAchievement =
                         handleChallengeMode(request.challengeId(), memberId, record);
-                return RunningRecordAddResultResponse.of(record, challengeAchievement);
+                return RunningRecordAddResultResponseV1.of(record, challengeAchievement);
             }
             case GOAL -> {
                 GoalAchievement goalAchievement = handleGoalMode(record, request.goalDistance(), request.goalTime());
-                return RunningRecordAddResultResponse.of(record, goalAchievement);
+                return RunningRecordAddResultResponseV1.of(record, goalAchievement);
             }
         }
-        return RunningRecordAddResultResponse.from(record);
+        return RunningRecordAddResultResponseV1.from(record);
     }
 
     @Transactional(readOnly = true)

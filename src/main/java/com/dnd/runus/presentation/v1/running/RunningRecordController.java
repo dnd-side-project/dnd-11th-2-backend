@@ -66,9 +66,9 @@ public class RunningRecordController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public RunningRecordAddResultResponse addRunningRecord(
+    public RunningRecordAddResultResponseV1 addRunningRecord(
             @MemberId long memberId, @Valid @RequestBody RunningRecordRequest request) {
-        return runningRecordService.addRunningRecord(memberId, request);
+        return runningRecordService.addRunningRecordV1(memberId, request);
     }
 
     @Operation(

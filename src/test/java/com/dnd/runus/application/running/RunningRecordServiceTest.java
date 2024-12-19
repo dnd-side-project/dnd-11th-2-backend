@@ -21,7 +21,7 @@ import com.dnd.runus.presentation.v1.running.dto.WeeklyRunningRatingDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequest;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponse;
+import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponseV1;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordQueryResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordWeeklySummaryResponse;
@@ -217,7 +217,7 @@ class RunningRecordServiceTest {
         given(challengeAchievementRepository.save(challengeAchievement)).willReturn(challengeAchievement);
 
         // when
-        RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
+        RunningRecordAddResultResponseV1 response = runningRecordService.addRunningRecordV1(1L, request);
 
         // then
         assertEquals(request.startAt(), response.startAt());
@@ -250,7 +250,7 @@ class RunningRecordServiceTest {
         given(goalAchievementRepository.save(goalAchievement)).willReturn(goalAchievement);
 
         // when
-        RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
+        RunningRecordAddResultResponseV1 response = runningRecordService.addRunningRecordV1(1L, request);
 
         // then
         assertEquals(request.startAt(), response.startAt());
@@ -289,7 +289,7 @@ class RunningRecordServiceTest {
         given(goalAchievementRepository.save(goalAchievement)).willReturn(goalAchievement);
 
         // when
-        RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
+        RunningRecordAddResultResponseV1 response = runningRecordService.addRunningRecordV1(1L, request);
 
         // then
         assertEquals(request.startAt(), response.startAt());
@@ -328,7 +328,7 @@ class RunningRecordServiceTest {
         given(goalAchievementRepository.save(goalAchievement)).willReturn(goalAchievement);
 
         // when
-        RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
+        RunningRecordAddResultResponseV1 response = runningRecordService.addRunningRecordV1(1L, request);
 
         // then
         assertEquals(request.startAt(), response.startAt());
@@ -367,7 +367,7 @@ class RunningRecordServiceTest {
         given(goalAchievementRepository.save(goalAchievement)).willReturn(goalAchievement);
 
         // when
-        RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
+        RunningRecordAddResultResponseV1 response = runningRecordService.addRunningRecordV1(1L, request);
 
         // then
         assertEquals(request.startAt(), response.startAt());
@@ -402,7 +402,7 @@ class RunningRecordServiceTest {
         given(runningRecordRepository.save(expected)).willReturn(expected);
 
         // when
-        RunningRecordAddResultResponse response = runningRecordService.addRunningRecord(1L, request);
+        RunningRecordAddResultResponseV1 response = runningRecordService.addRunningRecordV1(1L, request);
 
         // then
         assertEquals(new Pace(8, 28), response.runningData().averagePace());
