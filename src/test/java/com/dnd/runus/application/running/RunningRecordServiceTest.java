@@ -4,7 +4,7 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentageRepository;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
 import com.dnd.runus.domain.challenge.*;
-import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.common.CoordinatePoint;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
 import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
@@ -103,7 +103,7 @@ class RunningRecordServiceTest {
                 new Pace(5, 30),
                 ZonedDateTime.now(),
                 ZonedDateTime.now(),
-                List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)),
+                List.of(new CoordinatePoint(0, 0, 0), new CoordinatePoint(0, 0, 0)),
                 "start location",
                 "end location",
                 RunningEmoji.VERY_GOOD);
@@ -160,7 +160,7 @@ class RunningRecordServiceTest {
                 new Pace(5, 30),
                 ZonedDateTime.now(),
                 ZonedDateTime.now(),
-                List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)),
+                List.of(new CoordinatePoint(0, 0, 0), new CoordinatePoint(0, 0, 0)),
                 "start location",
                 "end location",
                 RunningEmoji.VERY_GOOD);
@@ -517,7 +517,7 @@ class RunningRecordServiceTest {
                 .averagePace(Pace.from(
                         request.runningData().distanceMeter(),
                         request.runningData().runningTime()))
-                .route(List.of(new Coordinate(0, 0, 0), new Coordinate(0, 0, 0)))
+                .route(List.of(new CoordinatePoint(0, 0, 0), new CoordinatePoint(0, 0, 0)))
                 .build();
     }
 }

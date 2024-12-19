@@ -1,6 +1,7 @@
 package com.dnd.runus.infrastructure.persistence.domain;
 
-import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.common.CoordinatePoint;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.PrecisionModel;
@@ -14,21 +15,20 @@ import static org.locationtech.jts.geom.PrecisionModel.FLOATING;
 public final class GeometryMapper {
     GeometryMapper() {}
 
-    public static Coordinate toDomain(org.locationtech.jts.geom.Coordinate coordinate) {
-        return new Coordinate(coordinate.getX(), coordinate.getY(), coordinate.getZ());
+    public static CoordinatePoint toDomain(Coordinate coordinate) {
+        return new CoordinatePoint(coordinate.getX(), coordinate.getY(), coordinate.getZ());
     }
 
-    public static List<Coordinate> toDomain(LineString lineString) {
+    public static List<CoordinatePoint> toDomain(LineString lineString) {
         return Stream.of(lineString.getCoordinates())
                 .map(GeometryMapper::toDomain)
                 .toList();
     }
 
-    public static LineString toLineString(List<Coordinate> coordinates) {
-        org.locationtech.jts.geom.Coordinate[] geoCoordinates = coordinates.stream()
-                .map(coordinate -> new org.locationtech.jts.geom.Coordinate(
-                        coordinate.longitude(), coordinate.latitude(), coordinate.altitude()))
-                .toArray(org.locationtech.jts.geom.Coordinate[]::new);
+    public static LineString toLineString(List<CoordinatePoint> coordinates) {
+        Coordinate[] geoCoordinates = coordinates.stream()
+                .map(coordinate -> new Coordinate(coordinate.longitude(), coordinate.latitude(), coordinate.altitude()))
+                .toArray(Coordinate[]::new);
         return GeometryFactoryHolder.INSTANCE.createLineString(geoCoordinates);
     }
 

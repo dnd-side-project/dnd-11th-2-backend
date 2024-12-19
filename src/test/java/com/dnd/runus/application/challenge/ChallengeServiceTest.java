@@ -1,7 +1,7 @@
 package com.dnd.runus.application.challenge;
 
 import com.dnd.runus.domain.challenge.*;
-import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.common.CoordinatePoint;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.running.RunningRecord;
@@ -108,7 +108,7 @@ class ChallengeServiceTest {
                         new Pace(7, 0),
                         startDate,
                         startDate.plusMinutes(21),
-                        List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                        List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                         "start location",
                         "end location",
                         RunningEmoji.SOSO),
@@ -121,7 +121,7 @@ class ChallengeServiceTest {
                         new Pace(7, 0),
                         startDate.plusMinutes(5),
                         startDate.plusMinutes(5).plusMinutes(28),
-                        List.of(new Coordinate(1, 2, 3), new Coordinate(4, 5, 6)),
+                        List.of(new CoordinatePoint(1, 2, 3), new CoordinatePoint(4, 5, 6)),
                         "start location",
                         "end location",
                         RunningEmoji.SOSO));

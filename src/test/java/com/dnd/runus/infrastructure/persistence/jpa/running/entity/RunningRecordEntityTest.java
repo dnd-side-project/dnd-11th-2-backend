@@ -1,6 +1,6 @@
 package com.dnd.runus.infrastructure.persistence.jpa.running.entity;
 
-import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.common.CoordinatePoint;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.member.Member;
 import com.dnd.runus.domain.running.RunningRecord;
@@ -31,7 +31,7 @@ class RunningRecordEntityTest {
                 .averagePace(Pace.ofSeconds(100))
                 .startAt(ZonedDateTime.now())
                 .endAt(ZonedDateTime.now())
-                .route(List.of(new Coordinate(128.0, 36.0), new Coordinate(128.0, 37.0)))
+                .route(List.of(new CoordinatePoint(128.0, 36.0), new CoordinatePoint(128.0, 37.0)))
                 .startLocation("start location")
                 .endLocation("end location")
                 .emoji(RunningEmoji.VERY_GOOD)

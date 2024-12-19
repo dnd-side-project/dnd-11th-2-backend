@@ -9,7 +9,7 @@ import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentageRepository;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRecord;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
-import com.dnd.runus.domain.common.Coordinate;
+import com.dnd.runus.domain.common.CoordinatePoint;
 import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
 import com.dnd.runus.domain.goalAchievement.GoalAchievementRepository;
@@ -172,8 +172,8 @@ public class RunningRecordService {
         Member member =
                 memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
 
-        Coordinate emptyCoordinate = new Coordinate(0, 0, 0);
-        List<Coordinate> route = List.of(emptyCoordinate, emptyCoordinate);
+        CoordinatePoint emptyCoordinate = new CoordinatePoint(0, 0, 0);
+        List<CoordinatePoint> route = List.of(emptyCoordinate, emptyCoordinate);
 
         RunningRecord record = runningRecordRepository.save(RunningRecord.builder()
                 .member(member)
