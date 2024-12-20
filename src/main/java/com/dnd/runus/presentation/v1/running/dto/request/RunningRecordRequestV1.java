@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public record RunningRecordRequest(
+public record RunningRecordRequestV1(
         @NotNull
         LocalDateTime startAt,
         @NotNull
@@ -36,7 +36,7 @@ public record RunningRecordRequest(
         @NotNull
         RunningRecordMetricsForAddDto runningData
 ) {
-    public RunningRecordRequest {
+    public RunningRecordRequestV1 {
         if (startAt.isAfter(endAt)) {
             throw new BusinessException(ErrorType.START_AFTER_END, startAt + " ~ " + endAt);
         }
