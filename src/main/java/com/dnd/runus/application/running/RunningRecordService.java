@@ -1,5 +1,6 @@
 package com.dnd.runus.application.running;
 
+import com.dnd.runus.application.running.dto.RunningResultDto;
 import com.dnd.runus.application.running.event.RunningRecordAddedEvent;
 import com.dnd.runus.domain.challenge.Challenge;
 import com.dnd.runus.domain.challenge.ChallengeRepository;
@@ -23,6 +24,9 @@ import com.dnd.runus.presentation.v1.running.dto.WeeklyRunningRatingDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequestV1;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.*;
+import com.dnd.runus.presentation.v2.running.dto.request.RunningRecordRequestV2;
+import com.dnd.runus.presentation.v2.running.dto.request.RunningRecordRequestV2.ChallengeAchievedDto;
+import com.dnd.runus.presentation.v2.running.dto.request.RunningRecordRequestV2.GoalAchievedDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -35,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.dnd.runus.global.constant.MetricsConversionFactor.METERS_IN_A_KILOMETER;
 import static com.dnd.runus.global.constant.MetricsConversionFactor.SECONDS_PER_HOUR;
@@ -178,6 +183,71 @@ public class RunningRecordService {
                 .monthlyTotalMeter(runningRecordRepository.findTotalDistanceMeterByMemberIdWithRangeDate(
                         memberId, startDateOfMonth, startDateOfNextMonth))
                 .build();
+    }
+
+    @Transactional
+    public RunningResultDto addRunningRecordV2(long memberId, RunningRecordRequestV2 request) {
+        Member member =
+                memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(Member.class, memberId));
+
+        List<CoordinatePoint> route = request.runningData().route().stream()
+                .flatMap(point -> Stream.of(
+                        new CoordinatePoint(
+                                point.start().longitude(), point.start().latitude()),
+                        new CoordinatePoint(point.end().longitude(), point.end().latitude())))
+                .collect(Collectors.toList());
+
+        // 러닝 record 저장
+        RunningRecord record = runningRecordRepository.save(RunningRecord.builder()
+                .member(member)
+                .startAt(request.startAt().atZone(defaultZoneOffset))
+                .endAt(request.endAt().atZone(defaultZoneOffset))
+                .emoji(request.emotion())
+                .startLocation(request.startLocation())
+                .endLocation(request.endLocation())
+                .distanceMeter(request.runningData().distanceMeter())
+                .duration(request.runningData().runningTime())
+                .calorie(request.runningData().calorie())
+                .averagePace(Pace.from(
+                        request.runningData().distanceMeter(),
+                        request.runningData().runningTime()))
+                .route(route)
+                .build());
+
+        OffsetDateTime now = OffsetDateTime.now();
+        int totalDistance = runningRecordRepository.findTotalDistanceMeterByMemberId(memberId);
+        Duration totalDuration = runningRecordRepository.findTotalDurationByMemberId(memberId, BASE_TIME, now);
+
+        // 멤버 레벨, 뱃지, 지구한바퀴 저장(update) 이벤트 발생
+        eventPublisher.publishEvent(new RunningRecordAddedEvent(member, record, totalDistance, totalDuration));
+
+        switch (request.achievementMode()) {
+            case CHALLENGE -> {
+                ChallengeAchievedDto challengeAchievedForAdd = request.challengeValues();
+                Challenge challenge = challengeRepository
+                        .findById(challengeAchievedForAdd.challengeId())
+                        .orElseThrow(
+                                () -> new NotFoundException(Challenge.class, challengeAchievedForAdd.challengeId()));
+
+                ChallengeAchievement challengeAchievement = challengeAchievementRepository.save(
+                        new ChallengeAchievement(challenge, record, challengeAchievedForAdd.isSuccess()));
+
+                return RunningResultDto.of(record, challengeAchievement);
+            }
+            case GOAL -> {
+                GoalAchievedDto goalAchievedForAdd = request.goalValues();
+                GoalAchievement goalAchievement = goalAchievementRepository.save(new GoalAchievement(
+                        record,
+                        (goalAchievedForAdd.goalDistance() != null) ? GoalMetricType.DISTANCE : GoalMetricType.TIME,
+                        (goalAchievedForAdd.goalDistance() != null)
+                                ? goalAchievedForAdd.goalDistance()
+                                : goalAchievedForAdd.goalTime(),
+                        goalAchievedForAdd.isSuccess()));
+
+                return RunningResultDto.of(record, goalAchievement);
+            }
+        }
+        return RunningResultDto.from(record);
     }
 
     @Transactional

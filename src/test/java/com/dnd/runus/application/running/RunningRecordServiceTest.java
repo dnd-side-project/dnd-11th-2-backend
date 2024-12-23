@@ -1,5 +1,6 @@
 package com.dnd.runus.application.running;
 
+import com.dnd.runus.application.running.dto.RunningResultDto;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementPercentageRepository;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievementRepository;
@@ -25,8 +26,11 @@ import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResult
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordQueryResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordWeeklySummaryResponse;
+import com.dnd.runus.presentation.v2.running.dto.RouteDtoV2;
+import com.dnd.runus.presentation.v2.running.dto.request.RunningRecordRequestV2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -37,6 +41,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.time.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.dnd.runus.global.constant.TimeConstant.SERVER_TIMEZONE;
 import static java.time.temporal.ChronoField.DAY_OF_WEEK;
@@ -519,5 +525,78 @@ class RunningRecordServiceTest {
                         request.runningData().runningTime()))
                 .route(List.of(new CoordinatePoint(0, 0, 0), new CoordinatePoint(0, 0, 0)))
                 .build();
+    }
+
+    @Nested
+    @DisplayName("러닝 결과 저장 V2")
+    class RunningRecordAddV2 {
+
+        @Test
+        @DisplayName("러닝 결과 저장 : 루트가 순서대로 들어갔는지 확인")
+        void addRunningRecordV2_CheckRoute() {
+            // given
+            RunningRecordRequestV2 request = new RunningRecordRequestV2(
+                    LocalDateTime.of(2021, 1, 1, 12, 10, 30),
+                    LocalDateTime.of(2021, 1, 1, 13, 12, 10),
+                    "start location",
+                    "end location",
+                    RunningEmoji.VERY_GOOD,
+                    com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode.NORMAL,
+                    null,
+                    null,
+                    new RunningRecordRequestV2.RunningRecordMetrics(
+                            Duration.ofSeconds(10_100),
+                            10_000,
+                            500.0,
+                            List.of(
+                                    new RouteDtoV2(new RouteDtoV2.Point(0, 0), new RouteDtoV2.Point(1, 1)),
+                                    new RouteDtoV2(new RouteDtoV2.Point(2, 2), new RouteDtoV2.Point(3, 3)),
+                                    new RouteDtoV2(new RouteDtoV2.Point(4, 4), new RouteDtoV2.Point(5, 5)))));
+
+            List<CoordinatePoint> route = request.runningData().route().stream()
+                    .flatMap(point -> Stream.of(
+                            new CoordinatePoint(
+                                    point.start().longitude(), point.start().latitude()),
+                            new CoordinatePoint(
+                                    point.end().longitude(), point.end().latitude())))
+                    .collect(Collectors.toList());
+
+            Member member = new Member(MemberRole.USER, "nickname1");
+
+            RunningRecord expectedRecord = RunningRecord.builder()
+                    .member(member)
+                    .startAt(request.startAt().atZone(defaultZoneOffset))
+                    .endAt(request.endAt().atZone(defaultZoneOffset))
+                    .emoji(request.emotion())
+                    .startLocation(request.startLocation())
+                    .endLocation(request.endLocation())
+                    .distanceMeter(request.runningData().distanceMeter())
+                    .duration(request.runningData().runningTime())
+                    .calorie(request.runningData().calorie())
+                    .averagePace(Pace.from(
+                            request.runningData().distanceMeter(),
+                            request.runningData().runningTime()))
+                    .route(route)
+                    .build();
+
+            given(memberRepository.findById(1L)).willReturn(Optional.of(member));
+            given(runningRecordRepository.save(expectedRecord)).willReturn(expectedRecord);
+
+            // when
+            RunningResultDto response = runningRecordService.addRunningRecordV2(1L, request);
+
+            // then
+            assertEquals(
+                    com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode.NORMAL,
+                    response.runningAchievementMode());
+            assertNull(response.challengeAchievement());
+            assertNull(response.goalAchievement());
+
+            RunningRecord resultRunning = response.runningRecord();
+            for (int i = 0; i < resultRunning.route().size(); i++) {
+                assertEquals(i, resultRunning.route().get(i).longitude());
+                assertEquals(i, resultRunning.route().get(i).latitude());
+            }
+        }
     }
 }
