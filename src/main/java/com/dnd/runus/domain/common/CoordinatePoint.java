@@ -8,7 +8,7 @@ package com.dnd.runus.domain.common;
 public record CoordinatePoint(double longitude, double latitude, double altitude) {
 
     public CoordinatePoint(double longitude, double latitude) {
-        this(longitude, latitude, Double.NaN);
+        this(longitude, latitude, 0);
     }
 
     /**
