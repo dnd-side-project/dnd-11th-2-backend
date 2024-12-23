@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public record RunningRecordAddResultResponse(
+public record RunningRecordAddResultResponseV1(
         long runningRecordId,
         @Schema(description = "러닝 시작 시간")
         LocalDateTime startAt,
@@ -32,11 +32,11 @@ public record RunningRecordAddResultResponse(
         @NotNull
         RunningRecordMetricsDto runningData
 ) {
-    public static RunningRecordAddResultResponse from(RunningRecord runningRecord) {
+    public static RunningRecordAddResultResponseV1 from(RunningRecord runningRecord) {
         return buildResponse(runningRecord, null, null, RunningAchievementMode.NORMAL);
     }
 
-    public static RunningRecordAddResultResponse of(RunningRecord runningRecord, ChallengeAchievement achievement) {
+    public static RunningRecordAddResultResponseV1 of(RunningRecord runningRecord, ChallengeAchievement achievement) {
         return buildResponse(runningRecord,
                 new ChallengeDto(
                         achievement.challenge().challengeId(),
@@ -50,7 +50,7 @@ public record RunningRecordAddResultResponse(
         );
     }
 
-    public static RunningRecordAddResultResponse of(RunningRecord runningRecord, GoalAchievement achievement) {
+    public static RunningRecordAddResultResponseV1 of(RunningRecord runningRecord, GoalAchievement achievement) {
         return buildResponse(runningRecord,
                 null,
                 new GoalResultDto(
@@ -63,8 +63,8 @@ public record RunningRecordAddResultResponse(
         );
     }
 
-    private static RunningRecordAddResultResponse buildResponse(RunningRecord runningRecord, ChallengeDto challenge, GoalResultDto goal, RunningAchievementMode achievementMode) {
-        return new RunningRecordAddResultResponse(
+    private static RunningRecordAddResultResponseV1 buildResponse(RunningRecord runningRecord, ChallengeDto challenge, GoalResultDto goal, RunningAchievementMode achievementMode) {
+        return new RunningRecordAddResultResponseV1(
                 runningRecord.runningId(),
                 runningRecord.startAt().toLocalDateTime(),
                 runningRecord.endAt().toLocalDateTime(),
