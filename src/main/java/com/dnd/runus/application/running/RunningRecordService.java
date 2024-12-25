@@ -3,7 +3,9 @@ package com.dnd.runus.application.running;
 import com.dnd.runus.application.running.dto.RunningResultDto;
 import com.dnd.runus.application.running.event.RunningRecordAddedEvent;
 import com.dnd.runus.domain.challenge.Challenge;
+import com.dnd.runus.domain.challenge.ChallengeCondition;
 import com.dnd.runus.domain.challenge.ChallengeRepository;
+import com.dnd.runus.domain.challenge.ChallengeType;
 import com.dnd.runus.domain.challenge.ChallengeWithCondition;
 import com.dnd.runus.domain.challenge.GoalMetricType;
 import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
@@ -25,7 +27,6 @@ import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequestV1;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.*;
 import com.dnd.runus.presentation.v2.running.dto.request.RunningRecordRequestV2;
-import com.dnd.runus.presentation.v2.running.dto.request.RunningRecordRequestV2.ChallengeAchievedDto;
 import com.dnd.runus.presentation.v2.running.dto.request.RunningRecordRequestV2.GoalAchievedDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -223,16 +224,19 @@ public class RunningRecordService {
 
         switch (request.achievementMode()) {
             case CHALLENGE -> {
-                ChallengeAchievedDto challengeAchievedForAdd = request.challengeValues();
                 Challenge challenge = challengeRepository
-                        .findById(challengeAchievedForAdd.challengeId())
-                        .orElseThrow(
-                                () -> new NotFoundException(Challenge.class, challengeAchievedForAdd.challengeId()));
+                        .findById(request.challengeValues().challengeId())
+                        .orElseThrow(() -> new NotFoundException(
+                                Challenge.class, request.challengeValues().challengeId()));
 
-                ChallengeAchievement challengeAchievement = challengeAchievementRepository.save(
-                        new ChallengeAchievement(challenge, record, challengeAchievedForAdd.isSuccess()));
+                ChallengeAchievement challengeAchievement =
+                        challengeAchievementRepository.save(new ChallengeAchievement(
+                                challenge, record, request.challengeValues().isSuccess()));
 
-                return RunningResultDto.of(record, challengeAchievement);
+                return RunningResultDto.of(
+                        record,
+                        challengeAchievement,
+                        calChallengeAchievementPercentage(memberId, challengeAchievement));
             }
             case GOAL -> {
                 GoalAchievedDto goalAchievedForAdd = request.goalValues();
@@ -244,7 +248,10 @@ public class RunningRecordService {
                                 : goalAchievedForAdd.goalTime(),
                         goalAchievedForAdd.isSuccess()));
 
-                return RunningResultDto.of(record, goalAchievement);
+                int achievedGoalValue = goalAchievement.goalMetricType().getActualValue(record);
+
+                return RunningResultDto.of(
+                        record, goalAchievement, calPercentage(achievedGoalValue, goalAchievement.achievementValue()));
             }
         }
         return RunningResultDto.from(record);
@@ -336,5 +343,55 @@ public class RunningRecordService {
 
         GoalAchievement goalAchievement = new GoalAchievement(runningRecord, goalMetricType, goalValue, isAchieved);
         return goalAchievementRepository.save(goalAchievement);
+    }
+
+    /**
+     * 챌린지 퍼센테이지 계산(V2 이후에서 사용)
+     * 어제 러닝 기록 이기기 관련 챌린지면 챌린지 목표값 재등록(기본 목표 값 + 어제 러닝 기록)한 후 계산
+     * @return Double(퍼센테이지 계산하기 힘든, 2 이전에 저장된 챌린지같은 경우 null로 리턴)
+     */
+    private Double calChallengeAchievementPercentage(long memberId, ChallengeAchievement challengeAchievement) {
+
+        Challenge challenge = challengeAchievement.challenge();
+        ChallengeWithCondition challengeWithCondition = challengeRepository
+                .findChallengeWithConditionsByChallengeId(challenge.challengeId())
+                .orElseThrow(() -> new NotFoundException(Challenge.class, challenge.challengeId()));
+
+        // DISTANCE_IN_TIME, PACE 챌린지인지 확인
+        // (v2이전에 퍼센테이지를 표현할 수 없는 애들일 경우, 퍼센테이지 null로 리턴함)
+        if (challenge.challengeType() == ChallengeType.DISTANCE_IN_TIME
+                || challengeWithCondition.conditions().stream()
+                        .anyMatch(condition -> !condition.goalMetricType().hasPercentage())) {
+            return null;
+        }
+
+        ChallengeCondition condition = challengeWithCondition.conditions().getFirst();
+        RunningRecord runningRecord = challengeAchievement.runningRecord();
+
+        if (challenge.isDefeatYesterdayChallenge()) {
+            // 어제 러닝 기록 이기기 관련 챌린지면, 챌린지 목표값 재등록(어제 기록 + 목표값)
+            OffsetDateTime runningDate = runningRecord
+                    .startAt()
+                    .toLocalDate()
+                    .atStartOfDay(runningRecord.startAt().getZone())
+                    .toOffsetDateTime();
+
+            RunningRecord preRunningRecord =
+                    runningRecordRepository
+                            .findByMemberIdAndStartAtBetween(memberId, runningDate.minusDays(1), runningDate)
+                            .stream()
+                            .findFirst()
+                            .orElseThrow(() -> new NotFoundException("이전 러닝 기록을 가져올 수 없습니다."));
+            condition.registerComparisonValue(condition.goalMetricType().getActualValue(preRunningRecord));
+        }
+
+        int achievedValue = condition.goalMetricType().getActualValue(runningRecord);
+        return calPercentage(achievedValue, condition.comparisonValue());
+    }
+
+    private double calPercentage(double part, double total) {
+        if (total <= 0) return 0;
+        double percentage = part / total;
+        return percentage > 1 ? 1 : percentage;
     }
 }

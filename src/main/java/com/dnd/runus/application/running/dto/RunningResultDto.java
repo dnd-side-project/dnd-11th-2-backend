@@ -9,33 +9,38 @@ public record RunningResultDto(
     RunningRecord runningRecord,
     com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode runningAchievementMode,
     ChallengeAchievement challengeAchievement,
-    GoalAchievement goalAchievement
+    GoalAchievement goalAchievement,
+    Double percentage
 ) {
     public static RunningResultDto from(RunningRecord runningRecord) {
         return new RunningResultDto(
             runningRecord,
             com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode.NORMAL,
             null,
+            null,
             null
         );
     }
 
     public static RunningResultDto of(RunningRecord runningRecord,
-        ChallengeAchievement challengeAchievement) {
+        ChallengeAchievement challengeAchievement, Double percentage) {
         return new RunningResultDto(
             runningRecord,
             com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode.CHALLENGE,
             challengeAchievement,
-            null
+            null,
+            percentage
         );
     }
 
-    public static RunningResultDto of(RunningRecord runningRecord, GoalAchievement goalAchievement) {
+    public static RunningResultDto of(RunningRecord runningRecord,
+        GoalAchievement goalAchievement, Double percentage) {
         return new RunningResultDto(
             runningRecord,
             com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode.GOAL,
             null,
-            goalAchievement
+            goalAchievement,
+            percentage
         );
     }
 }

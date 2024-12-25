@@ -110,6 +110,7 @@ class RunningRecordControllerV2Test extends ControllerTestHelper {
                         createRunningRecordFrom(request),
                         com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode.NORMAL,
                         null,
+                        null,
                         null));
 
         // when
