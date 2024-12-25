@@ -49,8 +49,8 @@ public record ChallengesResponse(
             challenge.formatExpectedTime(),
             challenge.imageUrl(),
             condition.goalMetricType(),
-            condition.goalMetricType().equals(GoalMetricType.DISTANCE) ? calMeterToKm(condition.goalValue()) : null,
-            condition.goalMetricType().equals(GoalMetricType.TIME) ? condition.goalValue() : null
+            condition.goalMetricType().equals(GoalMetricType.DISTANCE) ? calMeterToKm(condition.comparisonValue()) : null,
+            condition.goalMetricType().equals(GoalMetricType.TIME) ? condition.comparisonValue() : null
         );
     }
 
