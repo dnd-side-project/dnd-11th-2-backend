@@ -50,6 +50,9 @@ public enum ErrorType {
     GOAL_VALUES_REQUIRED_IN_GOAL_MODE(BAD_REQUEST, DEBUG, "RUNNING_005", "개인 목표 모드에서, 개인 목표 달성값은 필수 잆니다."),
     CHALLENGE_VALUES_REQUIRED_IN_CHALLENGE_MODE(BAD_REQUEST, DEBUG, "RUNNING_006", "챌린지 모드에서, 챌린지 달성값은 필수 입니다."),
 
+    // ChallengeErrorType
+    CHALLENGE_NOT_ACTIVE(CONFLICT, DEBUG, "CHALLENGE_001", "해당 챌린지는 현재 활성화된 챌린지가 아닙니다."),
+
     // WeatherErrorType
     WEATHER_API_ERROR(SERVICE_UNAVAILABLE, WARN, "WEATHER_001", "날씨 API 호출 중 오류가 발생했습니다"),
     ;

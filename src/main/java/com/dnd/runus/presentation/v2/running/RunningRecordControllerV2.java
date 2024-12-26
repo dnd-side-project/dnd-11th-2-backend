@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class RunningRecordControllerV2 {
     private final RunningRecordServiceV2 runningRecordService2;
     private final RunningRecordService runningRecordService;
+
+    @GetMapping("/{runningRecordId}")
+    @Operation(summary = "러닝 기록 상세 조회", description = "RunngingRecord id로 러닝 상세 기록을 조회합니다.")
+    public RunningRecordResultResponseV2 getRunningRecord(@MemberId long memberId, @PathVariable long runningRecordId) {
+        return RunningRecordResultResponseV2.from(runningRecordService.getRunningRecord(memberId, runningRecordId));
+    }
 
     @Operation(summary = "이번 달 러닝 기록 조회(홈화면) V2", description = """
     홈화면의 이번 달 러닝 기록을 조회 합니다.<br>
@@ -47,9 +54,9 @@ public class RunningRecordControllerV2 {
                     """
             러닝 기록을 추가합니다.<br>
             러닝 기록은 시작 시간, 종료 시간, 러닝 평가(emotion), 러닝 데이터 등으로 구성됩니다. <br>
-            챌린지 모드가 normal : challengeValues, goalValues 둘다 null <br>
-            챌린지 모드가 challenge : challengeValues 필수 값 <br>
-            챌린지 모드가 goal : goalValues 필수 값 <br>
+            normal : challengeValues, goalValues 둘다 null <br>
+            challenge : challengeValues 필수 값 <br>
+            goal : goalValues 필수 값 <br>
             러닝 데이터는 위치, 거리, 시간, 칼로리, 평균 페이스, 러닝 경로로 구성됩니다. <br>
             러닝 기록 추가에 성공하면 러닝 기록 ID, 기록 정보를 반환합니다. <br>
             """)
@@ -58,7 +65,8 @@ public class RunningRecordControllerV2 {
         ErrorType.CHALLENGE_VALUES_REQUIRED_IN_CHALLENGE_MODE,
         ErrorType.GOAL_VALUES_REQUIRED_IN_GOAL_MODE,
         ErrorType.GOAL_TIME_AND_DISTANCE_BOTH_EXIST,
-        ErrorType.ROUTE_MUST_HAVE_AT_LEAST_TWO_COORDINATES
+        ErrorType.ROUTE_MUST_HAVE_AT_LEAST_TWO_COORDINATES,
+        ErrorType.CHALLENGE_NOT_ACTIVE
     })
     @PostMapping
     @ResponseStatus(HttpStatus.OK)

@@ -31,7 +31,8 @@ public record RunningRecordRequestV2(
         com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode achievementMode,
         @Schema(description = "챌린지 데이터, 챌린지를 하지 않은 경우 null이나 필드 없이 보내주세요")
         ChallengeAchievedDto challengeValues,
-        @Schema(description = "목표 데이터, 목표를 설정하지 않은 경우 null이나 필드 없이 보내주세요")
+        @Schema(description = "목표 데이터, 목표를 설정하지 않은 경우 null이나 필드 없이 보내주세요. "
+            + "goalDistance(거리) 또는 goalTime(시간)값 둘 중 하나는 null이어야 합니다.")
         GoalAchievedDto goalValues,
         @NotNull
         RunningRecordMetrics runningData
@@ -52,7 +53,8 @@ public record RunningRecordRequestV2(
             if(goalValues == null) {
                 throw new BusinessException(ErrorType.GOAL_VALUES_REQUIRED_IN_GOAL_MODE);
             }
-            if (goalValues.goalDistance() == null && goalValues.goalTime() == null) {
+            if ((goalValues.goalDistance() == null && goalValues.goalTime() == null)
+                || (goalValues.goalDistance() != null && goalValues.goalTime() != null)) {
                 throw new BusinessException(ErrorType.GOAL_TIME_AND_DISTANCE_BOTH_EXIST);
             }
         }

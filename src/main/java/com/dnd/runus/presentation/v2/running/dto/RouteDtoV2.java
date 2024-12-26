@@ -14,7 +14,7 @@ public record RouteDtoV2(
 ) {
     public record Point(double longitude, double latitude) {
         public static Point from(CoordinatePoint point) {
-            return new Point(point.longitude(), point.longitude());
+            return new Point(point.longitude(), point.latitude());
         }
     }
 }

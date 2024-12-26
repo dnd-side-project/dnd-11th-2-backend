@@ -31,7 +31,7 @@ public class RunningRecordController {
     @GetMapping("/{runningRecordId}")
     @Operation(summary = "러닝 기록 상세 조회", description = "RunngingRecord id로 러닝 상세 기록을 조회합니다.")
     public RunningRecordQueryResponse getRunningRecord(@MemberId long memberId, @PathVariable long runningRecordId) {
-        return runningRecordService.getRunningRecord(memberId, runningRecordId);
+        return RunningRecordQueryResponse.from(runningRecordService.getRunningRecord(memberId, runningRecordId));
     }
 
     @GetMapping("monthly-dates")

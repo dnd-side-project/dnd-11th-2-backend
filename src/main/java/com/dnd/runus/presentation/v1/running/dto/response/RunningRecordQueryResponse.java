@@ -1,7 +1,6 @@
 package com.dnd.runus.presentation.v1.running.dto.response;
 
-import com.dnd.runus.domain.challenge.achievement.ChallengeAchievement;
-import com.dnd.runus.domain.goalAchievement.GoalAchievement;
+import com.dnd.runus.application.running.dto.RunningResultDto;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.presentation.v1.running.dto.ChallengeDto;
@@ -32,45 +31,18 @@ public record RunningRecordQueryResponse(
         @NotNull
         RunningRecordMetricsDto runningData
 ) {
-    public static RunningRecordQueryResponse from(RunningRecord runningRecord) {
-        return buildResponse(runningRecord, null, null, RunningAchievementMode.NORMAL);
-    }
 
-    public static RunningRecordQueryResponse of(RunningRecord runningRecord, ChallengeAchievement achievement) {
-        return buildResponse(runningRecord,
-                new ChallengeDto(
-                        achievement.challenge().challengeId(),
-                        achievement.challenge().name(),
-                        achievement.description(),
-                        achievement.challenge().imageUrl(),
-                        achievement.isSuccess()
-                ),
-                null,
-                RunningAchievementMode.CHALLENGE
+    public static RunningRecordQueryResponse from(RunningResultDto runningResult) {
+        return buildResponse(
+            runningResult.runningRecord(),
+            runningResult.challengeAchievement() == null ? null
+                : ChallengeDto.from(runningResult.challengeAchievement()),
+            runningResult.goalAchievement() == null ? null
+                : GoalResultDto.from(runningResult.goalAchievement()),
+            runningResult.runningAchievementMode()
         );
     }
 
-    public static RunningRecordQueryResponse of(RunningRecord runningRecord, GoalAchievement achievement) {
-        return buildResponse(runningRecord,
-                null,
-                new GoalResultDto(
-                        achievement.getTitle(),
-                        achievement.getDescription(),
-                        achievement.getIconUrl(),
-                        achievement.isAchieved()
-                ),
-                RunningAchievementMode.GOAL
-        );
-    }
-
-    public static RunningRecordQueryResponse of(RunningRecord runningRecord, ChallengeAchievement challengeAchievement, GoalAchievement goalAchievement) {
-        if (challengeAchievement != null) {
-            return of(runningRecord, challengeAchievement);
-        } else if (goalAchievement != null) {
-            return of(runningRecord, goalAchievement);
-        }
-        return from(runningRecord);
-    }
 
     private static RunningRecordQueryResponse buildResponse(RunningRecord runningRecord, ChallengeDto challenge, GoalResultDto goal, RunningAchievementMode achievementMode) {
         return new RunningRecordQueryResponse(
@@ -89,4 +61,5 @@ public record RunningRecordQueryResponse(
                 )
         );
     }
+
 }
