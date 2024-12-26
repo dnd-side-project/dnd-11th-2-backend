@@ -54,9 +54,9 @@ public class RunningRecordControllerV2 {
                     """
             러닝 기록을 추가합니다.<br>
             러닝 기록은 시작 시간, 종료 시간, 러닝 평가(emotion), 러닝 데이터 등으로 구성됩니다. <br>
-            챌린지 모드가 normal : challengeValues, goalValues 둘다 null <br>
-            챌린지 모드가 challenge : challengeValues 필수 값 <br>
-            챌린지 모드가 goal : goalValues 필수 값 <br>
+            normal : challengeValues, goalValues 둘다 null <br>
+            challenge : challengeValues 필수 값 <br>
+            goal : goalValues 필수 값 <br>
             러닝 데이터는 위치, 거리, 시간, 칼로리, 평균 페이스, 러닝 경로로 구성됩니다. <br>
             러닝 기록 추가에 성공하면 러닝 기록 ID, 기록 정보를 반환합니다. <br>
             """)
