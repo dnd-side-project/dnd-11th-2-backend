@@ -52,7 +52,8 @@ public record RunningRecordRequestV2(
             if(goalValues == null) {
                 throw new BusinessException(ErrorType.GOAL_VALUES_REQUIRED_IN_GOAL_MODE);
             }
-            if (goalValues.goalDistance() == null && goalValues.goalTime() == null) {
+            if ((goalValues.goalDistance() == null && goalValues.goalTime() == null)
+                || (goalValues.goalDistance() != null && goalValues.goalTime() != null)) {
                 throw new BusinessException(ErrorType.GOAL_TIME_AND_DISTANCE_BOTH_EXIST);
             }
         }
