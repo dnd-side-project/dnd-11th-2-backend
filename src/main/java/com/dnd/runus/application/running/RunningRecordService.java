@@ -21,7 +21,9 @@ import com.dnd.runus.domain.member.MemberRepository;
 import com.dnd.runus.domain.running.DailyRunningRecordSummary;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.domain.running.RunningRecordRepository;
+import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.NotFoundException;
+import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.v1.running.dto.WeeklyRunningRatingDto;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequestV1;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
@@ -228,6 +230,9 @@ public class RunningRecordService {
                         .findById(request.challengeValues().challengeId())
                         .orElseThrow(() -> new NotFoundException(
                                 Challenge.class, request.challengeValues().challengeId()));
+                if (!challenge.isActive()) {
+                    throw new BusinessException(ErrorType.CHALLENGE_NOT_ACTIVE);
+                }
 
                 ChallengeAchievement challengeAchievement =
                         challengeAchievementRepository.save(new ChallengeAchievement(
