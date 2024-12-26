@@ -25,6 +25,7 @@ import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.NotFoundException;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.v1.running.dto.WeeklyRunningRatingDto;
+import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequestV1;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.*;
@@ -82,7 +83,7 @@ public class RunningRecordService {
     }
 
     @Transactional(readOnly = true)
-    public RunningRecordQueryResponse getRunningRecord(long memberId, long runningRecordId) {
+    public RunningResultDto getRunningRecord(long memberId, long runningRecordId) {
         RunningRecord runningRecord = runningRecordRepository
                 .findById(runningRecordId)
                 .filter(r -> r.member().memberId() == memberId)
@@ -100,7 +101,27 @@ public class RunningRecordService {
                         .orElse(null)
                 : null;
 
-        return RunningRecordQueryResponse.of(runningRecord, challengeAchievement, goalAchievement);
+        RunningAchievementMode runningAchievementMode = (challengeAchievement != null)
+                ? RunningAchievementMode.CHALLENGE
+                : (goalAchievement != null) ? RunningAchievementMode.GOAL : RunningAchievementMode.NORMAL;
+
+        switch (runningAchievementMode) {
+            case CHALLENGE -> {
+                return RunningResultDto.of(
+                        runningRecord,
+                        challengeAchievement,
+                        calChallengeAchievementPercentage(memberId, challengeAchievement));
+            }
+            case GOAL -> {
+                int achievedGoalValue = goalAchievement.goalMetricType().getActualValue(runningRecord);
+                return RunningResultDto.of(
+                        runningRecord,
+                        goalAchievement,
+                        calPercentage(achievedGoalValue, goalAchievement.achievementValue()));
+            }
+        }
+
+        return RunningResultDto.from(runningRecord);
     }
 
     @Transactional(readOnly = true)

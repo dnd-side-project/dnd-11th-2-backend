@@ -24,7 +24,6 @@ import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordRequestV1;
 import com.dnd.runus.presentation.v1.running.dto.request.RunningRecordWeeklySummaryType;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordAddResultResponseV1;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordMonthlySummaryResponse;
-import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordQueryResponse;
 import com.dnd.runus.presentation.v1.running.dto.response.RunningRecordWeeklySummaryResponse;
 import com.dnd.runus.presentation.v2.running.dto.RouteDtoV2;
 import com.dnd.runus.presentation.v2.running.dto.request.RunningRecordRequestV2;
@@ -118,11 +117,11 @@ class RunningRecordServiceTest {
         given(runningRecordRepository.findById(runningRecordId)).willReturn(Optional.of(runningRecord));
 
         // when
-        RunningRecordQueryResponse result = runningRecordService.getRunningRecord(memberId, runningRecordId);
+        RunningResultDto result = runningRecordService.getRunningRecord(memberId, runningRecordId);
 
         // then
-        assertEquals(runningRecordId, result.runningRecordId());
-        assertEquals(runningRecord.emoji(), result.emotion());
+        assertEquals(runningRecordId, result.runningRecord().runningId());
+        assertEquals(runningRecord.emoji(), result.runningRecord().emoji());
     }
 
     @Test
@@ -157,6 +156,7 @@ class RunningRecordServiceTest {
         // given
         long memberId = 1;
         long runningRecordId = 1;
+        Challenge challenge = new Challenge(1L, "challenge", "image", true, ChallengeType.TODAY);
         Member member = new Member(memberId, MemberRole.USER, "nickname1", OffsetDateTime.now(), OffsetDateTime.now());
         RunningRecord runningRecord = new RunningRecord(
                 1L,
@@ -172,23 +172,126 @@ class RunningRecordServiceTest {
                 "end location",
                 RunningEmoji.VERY_GOOD);
 
-        ChallengeAchievement.Status challengeAchievementStatus = new ChallengeAchievement.Status(
-                1L, new Challenge(1L, "challenge", "image", true, ChallengeType.TODAY), true);
+        ChallengeAchievement.Status challengeAchievementStatus = new ChallengeAchievement.Status(1L, challenge, true);
 
         given(runningRecordRepository.findById(runningRecordId)).willReturn(Optional.of(runningRecord));
         given(challengeAchievementRepository.findByRunningRecordId(runningRecordId))
                 .willReturn(Optional.of(challengeAchievementStatus));
+        given(challengeRepository.findChallengeWithConditionsByChallengeId(challenge.challengeId()))
+                .willReturn(Optional.of(new ChallengeWithCondition(
+                        challenge,
+                        List.of(new ChallengeCondition(
+                                GoalMetricType.DISTANCE, ComparisonType.GREATER_THAN_OR_EQUAL_TO, 1_000)))));
 
         // when
-        RunningRecordQueryResponse result = runningRecordService.getRunningRecord(memberId, runningRecordId);
+        RunningResultDto result = runningRecordService.getRunningRecord(memberId, runningRecordId);
 
         // then
-        assertEquals(runningRecordId, result.runningRecordId());
-        assertEquals(runningRecord.emoji(), result.emotion());
+        assertEquals(runningRecordId, result.runningRecord().runningId());
+        assertEquals(runningRecord.emoji(), result.runningRecord().emoji());
+        assertNotNull(result.challengeAchievement());
+        assertEquals(RunningAchievementMode.CHALLENGE, result.runningAchievementMode());
         assertEquals(
                 challengeAchievementStatus.challenge().name(),
-                result.challenge().title());
-        assertEquals(RunningAchievementMode.CHALLENGE, result.achievementMode());
+                result.challengeAchievement().challenge().name());
+        assertEquals(1, result.percentage());
+    }
+
+    @Test
+    @DisplayName("Challenge 모드의 러닝 기록 조회 : DISTANCE_IN_TIME 타입일 경우 퍼센테이지 null 리턴 ")
+    void getRunningRecord_challenge_DISTANCE_IN_TIME_Type() {
+        // given
+        long memberId = 1;
+        long runningRecordId = 1;
+        Challenge challenge = new Challenge(1L, "challenge", "image", true, ChallengeType.DISTANCE_IN_TIME);
+        Member member = new Member(memberId, MemberRole.USER, "nickname1", OffsetDateTime.now(), OffsetDateTime.now());
+        RunningRecord runningRecord = new RunningRecord(
+                1L,
+                member,
+                10_000,
+                Duration.ofSeconds(10_000),
+                500,
+                new Pace(5, 30),
+                ZonedDateTime.now(),
+                ZonedDateTime.now(),
+                List.of(new CoordinatePoint(0, 0, 0), new CoordinatePoint(0, 0, 0)),
+                "start location",
+                "end location",
+                RunningEmoji.VERY_GOOD);
+
+        ChallengeAchievement.Status challengeAchievementStatus = new ChallengeAchievement.Status(1L, challenge, true);
+
+        given(runningRecordRepository.findById(runningRecordId)).willReturn(Optional.of(runningRecord));
+        given(challengeAchievementRepository.findByRunningRecordId(runningRecordId))
+                .willReturn(Optional.of(challengeAchievementStatus));
+        given(challengeRepository.findChallengeWithConditionsByChallengeId(challenge.challengeId()))
+                .willReturn(Optional.of(new ChallengeWithCondition(
+                        challenge,
+                        List.of(new ChallengeCondition(
+                                GoalMetricType.DISTANCE, ComparisonType.GREATER_THAN_OR_EQUAL_TO, 1_000)))));
+
+        // when
+        RunningResultDto result = runningRecordService.getRunningRecord(memberId, runningRecordId);
+
+        // then
+        assertEquals(runningRecordId, result.runningRecord().runningId());
+        assertEquals(runningRecord.emoji(), result.runningRecord().emoji());
+        assertNotNull(result.challengeAchievement());
+        assertEquals(RunningAchievementMode.CHALLENGE, result.runningAchievementMode());
+        assertEquals(
+                challengeAchievementStatus.challenge().name(),
+                result.challengeAchievement().challenge().name());
+        assertNull(result.percentage());
+    }
+
+    @Test
+    @DisplayName("Challenge 모드의 러닝 기록 조회 : 퍼센테이지를 표시 할 수 없는 챌린지가 하나라도 있을 경우 퍼센테이지 null 리턴 ")
+    void getRunningRecord_challenge_hasNotPercentage() {
+        // given
+        long memberId = 1;
+        long runningRecordId = 1;
+        Challenge challenge = new Challenge(1L, "challenge", "image", true, ChallengeType.TODAY);
+        Member member = new Member(memberId, MemberRole.USER, "nickname1", OffsetDateTime.now(), OffsetDateTime.now());
+        RunningRecord runningRecord = new RunningRecord(
+                1L,
+                member,
+                10_000,
+                Duration.ofSeconds(10_000),
+                500,
+                new Pace(5, 30),
+                ZonedDateTime.now(),
+                ZonedDateTime.now(),
+                List.of(new CoordinatePoint(0, 0, 0), new CoordinatePoint(0, 0, 0)),
+                "start location",
+                "end location",
+                RunningEmoji.VERY_GOOD);
+
+        ChallengeAchievement.Status challengeAchievementStatus = new ChallengeAchievement.Status(1L, challenge, true);
+
+        given(runningRecordRepository.findById(runningRecordId)).willReturn(Optional.of(runningRecord));
+        given(challengeAchievementRepository.findByRunningRecordId(runningRecordId))
+                .willReturn(Optional.of(challengeAchievementStatus));
+        given(challengeRepository.findChallengeWithConditionsByChallengeId(challenge.challengeId()))
+                .willReturn(Optional.of(new ChallengeWithCondition(
+                        challenge,
+                        List.of(
+                                new ChallengeCondition(
+                                        GoalMetricType.DISTANCE, ComparisonType.GREATER_THAN_OR_EQUAL_TO, 1_000),
+                                new ChallengeCondition(
+                                        GoalMetricType.PACE, ComparisonType.GREATER_THAN_OR_EQUAL_TO, 1_000)))));
+
+        // when
+        RunningResultDto result = runningRecordService.getRunningRecord(memberId, runningRecordId);
+
+        // then
+        assertEquals(runningRecordId, result.runningRecord().runningId());
+        assertEquals(runningRecord.emoji(), result.runningRecord().emoji());
+        assertNotNull(result.challengeAchievement());
+        assertEquals(RunningAchievementMode.CHALLENGE, result.runningAchievementMode());
+        assertEquals(
+                challengeAchievementStatus.challenge().name(),
+                result.challengeAchievement().challenge().name());
+        assertNull(result.percentage());
     }
 
     @Test
