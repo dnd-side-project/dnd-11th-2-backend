@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class RunningRecordControllerV2 {
     private final RunningRecordServiceV2 runningRecordService2;
     private final RunningRecordService runningRecordService;
+
+    @GetMapping("/{runningRecordId}")
+    @Operation(summary = "러닝 기록 상세 조회", description = "RunngingRecord id로 러닝 상세 기록을 조회합니다.")
+    public RunningRecordResultResponseV2 getRunningRecord(@MemberId long memberId, @PathVariable long runningRecordId) {
+        return RunningRecordResultResponseV2.from(runningRecordService.getRunningRecord(memberId, runningRecordId));
+    }
 
     @Operation(summary = "이번 달 러닝 기록 조회(홈화면) V2", description = """
     홈화면의 이번 달 러닝 기록을 조회 합니다.<br>
