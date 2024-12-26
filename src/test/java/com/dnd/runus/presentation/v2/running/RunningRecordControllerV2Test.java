@@ -122,8 +122,7 @@ class RunningRecordControllerV2Test extends ControllerTestHelper {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.emotion").value("very-good"))
                 .andExpect(jsonPath("$.data.achievementMode").value("normal"))
-                .andExpect(jsonPath("$.data.challenge").doesNotExist())
-                .andExpect(jsonPath("$.data.goal").doesNotExist())
+                .andExpect(jsonPath("$.data.achievementResult").doesNotExist())
                 .andExpect(jsonPath("$.data.runningData.averagePace").value("5’30”"))
                 .andExpect(
                         jsonPath("$.data.runningData.route[0].start.longitude").value("1.0"))

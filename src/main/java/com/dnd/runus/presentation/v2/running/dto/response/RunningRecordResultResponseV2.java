@@ -7,8 +7,8 @@ import com.dnd.runus.domain.common.Pace;
 import com.dnd.runus.domain.goalAchievement.GoalAchievement;
 import com.dnd.runus.domain.running.RunningRecord;
 import com.dnd.runus.global.constant.RunningEmoji;
-import com.dnd.runus.presentation.v1.running.dto.ChallengeDto;
-import com.dnd.runus.presentation.v1.running.dto.GoalResultDto;
+import com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode;
+import com.dnd.runus.presentation.v2.running.dto.AchievementResultDto;
 import com.dnd.runus.presentation.v2.running.dto.RouteDtoV2;
 import com.dnd.runus.presentation.v2.running.dto.RouteDtoV2.Point;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,12 +29,9 @@ public record RunningRecordResultResponseV2(
     RunningEmoji emotion,
     @NotNull
     @Schema(description = "달성 모드, normal: 일반(목표 설정 X), challenge: 챌린지, goal: 목표")
-    com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode achievementMode,
-    //todo 챌린지, 및 goal 관련해서 다시 구성
-    @Schema(description = "챌린지 정보, achievementMode가 challenge인 경우에만 값이 존재합니다.")
-    ChallengeDto challenge,
-    @Schema(description = "목표 결과 정보, achievementMode가 goal인 경우에만 값이 존재합니다.")
-    GoalResultDto goal,
+    RunningAchievementMode achievementMode,
+    @Schema(description = "달성 값(챌린지 또는 목표), achievementMode가 challenge 또는 goal인 경우에만 값이 존재합니다.")
+    AchievementResultDto achievementResult,
     @NotNull
     RunningRecordMetrics runningData
 ) {
@@ -61,10 +58,7 @@ public record RunningRecordResultResponseV2(
             runningRecord.endAt().toLocalDateTime(),
             runningRecord.emoji(),
             runningRecordResult.runningAchievementMode(),
-            runningRecordResult.runningAchievementMode() != com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode.CHALLENGE ? null
-                : buildChallengeDto(runningRecordResult.challengeAchievement()),
-            runningRecordResult.runningAchievementMode() != com.dnd.runus.presentation.v1.running.dto.request.RunningAchievementMode.GOAL ? null
-                : buildGoalResultDto(runningRecordResult.goalAchievement()),
+            buildAchievementResultOf(runningRecordResult),
             new RunningRecordMetrics(
                 runningRecord.averagePace(),
                 runningRecord.duration(),
@@ -75,31 +69,37 @@ public record RunningRecordResultResponseV2(
         );
     }
 
-    private static ChallengeDto buildChallengeDto(ChallengeAchievement achievement) {
-        if (achievement == null) {
-            return null;
-        }
-        return new ChallengeDto(
-            achievement.challenge().challengeId(),
-            achievement.challenge().name(),
-            achievement.description(),
-            achievement.challenge().imageUrl(),
-            achievement.isSuccess()
-        );
-    }
+    private static AchievementResultDto buildAchievementResultOf(RunningResultDto runningRecordResult) {
+        if (runningRecordResult.runningAchievementMode() == RunningAchievementMode.NORMAL) return null;
+        switch (runningRecordResult.runningAchievementMode()) {
+            case GOAL -> {
+                GoalAchievement goalAchievement = runningRecordResult.goalAchievement();
+                if (goalAchievement == null) return null;
+                return new AchievementResultDto(
+                    goalAchievement.getTitle(),
+                    goalAchievement.getDescription(),
+                    goalAchievement.getIconUrl(),
+                    goalAchievement.isAchieved(),
+                    runningRecordResult.percentage()
+                );
+            }
+            case CHALLENGE -> {
+                ChallengeAchievement challengeAchievement = runningRecordResult.challengeAchievement();
+                if (challengeAchievement == null) return null;
+                return new AchievementResultDto(
+                    challengeAchievement.challenge().name(),
+                    challengeAchievement.description(),
+                    challengeAchievement.challenge().imageUrl(),
+                    challengeAchievement.isSuccess(),
+                    runningRecordResult.percentage()
+                );
 
-    private static GoalResultDto buildGoalResultDto(GoalAchievement achievement) {
-        if (achievement == null) {
-            return null;
+            }
+            default -> {
+                return null;
+            }
         }
-        return new GoalResultDto(
-            achievement.getTitle(),
-            achievement.getDescription(),
-            achievement.getIconUrl(),
-            achievement.isAchieved()
-        );
     }
-
 
     private static List<RouteDtoV2> convertRouteDtoListFrom(
         List<CoordinatePoint> runningRecordRoute) {
