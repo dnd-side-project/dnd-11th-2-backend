@@ -65,7 +65,6 @@ public class RunningRecordControllerV2 {
         ErrorType.CHALLENGE_VALUES_REQUIRED_IN_CHALLENGE_MODE,
         ErrorType.GOAL_VALUES_REQUIRED_IN_GOAL_MODE,
         ErrorType.GOAL_TIME_AND_DISTANCE_BOTH_EXIST,
-        ErrorType.ROUTE_MUST_HAVE_AT_LEAST_TWO_COORDINATES,
         ErrorType.CHALLENGE_NOT_ACTIVE
     })
     @PostMapping
