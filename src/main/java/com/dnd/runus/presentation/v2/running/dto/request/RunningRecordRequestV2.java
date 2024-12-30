@@ -5,6 +5,7 @@ import com.dnd.runus.global.constant.RunningEmoji;
 import com.dnd.runus.global.exception.BusinessException;
 import com.dnd.runus.global.exception.type.ErrorType;
 import com.dnd.runus.presentation.v2.running.dto.RouteDtoV2;
+import com.dnd.runus.presentation.v2.running.dto.RouteDtoV2.Point;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -58,11 +59,6 @@ public record RunningRecordRequestV2(
                 throw new BusinessException(ErrorType.GOAL_TIME_AND_DISTANCE_BOTH_EXIST);
             }
         }
-
-        //러닝 경로 유요성 확인
-        if(runningData.route() == null || runningData.route().size() < 2) {
-            throw new BusinessException(ErrorType.ROUTE_MUST_HAVE_AT_LEAST_TWO_COORDINATES);
-        }
     }
 
     public record ChallengeAchievedDto(
@@ -96,5 +92,14 @@ public record RunningRecordRequestV2(
         @Schema(description = "러닝 경로, 최소, 경로는 최소 2개의 좌표를 가져야합니다.")
         List<RouteDtoV2> route
     ) {
+        public RunningRecordMetrics{
+            //러닝 경로 유요성 확인, 기본으로 null Point 좌표가 들어가게
+            if (route == null || route.isEmpty()) {
+                Point nullIsLandPoint = new Point(0, 0);
+                route = List.of(
+                    new RouteDtoV2(nullIsLandPoint, nullIsLandPoint)
+                );
+            }
+        }
     }
 }
