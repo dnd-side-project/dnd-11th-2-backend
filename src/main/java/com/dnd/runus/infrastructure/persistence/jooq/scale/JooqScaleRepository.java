@@ -35,7 +35,10 @@ public class JooqScaleRepository {
                 .fields("id", "cumulative_sum")
                 .as(select(
                                 SCALE.ID,
-                                sum(SCALE.SIZE_METER).over().orderBy(SCALE.ID).cast(int.class))
+                                sum(SCALE.SIZE_METER)
+                                        .over()
+                                        .orderBy(SCALE.INDEX)
+                                        .cast(int.class))
                         .from(SCALE));
 
         return dsl.with(totalDistance)
