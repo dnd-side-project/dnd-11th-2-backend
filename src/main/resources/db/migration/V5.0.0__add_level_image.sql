@@ -1,2 +1,0 @@
-ALTER TABLE level
-    ADD COLUMN image_url VARCHAR(500);
