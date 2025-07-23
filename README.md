@@ -51,3 +51,4 @@
 ### 📊 나의 기록 확인
 
 <img src="https://github.com/user-attachments/assets/618c29ed-7ea8-416c-a37d-8b68a27ec5ac" width="2000" alt="RunUs f3">
+
