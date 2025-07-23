@@ -16,8 +16,8 @@ public record GoalAchievement(
         RunningRecord runningRecord, GoalMetricType goalMetricType, int achievementValue, boolean isAchieved) {
 
     private static final DecimalFormat KILO_METER_FORMATTER = new DecimalFormat("0.##km");
-    private static final String SUCCESS_ICON_URL = "https://d27big3ufowabi.cloudfront.net/goal/goal-success.png";
-    private static final String FAILURE_ICON_URL = "https://d27big3ufowabi.cloudfront.net/goal/goal-failure.png";
+    private static final String SUCCESS_ICON_URL = "https://d35ymibkiqfp0q.cloudfront.net/goal/goal-success.png";
+    private static final String FAILURE_ICON_URL = "https://d35ymibkiqfp0q.cloudfront.net/goal/goal-failure.png";
 
     public GoalAchievement(RunningRecord runningRecord, GoalMetricType goalMetricType, int achievementValue) {
         this(
